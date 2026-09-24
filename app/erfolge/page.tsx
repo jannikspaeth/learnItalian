@@ -76,7 +76,7 @@ export default function ErfolgePage() {
       daysActive,
       inTop5: !!race?.highscores.some(h => h.name === profile.name),
     }).filter(b => b.unlocked).map(b => b.id);
-    const k = `spanisch_badges2_${profile.id}`;
+    const k = `italienisch_badges_${profile.id}`;
     const raw = localStorage.getItem(k);
     if (raw === null) {
       localStorage.setItem(k, JSON.stringify(ids)); // first visit: seed silently

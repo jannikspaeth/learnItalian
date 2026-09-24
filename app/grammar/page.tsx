@@ -41,7 +41,7 @@ export default function GrammarPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Grundlagen</h1>
           <p className="text-gray-400 text-sm mt-0.5">
-            Die ersten Schritte auf Spanisch – kurz erklärt.
+            Die ersten Schritte auf Italienisch – kurz erklärt.
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export default function GrammarPage() {
                               key={j}
                               className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 bg-gray-50 rounded-lg px-3 py-2"
                             >
-                              <span className="font-semibold text-gray-900 text-sm">{ex.es}</span>
+                              <span className="font-semibold text-gray-900 text-sm">{ex.it}</span>
                               <span className="text-gray-300 text-sm">→</span>
                               <span className="text-gray-500 text-sm">{ex.de}</span>
                             </div>

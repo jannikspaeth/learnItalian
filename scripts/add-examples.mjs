@@ -1,6 +1,6 @@
 // Merge an authored batch into public/vocab-examples.json.
 // Usage: node scripts/add-examples.mjs <batch.json>
-// Batch shape: { "<normEs>": { "es": "...", "de": "...", "conj"?: [...] }, ... }
+// Batch shape: { "<normWord(it)>": { "it": "...", "de": "..." }, ... }
 // Per key, provided fields overwrite; fields not provided (e.g. conj) are preserved.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -32,5 +32,5 @@ for (const [k, v] of Object.entries(batch)) {
 }
 
 writeJson(obj);
-const withEx = Object.values(obj).filter(v => v.es).length;
+const withEx = Object.values(obj).filter(v => v.it).length;
 console.log(`Merged ${added} entries. Total: ${Object.keys(obj).length} | with example: ${withEx}`);

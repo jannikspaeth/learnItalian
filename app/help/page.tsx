@@ -61,6 +61,11 @@ export default function HelpPage() {
               <p>Introduces 20 new words you haven&apos;t seen yet. Start here every day.</p>
             </div>
             <div>
+              <p className="font-semibold text-gray-800">Ask 🇩🇪 → 🇮🇹 / 🇮🇹 → 🇩🇪 / Mixed</p>
+              <p>Choose which side of the card you&apos;re asked. Italian → German trains recognition,
+                German → Italian trains actively using the word. Mixed (the default) picks at random per card.</p>
+            </div>
+            <div>
               <p className="font-semibold text-gray-800">Review</p>
               <p>Words that are due for review today. Do this before learning new words.</p>
             </div>
@@ -81,11 +86,9 @@ export default function HelpPage() {
             Your accuracy is tracked per verb and per tense. Verbs with recent mistakes are shown in the <strong>Errors</strong> tab.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
-            <span className="font-semibold">Mattis</span> practices Spanish verbs (present, preterite, future).
-            <br />
-            <span className="font-semibold">Marina</span> practices German verbs (present tense).
-            <br />
-            <span className="font-semibold">Emmi</span> (beginner) practices Spanish verbs in the present tense only.
+            You practice the <strong>presente</strong>, <strong>passato prossimo</strong> and <strong>futuro semplice</strong>.
+            Beginner profiles practice the present tense only. Accents don&apos;t matter when checking,
+            and for verbs with <em>essere</em> both endings count (e.g. <em>sono andato/a</em>).
           </p>
         </section>
 
@@ -95,8 +98,8 @@ export default function HelpPage() {
             <span>📘</span> Grundlagen
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Brand-new to Spanish? Beginner profiles get a <strong>Grundlagen</strong> page with short
-            first-steps lessons (pronunciation, pronouns, articles, ser vs. estar, present-tense verbs)
+            Brand-new to Italian? Beginner profiles get a <strong>Grundlagen</strong> page with short
+            first-steps lessons (pronunciation, pronouns, articles, essere vs. avere, present-tense verbs)
             and a gentler, ordered set of starter words to learn first.
           </p>
         </section>

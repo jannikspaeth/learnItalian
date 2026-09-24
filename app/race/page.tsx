@@ -221,7 +221,7 @@ export default function RacePage() {
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
             Most points this calendar month wins a ⭐ — then it resets on the 1st. Most learning
-            each day scores 5 · 4 · 3 · 2 · 1; flashcards, conjugations and articles count.
+            each day scores 5 · 4 · 3 · 2 · 1; flashcards, conjugations and sentences count.
           </p>
         </div>
 

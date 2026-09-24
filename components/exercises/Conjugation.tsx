@@ -3,20 +3,11 @@
 import { useState } from 'react';
 import { ConjugationExercise } from '@/lib/types';
 import { upsertConjugationAttempt } from '@/lib/storage';
+import { conjugationMatches as answersMatch } from '@/lib/conjugation-match';
 
 interface Props {
   exercise: ConjugationExercise;
   onComplete?: (correct: number, total: number) => void;
-}
-
-// Conjugation answers are checked accent-insensitively: a missing or wrong accent
-// (e.g. "hablo" vs "habló", "comi" vs "comí") still counts as correct. For German,
-// "ß" and "ss" are treated as equal so it can be typed on any keyboard
-// (e.g. "heißt" vs "heisst", "groß" vs "gross").
-function answersMatch(a: string, b: string): boolean {
-  const norm = (s: string) =>
-    s.trim().toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[̀-ͯ]/g, '');
-  return norm(a) === norm(b);
 }
 
 export default function Conjugation({ exercise, onComplete }: Props) {

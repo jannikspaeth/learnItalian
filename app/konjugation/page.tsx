@@ -6,7 +6,6 @@ import { getConjugationRecords, recordExercise } from '@/lib/storage';
 import { ConjugationRecord, ConjugationExercise } from '@/lib/types';
 import Conjugation from '@/components/exercises/Conjugation';
 import { VERB_CATALOG } from '@/lib/verb-catalog';
-import { VERB_CATALOG_DE } from '@/lib/verb-catalog-de';
 import { useProfile } from '@/lib/use-profile';
 import { isBeginner } from '@/lib/profiles';
 
@@ -105,8 +104,7 @@ export default function KonjugationPage() {
     );
   }
 
-  const direction = profile.direction;
-  const catalog = direction === 'es_to_de' ? VERB_CATALOG_DE : VERB_CATALOG;
+  const catalog = VERB_CATALOG;
 
   const withMistakes = records.filter(r =>
     r.sections.some(s => s.recentMistakes.length > 0)
@@ -139,7 +137,7 @@ export default function KonjugationPage() {
       const res = await fetch('/api/exercise', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'conjugation', knownVerbs, language: direction, beginner: isBeginner(profile) }),
+        body: JSON.stringify({ type: 'conjugation', knownVerbs, beginner: isBeginner(profile) }),
       });
       const data = await res.json();
       if (data.error) setError(data.error);
@@ -177,7 +175,6 @@ export default function KonjugationPage() {
         body: JSON.stringify({
           type: 'conjugation',
           verb: record.verb,
-          language: direction,
           beginner: isBeginner(profile),
         }),
       });

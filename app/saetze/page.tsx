@@ -12,24 +12,25 @@ import { VocabEntry, SentenceProgress } from '@/lib/types';
 import { loadExamples, VocabExample } from '@/lib/vocab-examples';
 import { Confidence, isDue, computeNewLevel, nextReviewDate } from '@/lib/srs';
 import { useProfile } from '@/lib/use-profile';
+import { normWord as norm } from '@/lib/norm';
+import { useQuizDirection, askItalian } from '@/lib/use-quiz-direction';
+import QuizDirectionToggle from '@/components/QuizDirectionToggle';
 
 type Tab = 'learn' | 'review';
 type Phase = 'idle' | 'active' | 'done';
 const ROUND_SIZE = 15;
 
-interface SItem {
+interface Pair {
   key: string;
-  source: string; // sentence shown (source language)
-  target: string; // model translation (target language)
+  it: string;
+  de: string;
 }
 
-function norm(s: string): string {
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/^(el|la|los|las|un|una|unos|unas|der|die|das|ein|eine|einen|einem|einer)\s+/i, '')
-    .replace(/\s*\(.*?\)\s*/g, '')
-    .trim();
+interface SItem {
+  key: string;
+  askItalian: boolean; // true ⇒ Italian sentence shown, translate into German
+  source: string;      // sentence shown
+  target: string;      // model translation
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -58,6 +59,7 @@ export default function SaetzePage() {
   const [doneCount, setDoneCount] = useState(0);
 
   const saveChain = useRef<Promise<unknown>>(Promise.resolve());
+  const [quizDir, setQuizDir] = useQuizDirection();
 
   useEffect(() => {
     if (ready && !profile) router.push('/profile');
@@ -85,22 +87,16 @@ export default function SaetzePage() {
     );
   }
 
-  const direction = profile.direction;
-
   // Pool = the user's vocab words that have an example sentence.
-  const pool: SItem[] = [];
+  const pool: Pair[] = [];
   const seenKeys = new Set<string>();
   for (const v of vocab) {
     const key = norm(v.word);
     if (seenKeys.has(key)) continue;
     const ex = examples.get(key);
-    if (!ex || !ex.es || !ex.de) continue;
+    if (!ex || !ex.it || !ex.de) continue;
     seenKeys.add(key);
-    pool.push(
-      direction === 'es_to_de'
-        ? { key, source: ex.es, target: ex.de }
-        : { key, source: ex.de, target: ex.es },
-    );
+    pool.push({ key, it: ex.it, de: ex.de });
   }
 
   const progressMap = new Map(progress.map(p => [p.key, p]));
@@ -115,7 +111,12 @@ export default function SaetzePage() {
     const src = which === 'learn' ? unseen.slice(0, ROUND_SIZE) : shuffle(dueItems);
     if (src.length === 0) return;
     setTab(which);
-    setItems(src);
+    setItems(src.map(p => {
+      const asksItalian = askItalian(quizDir);
+      return asksItalian
+        ? { key: p.key, askItalian: true, source: p.it, target: p.de }
+        : { key: p.key, askItalian: false, source: p.de, target: p.it };
+    }));
     setCurrent(0);
     setDoneCount(0);
     setPhase('active');
@@ -250,6 +251,9 @@ export default function SaetzePage() {
                   >
                     Start learning →
                   </button>
+                  <div className="flex justify-center">
+                    <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
+                  </div>
                 </>
               ) : (
                 <p className="text-sm text-gray-500">No new sentences. Learn more vocabulary to unlock more.</p>
@@ -263,6 +267,9 @@ export default function SaetzePage() {
                 >
                   Start review →
                 </button>
+                <div className="flex justify-center">
+                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
+                </div>
               </>
             ) : (
               <p className="text-sm text-gray-500">Nothing due right now. Come back later! ✅</p>
@@ -291,7 +298,7 @@ function SentenceCard({
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
       <div className="flex justify-between text-xs text-gray-400">
-        <span>Translate</span>
+        <span>Translate {item.askItalian ? '🇮🇹 → 🇩🇪' : '🇩🇪 → 🇮🇹'}</span>
         <span className="tabular-nums">{position} / {total}</span>
       </div>
 

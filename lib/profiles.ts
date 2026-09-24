@@ -1,25 +1,20 @@
-export type Direction = 'de_to_es' | 'es_to_de';
-
+// Everyone is a German speaker learning Italian, so a profile only needs a name
+// and an optional level.
 export type Level = 'A1' | 'B1';
 
 export interface Profile {
   id: string;
   name: string;
-  direction: Direction;
-  nativeLang: 'de' | 'es';
-  targetLang: 'es' | 'de';
-  level?: Level; // absent ⇒ treat as 'B1' (existing learners)
+  level?: Level; // absent ⇒ treat as 'B1'
 }
 
 export const PROFILES: Profile[] = [
-  { id: 'mattis', name: 'Mattis', direction: 'de_to_es', nativeLang: 'de', targetLang: 'es' },
-  { id: 'marina', name: 'Marina', direction: 'es_to_de', nativeLang: 'es', targetLang: 'de' },
-  { id: 'emmi', name: 'Emmi', direction: 'de_to_es', nativeLang: 'de', targetLang: 'es', level: 'A1' },
-  { id: 'jakob', name: 'Jakob', direction: 'de_to_es', nativeLang: 'de', targetLang: 'es' },
-  { id: 'robert', name: 'Robert', direction: 'de_to_es', nativeLang: 'de', targetLang: 'es' },
-  { id: 'jake', name: "Jake", direction: 'de_to_es', nativeLang: 'de', targetLang: 'es' },
-  { id: 'max', name: "Max", direction: 'de_to_es', nativeLang: 'de', targetLang: 'es' },
-  { id: 'sandra', name: "Sandra", direction: 'es_to_de', nativeLang: 'es', targetLang: 'de' },
+  { id: 'mattis', name: 'Mattis' },
+  { id: 'emmi', name: 'Emmi', level: 'A1' },
+  { id: 'jakob', name: 'Jakob' },
+  { id: 'robert', name: 'Robert' },
+  { id: 'jake', name: 'Jake' },
+  { id: 'max', name: 'Max' },
 ];
 
 export function getProfile(id: string): Profile | null {
@@ -32,4 +27,4 @@ export function isBeginner(p: Profile | null): boolean {
   return p?.level === 'A1';
 }
 
-export const PROFILE_STORAGE_KEY = 'spanisch_profile';
+export const PROFILE_STORAGE_KEY = 'italienisch_profile';

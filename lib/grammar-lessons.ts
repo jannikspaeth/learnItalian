@@ -1,10 +1,10 @@
 // ─── Grundlagen (A1 grammar mini-lessons) ──────────────────────────────────────
 // Short, readable first-steps lessons for true beginners (Emmi). Written in German
 // (the learner's L1) and rendered on /grammar as collapsible cards. Keep each
-// lesson tight: a one-line intro, a few sections, and concrete es→de examples.
+// lesson tight: a one-line intro, a few sections, and concrete it→de examples.
 
 export interface GrammarExample {
-  es: string;
+  it: string;
   de: string;
 }
 
@@ -27,38 +27,51 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     id: 'aussprache',
     icon: '🗣️',
     title: 'Aussprache & Alphabet',
-    intro: 'Gute Nachricht: Spanisch wird fast so gelesen, wie es geschrieben wird.',
+    intro: 'Gute Nachricht: Italienisch wird fast so gelesen, wie es geschrieben wird.',
     sections: [
       {
         heading: 'Die wichtigsten Regeln',
         body:
-          'Die Vokale a, e, i, o, u klingen immer gleich – kurz und klar. Es gibt keine Umlaute. ' +
-          'Das „h" ist immer stumm, und „ll" klingt wie ein deutsches „j".',
+          'Die Vokale a, e, i, o, u klingen klar und immer ähnlich. Es gibt keine Umlaute. ' +
+          'Das „h" ist immer stumm. Das „r" wird mit der Zungenspitze leicht gerollt.',
         examples: [
-          { es: 'hola', de: 'das „h" bleibt stumm → „ola"' },
-          { es: 'llamar', de: '„ll" wie „j" → „jamar"' },
-          { es: 'gracias', de: '„c" vor i/e klingt wie „th"/„s"' },
+          { it: 'ho', de: 'das „h" bleibt stumm → „o" (ich habe)' },
+          { it: 'Roma', de: 'gerolltes Zungen-„r"' },
         ],
       },
       {
-        heading: 'ñ, j und das rollende r',
+        heading: 'c und g: hart oder weich',
         body:
-          'Das „ñ" klingt wie „nj" (wie in „Cognac"). Das „j" ist ein raues, gehauchtes „ch" wie in „Bach". ' +
-          'Das „r" am Wortanfang oder als „rr" wird gerollt.',
+          'Vor e und i werden c und g weich: „ce/ci" wie „tsche/tschi", „ge/gi" wie „dsche/dschi". ' +
+          'Vor a, o, u sind sie hart wie im Deutschen. Ein „h" dazwischen macht sie wieder hart: che = „ke", ghi = „gi".',
         examples: [
-          { es: 'español', de: '→ „espanjol"' },
-          { es: 'trabajar', de: '„j" wie „ch" in „Bach"' },
-          { es: 'perro', de: 'gerolltes „rr" (Hund)' },
+          { it: 'ciao', de: '→ „tschao"' },
+          { it: 'gelato', de: '→ „dschelato"' },
+          { it: 'che', de: '→ „ke" (was / dass)' },
+          { it: 'spaghetti', de: '→ „spagetti"' },
         ],
       },
       {
-        heading: 'Betonung',
+        heading: 'gli, gn und sc',
         body:
-          'Ein Akzent (´) zeigt immer, welche Silbe betont wird. Ohne Akzent gilt: endet das Wort auf einen ' +
-          'Vokal, n oder s, wird die vorletzte Silbe betont.',
+          '„gli" klingt wie „lj" (ähnlich wie in „Familie"), „gn" wie „nj" (wie in „Cognac"). ' +
+          '„sc" vor e/i klingt wie „sch", sonst wie „sk".',
         examples: [
-          { es: 'café', de: 'betont auf „fé"' },
-          { es: 'gracias', de: 'betont auf „gra"' },
+          { it: 'famiglia', de: '→ „familja" (Familie)' },
+          { it: 'gnocchi', de: '→ „njokki"' },
+          { it: 'scusa', de: '→ „skusa" (Entschuldigung)' },
+          { it: 'pesce', de: '→ „pesche" (Fisch)' },
+        ],
+      },
+      {
+        heading: 'Doppelte Konsonanten & Betonung',
+        body:
+          'Doppelte Konsonanten werden hörbar länger gesprochen – das kann die Bedeutung ändern. ' +
+          'Meist liegt die Betonung auf der vorletzten Silbe. Ein Akzent auf dem letzten Vokal zeigt, dass dort betont wird.',
+        examples: [
+          { it: 'nonno / nono', de: 'Großvater / neunter' },
+          { it: 'città', de: 'betont auf „tà" (Stadt)' },
+          { it: 'caffè', de: 'betont auf „fè"' },
         ],
       },
     ],
@@ -72,20 +85,30 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
       {
         heading: 'Die Pronomen',
         body:
-          'yo = ich · tú = du · él = er · ella = sie · usted = Sie (höflich) · ' +
-          'nosotros = wir · vosotros = ihr · ellos/ellas = sie (Mehrzahl) · ustedes = Sie (Mehrzahl).',
+          'io = ich · tu = du · lui = er · lei = sie · Lei = Sie (höflich) · ' +
+          'noi = wir · voi = ihr · loro = sie (Mehrzahl).',
         examples: [
-          { es: 'yo soy Emmi', de: 'ich bin Emmi' },
-          { es: 'tú eres mi amiga', de: 'du bist meine Freundin' },
+          { it: 'io sono Emmi', de: 'ich bin Emmi' },
+          { it: 'tu sei mia amica', de: 'du bist meine Freundin' },
         ],
       },
       {
-        heading: 'Tipp: oft kann man sie weglassen',
+        heading: 'Tipp: meistens lässt man sie weg',
         body:
-          'Weil die Verbendung schon zeigt, wer gemeint ist, lässt man das Pronomen im Spanischen häufig weg. ' +
-          '„Soy Emmi" reicht völlig.',
+          'Weil die Verbendung schon zeigt, wer gemeint ist, lässt man das Pronomen im Italienischen meistens weg. ' +
+          '„Sono Emmi" reicht völlig. Man benutzt es nur zur Betonung.',
         examples: [
-          { es: 'soy de Alemania', de: '(ich) bin aus Deutschland' },
+          { it: 'sono tedesca', de: '(ich) bin Deutsche' },
+          { it: 'parli italiano?', de: 'sprichst du Italienisch?' },
+        ],
+      },
+      {
+        heading: 'Höflich: Lei',
+        body:
+          'Wer siezt, benutzt „Lei" (groß oder klein geschrieben) mit der Verbform der 3. Person – wie „er/sie".',
+        examples: [
+          { it: 'Come sta?', de: 'Wie geht es Ihnen?' },
+          { it: 'Lei è di qui?', de: 'Sind Sie von hier?' },
         ],
       },
     ],
@@ -93,66 +116,85 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   {
     id: 'artikel',
     icon: '🔤',
-    title: 'Nomen & Artikel (el / la)',
+    title: 'Nomen & Artikel (il / la)',
     intro: 'Jedes Nomen ist männlich oder weiblich – lerne den Artikel immer mit.',
     sections: [
       {
         heading: 'Männlich oder weiblich',
         body:
-          'el = der/das (männlich), la = die (weiblich). Faustregel: Wörter auf -o sind meist männlich, ' +
-          'Wörter auf -a meist weiblich. Es gibt Ausnahmen – darum lernst du den Artikel immer mit dem Wort.',
+          'Faustregel: Wörter auf -o sind meist männlich, Wörter auf -a meist weiblich. ' +
+          'Wörter auf -e können beides sein – darum lernst du den Artikel immer mit dem Wort.',
         examples: [
-          { es: 'el libro', de: 'das Buch (männlich)' },
-          { es: 'la casa', de: 'das Haus (weiblich)' },
-          { es: 'el día', de: 'der Tag (Ausnahme: -a, aber männlich)' },
+          { it: 'il libro', de: 'das Buch (männlich)' },
+          { it: 'la casa', de: 'das Haus (weiblich)' },
+          { it: 'il pane / la notte', de: 'das Brot (m) / die Nacht (f)' },
+        ],
+      },
+      {
+        heading: 'Die bestimmten Artikel',
+        body:
+          'Männlich: il (normal), lo (vor s+Konsonant, z, gn, ps, y), l\' (vor Vokal). ' +
+          'Weiblich: la, l\' (vor Vokal).',
+        examples: [
+          { it: 'il ragazzo', de: 'der Junge' },
+          { it: 'lo studente', de: 'der Student' },
+          { it: "l'amico / l'amica", de: 'der Freund / die Freundin' },
+          { it: 'la ragazza', de: 'das Mädchen' },
         ],
       },
       {
         heading: 'Mehrzahl',
         body:
-          'Aus el wird los, aus la wird las. Das Nomen bekommt ein -s (oder -es nach Konsonant).',
+          'Aus -o wird -i, aus -a wird -e, aus -e wird -i. ' +
+          'Die Artikel: il → i, lo/l\' (m) → gli, la/l\' (f) → le.',
         examples: [
-          { es: 'los libros', de: 'die Bücher' },
-          { es: 'las casas', de: 'die Häuser' },
+          { it: 'i libri', de: 'die Bücher' },
+          { it: 'gli studenti', de: 'die Studenten' },
+          { it: 'le case', de: 'die Häuser' },
         ],
       },
       {
         heading: 'Ein / eine',
-        body: 'un = ein (männlich), una = eine (weiblich).',
+        body: 'un = ein (männlich), uno vor s+Konsonant/z, una = eine (weiblich), un\' vor weiblichem Vokal.',
         examples: [
-          { es: 'un amigo', de: 'ein Freund' },
-          { es: 'una amiga', de: 'eine Freundin' },
+          { it: 'un amico', de: 'ein Freund' },
+          { it: 'uno zaino', de: 'ein Rucksack' },
+          { it: "un'amica", de: 'eine Freundin' },
         ],
       },
     ],
   },
   {
-    id: 'ser-estar',
+    id: 'essere-avere',
     icon: '⚖️',
-    title: 'Ser vs. Estar (zweimal „sein")',
-    intro: 'Spanisch hat zwei Wörter für „sein". Welches du nimmst, hängt von der Bedeutung ab.',
+    title: 'Essere & Avere (sein & haben)',
+    intro: 'Die zwei wichtigsten Verben – beide unregelmäßig, beide überall.',
     sections: [
       {
-        heading: 'ser = was dauerhaft ist',
-        body: 'Identität, Herkunft, Beruf, Eigenschaften – Dinge, die sich nicht so schnell ändern.',
+        heading: 'essere = sein',
+        body: 'sono, sei, è, siamo, siete, sono. Achtung: „è" (er/sie ist) hat einen Akzent, „e" ohne heißt „und".',
         examples: [
-          { es: 'soy Emmi', de: 'ich bin Emmi (Identität)' },
-          { es: 'soy de Alemania', de: 'ich bin aus Deutschland (Herkunft)' },
-          { es: 'el coche es rojo', de: 'das Auto ist rot (Eigenschaft)' },
+          { it: 'sono Emmi', de: 'ich bin Emmi' },
+          { it: 'sono di Berlino', de: 'ich bin aus Berlin' },
+          { it: 'la casa è grande', de: 'das Haus ist groß' },
         ],
       },
       {
-        heading: 'estar = Zustand & Ort',
-        body: 'Gefühle, vorübergehende Zustände und wo sich etwas befindet.',
+        heading: 'avere = haben',
+        body: 'ho, hai, ha, abbiamo, avete, hanno. Das „h" ist stumm: ho klingt wie „o".',
         examples: [
-          { es: 'estoy bien', de: 'mir geht es gut (Zustand)' },
-          { es: 'estoy cansada', de: 'ich bin müde (vorübergehend)' },
-          { es: 'la casa está aquí', de: 'das Haus ist hier (Ort)' },
+          { it: 'ho un fratello', de: 'ich habe einen Bruder' },
+          { it: 'hai tempo?', de: 'hast du Zeit?' },
         ],
       },
       {
-        heading: 'Merksatz',
-        body: 'Wie du bist (Charakter) → ser. Wie es dir geht / wo du bist → estar.',
+        heading: 'Anders als im Deutschen',
+        body: 'Beim Alter und bei manchen Gefühlen sagt man „haben" statt „sein".',
+        examples: [
+          { it: 'ho vent\'anni', de: 'ich bin zwanzig (wörtl.: habe 20 Jahre)' },
+          { it: 'ho fame / ho sete', de: 'ich habe Hunger / Durst' },
+          { it: 'ho freddo', de: 'mir ist kalt' },
+        ],
       },
     ],
   },
@@ -160,37 +202,39 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     id: 'praesens',
     icon: '🔁',
     title: 'Regelmäßige Verben im Präsens',
-    intro: 'Die meisten Verben enden auf -ar, -er oder -ir. Du tauschst einfach die Endung.',
+    intro: 'Die meisten Verben enden auf -are, -ere oder -ire. Du tauschst einfach die Endung.',
     sections: [
       {
-        heading: '-ar: hablar (sprechen)',
-        body: 'hablo, hablas, habla, hablamos, habláis, hablan.',
+        heading: '-are: parlare (sprechen)',
+        body: 'parlo, parli, parla, parliamo, parlate, parlano.',
         examples: [
-          { es: 'yo hablo español', de: 'ich spreche Spanisch' },
-          { es: 'ella habla mucho', de: 'sie spricht viel' },
+          { it: 'parlo italiano', de: 'ich spreche Italienisch' },
+          { it: 'lei parla molto', de: 'sie spricht viel' },
         ],
       },
       {
-        heading: '-er: comer (essen)',
-        body: 'como, comes, come, comemos, coméis, comen.',
+        heading: '-ere: prendere (nehmen)',
+        body: 'prendo, prendi, prende, prendiamo, prendete, prendono.',
         examples: [
-          { es: 'yo como pan', de: 'ich esse Brot' },
-          { es: 'comemos juntos', de: 'wir essen zusammen' },
+          { it: 'prendo un caffè', de: 'ich nehme einen Kaffee' },
+          { it: 'prendiamo il treno', de: 'wir nehmen den Zug' },
         ],
       },
       {
-        heading: '-ir: vivir (leben/wohnen)',
-        body: 'vivo, vives, vive, vivimos, vivís, viven.',
+        heading: '-ire: dormire (schlafen) und capire (verstehen)',
+        body:
+          'dormo, dormi, dorme, dormiamo, dormite, dormono. ' +
+          'Viele -ire-Verben schieben „-isc-" ein: capisco, capisci, capisce, capiamo, capite, capiscono.',
         examples: [
-          { es: 'vivo en Berlín', de: 'ich wohne in Berlin' },
-          { es: '¿dónde vives?', de: 'wo wohnst du?' },
+          { it: 'dormo bene', de: 'ich schlafe gut' },
+          { it: 'non capisco', de: 'ich verstehe nicht' },
         ],
       },
       {
         heading: 'Das Muster',
         body:
-          'Die Endungen für „ich/du/er" sind: -ar → -o, -as, -a · -er → -o, -es, -e · -ir → -o, -es, -e. ' +
-          'Übe sie auf der Seite „Verbs".',
+          'Die Endungen für „ich/du/er" sind bei allen drei Gruppen fast gleich: -o, -i, -a/-e. ' +
+          '„wir" endet immer auf -iamo. Übe sie auf der Seite „Verbs".',
       },
     ],
   },
@@ -202,17 +246,18 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     sections: [
       {
         heading: 'Zahlen 0–10',
-        body: 'cero, uno, dos, tres, cuatro, cinco, seis, siete, ocho, nueve, diez.',
+        body: 'zero, uno, due, tre, quattro, cinque, sei, sette, otto, nove, dieci.',
       },
       {
         heading: 'Sich vorstellen',
         body: 'Ein paar Sätze für den Anfang:',
         examples: [
-          { es: '¿Cómo te llamas?', de: 'Wie heißt du?' },
-          { es: 'Me llamo Emmi', de: 'Ich heiße Emmi' },
-          { es: 'Mucho gusto', de: 'Sehr erfreut' },
-          { es: 'No entiendo', de: 'Ich verstehe nicht' },
-          { es: '¿Hablas alemán?', de: 'Sprichst du Deutsch?' },
+          { it: 'Come ti chiami?', de: 'Wie heißt du?' },
+          { it: 'Mi chiamo Emmi', de: 'Ich heiße Emmi' },
+          { it: 'Piacere!', de: 'Freut mich!' },
+          { it: 'Non capisco', de: 'Ich verstehe nicht' },
+          { it: 'Parli tedesco?', de: 'Sprichst du Deutsch?' },
+          { it: 'Un caffè, per favore', de: 'Einen Kaffee, bitte' },
         ],
       },
     ],

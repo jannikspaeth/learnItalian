@@ -4,14 +4,12 @@ import {
   ExerciseType,
   ConjugationRecord,
   ConjugationSectionRecord,
-  ArticleRecord,
-  ArticleItem,
-  ArticleTopic,
   RaceResponse,
   SentenceProgress,
 } from './types';
 import { PROFILE_STORAGE_KEY } from './profiles';
 import { berlinToday } from './race';
+import { conjugationMatches } from './conjugation-match';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -121,13 +119,13 @@ export async function recordExercise(
   const yesterday = new Date(Date.now() - 86400000).toDateString();
 
   // Per-day activity tally: every vocabulary flashcard (+1); every conjugated form
-  // and every article (declension) item count for half credit, repeats included.
+  // counts for half credit, repeats included.
   // Drives the daily goal and the race.
   const dayKey = berlinToday();
   const daily = pruneDaily({ ...(stats.daily ?? {}) });
   if (type === 'vocabulary') {
     daily[dayKey] = (daily[dayKey] ?? 0) + total;
-  } else if (type === 'conjugation' || type === 'article') {
+  } else if (type === 'conjugation') {
     daily[dayKey] = (daily[dayKey] ?? 0) + Math.round(total / 2); // half credit per item
   } else if (type === 'sentence') {
     daily[dayKey] = (daily[dayKey] ?? 0) + total * 2; // 2 points per translated sentence
@@ -194,14 +192,9 @@ export async function upsertConjugationAttempt(
       typeof r === 'object' && r !== null && Array.isArray((r as ConjugationRecord).sections)
   );
 
-  // Accent-insensitive, matching the Conjugation component's answer check.
-  const foldAccents = (s: string) =>
-    s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-
+  // Same check as the Conjugation component (accent-insensitive, o/a endings).
   const computed: ConjugationSectionRecord[] = sections.map(s => {
-    const correct = s.userAnswers.map(
-      (a, i) => foldAccents(a) === foldAccents(s.correctAnswers[i])
-    );
+    const correct = s.userAnswers.map((a, i) => conjugationMatches(a, s.correctAnswers[i]));
     return {
       tense: s.tense,
       tenseName_de: s.tenseName_de,
@@ -253,94 +246,6 @@ export async function upsertConjugationAttempt(
   await putJson('/api/data/conjugation', records);
 }
 
-// ─── article (German declension topics) ───────────────────────────────────────
-
-export async function getArticleRecords(): Promise<ArticleRecord[]> {
-  const data = await getJson<unknown[]>('/api/data/artikel', []);
-  return data.filter(
-    (r): r is ArticleRecord =>
-      typeof r === 'object' && r !== null && typeof (r as ArticleRecord).id === 'string'
-  );
-}
-
-// Records one attempt at a topic: counts correct answers and stores the wrong
-// ones. Read-modify-write of the single per-user JSONB row, like conjugation.
-export async function upsertArticleAttempt(
-  topicId: string,
-  topic: string,
-  topic_es: string,
-  items: ArticleItem[],
-  userAnswers: string[]
-): Promise<void> {
-  const raw = await getJsonStrict<unknown[]>('/api/data/artikel');
-  const records = raw.filter(
-    (r): r is ArticleRecord =>
-      typeof r === 'object' && r !== null && typeof (r as ArticleRecord).id === 'string'
-  );
-
-  const correct = items.map((it, i) => {
-    const a = userAnswers[i]?.trim().toLowerCase() ?? '';
-    return a === it.answer.toLowerCase() || (it.alternatives ?? []).some(alt => alt.toLowerCase() === a);
-  });
-  const totalCorrect = correct.filter(Boolean).length;
-  const totalQuestions = items.length;
-  const recentMistakes = items
-    .map((it, i) =>
-      !correct[i]
-        ? { prompt: `${it.before}___${it.after}`, correct: it.answer, userAnswer: userAnswers[i] ?? '' }
-        : null
-    )
-    .filter((x): x is NonNullable<typeof x> => x !== null);
-  const mastered = recentMistakes.length === 0;
-
-  const existing = records.find(r => r.id === topicId);
-  if (existing) {
-    existing.totalAttempts += 1;
-    existing.totalCorrect += totalCorrect;
-    existing.totalQuestions += totalQuestions;
-    existing.recentMistakes = recentMistakes;
-    existing.lastAttempted = new Date().toISOString();
-    existing.mastered = mastered;
-    existing.topic = topic;
-    existing.topic_es = topic_es;
-  } else {
-    records.unshift({
-      id: topicId,
-      topic,
-      topic_es,
-      totalAttempts: 1,
-      totalCorrect,
-      totalQuestions,
-      recentMistakes,
-      lastAttempted: new Date().toISOString(),
-      mastered,
-    });
-  }
-
-  await putJson('/api/data/artikel', records);
-}
-
-// ─── generated article topics (saved AI exercises) ─────────────────────────────
-
-export async function getGeneratedTopics(): Promise<ArticleTopic[]> {
-  const data = await getJson<unknown[]>('/api/data/article-topics', []);
-  return data.filter(
-    (t): t is ArticleTopic =>
-      typeof t === 'object' && t !== null && typeof (t as ArticleTopic).id === 'string'
-  );
-}
-
-// Save a newly generated topic (read-modify-write of the single per-user row).
-export async function addGeneratedTopic(topic: ArticleTopic): Promise<void> {
-  const raw = await getJsonStrict<unknown[]>('/api/data/article-topics');
-  const topics = raw.filter(
-    (t): t is ArticleTopic =>
-      typeof t === 'object' && t !== null && typeof (t as ArticleTopic).id === 'string'
-  );
-  topics.unshift(topic);
-  await putJson('/api/data/article-topics', topics);
-}
-
 // ─── the race (global standings) ───────────────────────────────────────────────
 
 const emptyRace: RaceResponse = {
@@ -364,13 +269,4 @@ export async function getStars(): Promise<{ stars: Record<string, number>; month
     stars: {},
     month: '',
   });
-}
-
-export async function deleteGeneratedTopic(id: string): Promise<void> {
-  const raw = await getJsonStrict<unknown[]>('/api/data/article-topics');
-  const topics = raw.filter(
-    (t): t is ArticleTopic =>
-      typeof t === 'object' && t !== null && typeof (t as ArticleTopic).id === 'string'
-  );
-  await putJson('/api/data/article-topics', topics.filter(t => t.id !== id));
 }

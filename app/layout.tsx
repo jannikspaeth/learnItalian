@@ -3,8 +3,8 @@ import './globals.css';
 import Navigation from '@/components/Navigation';
 
 export const metadata: Metadata = {
-  title: 'Vocab & Verbs',
-  description: 'Language learning app for vocabulary and verb conjugations',
+  title: 'Italienisch',
+  description: 'Italian vocabulary and verb conjugation practice for German speakers',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

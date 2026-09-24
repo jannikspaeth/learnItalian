@@ -1,24 +1,22 @@
 @AGENTS.md
 
-# Spanisch — language-learning web app
+# Italienisch — language-learning web app
 
-A small, personal Spanish/German learning app used by a handful of friends. German
-speakers learning Spanish (and one Spanish speaker learning German). Plain, mobile-first
-UI in English with German/Spanish content.
+A small, personal Italian learning app used by a handful of friends — all German speakers
+learning Italian. Plain, mobile-first UI in English with German/Italian content.
+(Converted from an earlier Spanish version of the same app.)
 
 ## Stack & environment
 
 - **Next.js 16.2.9 (App Router, Turbopack)**, React 19, TypeScript, **Tailwind CSS v4**.
 - **Supabase** (Postgres) for all persistence, via `@supabase/supabase-js` (service-role key,
   server-side only).
-- **Groq** (`llama-3.3-70b-versatile`) for LLM generation (article exercises, vocab sets, chat).
 - Deployed on **Vercel**. No test framework. Dev on **Windows / PowerShell**.
 - Commands: `npm run dev`, `npm run build`, `npx tsc --noEmit`, `npm run lint`.
 
 ### Env vars
 - `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`) and `SUPABASE_SERVICE_ROLE_KEY` — required for
   all persistence; reads/writes throw if missing. `dbConfigured()` guards optional paths.
-- `GROQ_API_KEY` — required for the generation routes only.
 - Set these in Vercel project env. Local `.env.local` only carries a Vercel OIDC token (no DB keys),
   so the DB can't be queried from a local shell without `vercel env pull`.
 
@@ -29,9 +27,10 @@ stored in `localStorage['spanisch_profile']` and sent as the **`x-user-id` heade
 call. That header becomes the Supabase **`user_id`**, which isolates each person's data. Adding a
 learner = one entry in `PROFILES` (no DB change).
 
-- Fields: `direction` (`de_to_es` | `es_to_de`), `nativeLang`, `targetLang`, optional `level`
-  (`'A1'` | `'B1'`; absent ⇒ B1). `isBeginner(profile)` ⇒ `level === 'A1'`.
-- Current: `mattis` (de→es, B1), `marina` (es→de), `emmi` (de→es, **A1**), `jakob`, `robert` (de→es, B1).
+- Fields: `id`, `name`, optional `level` (`'A1'` | `'B1'`; absent ⇒ B1). `isBeginner(profile)` ⇒
+  `level === 'A1'`. There is no per-profile language direction — everyone learns de→it.
+- Which side of a card is asked is a per-device setting (`useQuizDirection`, localStorage):
+  🇩🇪→🇮🇹 / 🇮🇹→🇩🇪 / Mixed (default). The SRS level stays one per word either way.
 - `useProfile()` (`lib/use-profile.ts`) reads/sets the active profile and syncs across tabs.
 
 ## Data flow
@@ -39,30 +38,58 @@ learner = one entry in `PROFILES` (no DB change).
 Client component → `lib/storage.ts` (fetch with `x-user-id`) → `app/api/data/*` route → `lib/db.ts`
 (Supabase). `storage.ts` reads are tolerant (return fallback) for display, but **strict** before any
 read-modify-write so a failed read can't overwrite real data with an empty list. Per-row writes
-(vocab) avoid clobbering the whole list; JSONB-blob writes (conjugation/article/race) are read-modify-write.
+(vocab) avoid clobbering the whole list; JSONB-blob writes (conjugation/sentences/race) are read-modify-write.
 
 ### Supabase tables
 - `vocab` — one row per user+word (SRS: levels 1–7 learning, 8 known; `next_review`, `last_reviewed`, `review_count`).
 - `stats` — one row per user. Cumulative totals + `streak` + **`daily` jsonb** (Berlin-date → activity count).
-- `conjugation`, `article`, `article_topics` — one JSONB row per user (arrays of records).
+- `conjugation`, `sentences` — one JSONB row per user (arrays of records).
 - `race` — **one global row** `id='global'` holding `{ points, dailyCounts, settledDates, highscores }`.
 
 ### ⚠️ Manual SQL migrations (no migrations dir — tables are created by hand)
-Two things must exist in Supabase or features silently break:
+Full setup for a fresh Supabase project (column names match `lib/db.ts`):
 ```sql
-create table if not exists race ( id text primary key, data jsonb not null default '{}'::jsonb );
-alter table stats add column if not exists daily jsonb not null default '{}'::jsonb;
+create table if not exists vocab (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null,
+  norm_word text not null,
+  word text not null,
+  translation text not null,
+  example text,
+  level int not null default 1,
+  next_review timestamptz,
+  last_reviewed timestamptz,
+  review_count int not null default 0,
+  added_at timestamptz not null default now(),
+  unique (user_id, norm_word)
+);
+create table if not exists stats (
+  user_id text primary key,
+  exercises_completed int not null default 0,
+  correct_answers int not null default 0,
+  total_answers int not null default 0,
+  streak int not null default 0,
+  last_activity timestamptz,
+  exercises_by_type jsonb not null default '{}'::jsonb,
+  daily jsonb not null default '{}'::jsonb
+);
+create table if not exists conjugation ( user_id text primary key, data jsonb not null default '[]'::jsonb );
+create table if not exists sentences   ( user_id text primary key, data jsonb not null default '[]'::jsonb );
+create table if not exists race        ( id text primary key, data jsonb not null default '{}'::jsonb );
 ```
 
 ## Features / pages
 
 - `/vokabeln` — Vocabulary: SRS flashcards (one at a time), **Learn in rounds of 20**, Review
   (shuffled), Words list. Daily goal banner. Beginners (A1) learn an ordered starter set first
-  (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts` (~2966 words).
-- `/konjugation` — Verb conjugation practice from **static catalogs** (`lib/verb-catalog.ts` ES,
-  `lib/verb-catalog-de.ts` DE) — *not* LLM. A1 profiles drill present tense only. Answer checking is
-  **accent-insensitive**; Check works with blank fields.
-- `/artikel` — German declension practice (es→de only); LLM-generated topics saved per user.
+  (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts`. Word keys come from
+  `normWord` (`lib/norm.ts`: strips il/lo/la/l'/i/gli/le/un/uno/una/un' + German articles).
+- `/saetze` — translate example sentences (`public/vocab-examples.json`, keyed by `normWord`).
+- `/konjugation` — Verb conjugation from `lib/verb-catalog.ts`: short specs + a **rule engine**
+  derives presente / passato prossimo / futuro semplice; irregulars live in `IRREGULAR` (or via
+  `base` for prefixed verbs). A1 profiles drill present tense only. Answer checking
+  (`lib/conjugation-match.ts`) is **accent-insensitive** and accepts either ending of
+  essere-participles written `andato/a` / `andati/e`.
 - `/grammar` — "Grundlagen" first-steps lessons (A1 only, `lib/grammar-lessons.ts`).
 - `/race` — **THE RACE**: global competitive leaderboard (see below).
 - `/help`, `/profile`. Nav in `components/Navigation.tsx` (filters items by `onlyDirection`/`onlyLevel`).
@@ -71,7 +98,7 @@ alter table stats add column if not exists daily jsonb not null default '{}'::js
 
 Global standings everyone sees; cars race to **100 points**.
 - **Daily activity** per user = every vocab flashcard (+1) + every conjugated form (**half credit**,
-  `round(total/2)`), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
+  `round(total/2)`) + every translated sentence (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
   keyed by **Europe/Berlin date**.
 - Each finished day awards **5/4/3/2/1** to the top daily scorers; **ties split the tiers evenly**;
   0 activity earns nothing. Logic is pure in `lib/race.ts` (`awardPoints`, `berlinDayStart`/`berlinToday`).

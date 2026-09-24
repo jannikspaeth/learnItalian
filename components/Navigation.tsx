@@ -14,8 +14,6 @@ const nav = [
   // Global competitive leaderboard — everyone sees the same standings.
   { href: '/race', label: 'The Race', icon: '🏁' },
   { href: '/erfolge', label: 'Achievements', icon: '🏆' },
-  // German declension practice — only relevant for Spanish→German learners (Marina).
-  { href: '/artikel', label: 'Artikel', icon: '🇩🇪', onlyDirection: 'es_to_de' as const },
   // Grammar first-steps — only for true beginners (A1).
   { href: '/grammar', label: 'Grundlagen', icon: '📘', onlyLevel: 'A1' as const },
   { href: '/help', label: 'Help', icon: '❓' },
@@ -28,14 +26,7 @@ export default function Navigation() {
   const myStars = profile ? formatStars(stars[profile.id] ?? 0) : '';
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const flag = profile?.direction === 'es_to_de' ? '🇩🇪' : '🇪🇸';
-  const subtitle = profile?.direction === 'es_to_de' ? 'Spanish → German' : 'German → Spanish';
-
-  const items = nav.filter(
-    n =>
-      (!('onlyDirection' in n) || n.onlyDirection === profile?.direction) &&
-      (!('onlyLevel' in n) || n.onlyLevel === profile?.level)
-  );
+  const items = nav.filter(n => !('onlyLevel' in n) || n.onlyLevel === profile?.level);
 
   // Mobile: keep the core practice/engagement tabs visible; tuck the rest behind "More".
   const primary = items.slice(0, 4);
@@ -59,12 +50,12 @@ export default function Navigation() {
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-100 z-50">
         <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-2.5">
-            <span className="text-2xl">{flag}</span>
+            <span className="text-2xl">🇮🇹</span>
             <div>
               <p className="font-bold text-gray-900 text-sm leading-none">
                 {profile ? profile.name + myStars : 'Language Learning'}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>
+              <p className="text-xs text-gray-400 mt-0.5">German → Italian</p>
             </div>
           </div>
         </div>

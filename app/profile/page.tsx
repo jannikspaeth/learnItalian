@@ -20,7 +20,7 @@ export default function ProfilePage() {
     <main className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
-          <p className="text-4xl mb-3">🌍</p>
+          <p className="text-4xl mb-3">🇮🇹</p>
           <h1 className="text-2xl font-bold text-gray-900">Who are you?</h1>
           <p className="text-sm text-gray-400 mt-1">Choose your profile to continue.</p>
         </div>
@@ -39,9 +39,7 @@ export default function ProfilePage() {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-gray-400 mt-0.5">
-                {p.direction === 'de_to_es' ? '🇩🇪 → 🇪🇸 Learning Spanish' : '🇪🇸 → 🇩🇪 Learning German'}
-              </p>
+              <p className="text-sm text-gray-400 mt-0.5">🇩🇪 → 🇮🇹 Learning Italian</p>
             </button>
           ))}
         </div>

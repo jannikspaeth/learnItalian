@@ -1,12 +1,12 @@
 // Static example sentences + present-tense conjugations for catalog words, keyed by
-// the normalized Spanish word (same key as normWord in lib/db.ts). Shipped as a
+// the normalized Italian word (same key as normWord in lib/norm.ts). Shipped as a
 // static file in /public, fetched once and memoized so it stays out of the JS bundle.
 // A word missing here simply shows no example/table — callers must handle undefined.
 
 export interface VocabExample {
-  es: string;            // short, natural Spanish sentence using the word
+  it: string;            // short, natural Italian sentence using the word
   de: string;            // German translation of that sentence
-  conj?: string[];       // 6 present-tense forms (verbs only): yo, tú, él/ella, nos, vos, ellos
+  conj?: string[];       // 6 present-tense forms (verbs only): io, tu, lui/lei, noi, voi, loro
 }
 
 let cache: Map<string, VocabExample> | null = null;

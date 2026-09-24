@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Profile, getProfile, PROFILE_STORAGE_KEY } from './profiles';
 
-const PROFILE_EVENT = 'spanisch-profile-changed';
+const PROFILE_EVENT = 'italienisch-profile-changed';
 
 export function useProfile() {
   const [profile, setProfileState] = useState<Profile | null>(null);

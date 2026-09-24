@@ -15,8 +15,11 @@ import { STARTER_VOCAB } from '@/lib/vocab-starter';
 import { useProfile } from '@/lib/use-profile';
 import { isBeginner } from '@/lib/profiles';
 import { berlinToday } from '@/lib/race';
-import { PRONOUNS } from '@/lib/verb-catalog';
+import { PRONOUNS, findVerb } from '@/lib/verb-catalog';
 import { loadExamples, VocabExample } from '@/lib/vocab-examples';
+import { normWord as norm } from '@/lib/norm';
+import { useQuizDirection, askItalian } from '@/lib/use-quiz-direction';
+import QuizDirectionToggle from '@/components/QuizDirectionToggle';
 import {
   Confidence,
   VOCAB_KNOWN_LEVEL,
@@ -54,12 +57,13 @@ type WordGroup = 'none' | 'phase' | 'due';
 
 interface SessionItem {
   de: string;
-  es: string;
-  example: string;       // Spanish example sentence
+  it: string;
+  example: string;       // Italian example sentence
   exampleDe?: string;    // German translation of the example
   conj?: string[];       // present-tense forms (verbs only)
   vocabId?: string;
   currentLevel: number;
+  askItalian: boolean;   // true ⇒ Italian shown, German is the answer
   question: string;
   answer: string;
 }
@@ -96,16 +100,7 @@ function getLevel(v: VocabEntry): number {
 
 // ─── Answer checking ─────────────────────────────────────────────────────────
 
-function norm(s: string): string {
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/^(el|la|los|las|un|una|unos|unas|der|die|das|ein|eine|einen|einem|einer)\s+/i, '')
-    .replace(/\s*\(.*?\)\s*/g, '')
-    .trim();
-}
-
-// Grading only: catalog phrases often include .?! ¡¿ … — ignore them when comparing.
+// Grading only: catalog phrases often include .?! … — ignore them when comparing.
 function answerNorm(s: string): string {
   return norm(s)
     .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
@@ -137,7 +132,7 @@ function germanFold(s: string): string {
 }
 
 // A translation may list several acceptable answers separated by "/",
-// e.g. "leben / wohnen" or "el novio / la novia". Any one of them counts.
+// e.g. "leben / wohnen" or "il ragazzo / la ragazza". Any one of them counts.
 // Parentheticals are dropped first so a "/" inside them — e.g.
 // "sein (Zustand/Ort)" — isn't mistaken for a variant separator.
 function splitVariants(s: string): string[] {
@@ -175,6 +170,12 @@ function checkAnswer(user: string, correct: string): { correct: boolean; accentH
   return { correct: false };
 }
 
+// Present-tense table for a verb card: the verb catalog is authoritative, the
+// examples file only fills in verbs the catalog lacks.
+function presentForms(word: string, ex?: VocabExample): string[] | undefined {
+  return findVerb(word.trim())?.presente ?? ex?.conj;
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function VokabelnPage() {
@@ -203,7 +204,7 @@ export default function VokabelnPage() {
   const [vocabLoaded, setVocabLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
-  // Static example sentences + conjugations, keyed by normalized Spanish word.
+  // Static example sentences + conjugations, keyed by normalized Italian word.
   const [examples, setExamples] = useState<Map<string, VocabExample>>(new Map());
   useEffect(() => { loadExamples().then(setExamples); }, []);
 
@@ -217,10 +218,12 @@ export default function VokabelnPage() {
   const celebrate = useCallback((msg: string) => setCelebration(msg), []);
   const streakSeen = useRef<number | null>(null);
 
+  const [quizDir, setQuizDir] = useQuizDirection();
+
   // Add-your-own-word form state
   const [showAddForm, setShowAddForm] = useState(false);
-  const [addNative, setAddNative] = useState('');
-  const [addTarget, setAddTarget] = useState('');
+  const [addGerman, setAddGerman] = useState('');
+  const [addItalian, setAddItalian] = useState('');
   const [addExample, setAddExample] = useState('');
   const [addError, setAddError] = useState('');
 
@@ -264,14 +267,11 @@ export default function VokabelnPage() {
     );
   }
 
-  const direction = profile.direction;
-  const answerLang = direction === 'es_to_de' ? 'German…' : 'Spanish…';
-
   // Beginners (A1) learn from an ordered starter set first, then flow into the full
   // catalog (deduped) so they never run out. Everyone else uses the full catalog.
-  const starterEs = new Set(STARTER_VOCAB.map(w => norm(w.es)));
+  const starterKeys = new Set(STARTER_VOCAB.map(w => norm(w.it)));
   const sourceCatalog = isBeginner(profile)
-    ? [...STARTER_VOCAB, ...VOCAB_CATALOG.filter(w => !starterEs.has(norm(w.es)))]
+    ? [...STARTER_VOCAB, ...VOCAB_CATALOG.filter(w => !starterKeys.has(norm(w.it)))]
     : VOCAB_CATALOG;
 
   const bekanntWords = vocab.filter(v => getLevel(v) >= VOCAB_KNOWN_LEVEL);
@@ -285,7 +285,7 @@ export default function VokabelnPage() {
   });
 
   const seenWords = new Set(vocab.map(v => norm(v.word)));
-  const unseenCount = sourceCatalog.filter(e => !seenWords.has(norm(e.es))).length;
+  const unseenCount = sourceCatalog.filter(e => !seenWords.has(norm(e.it))).length;
 
   // Every flashcard done today counts (repeats included) — sourced from the
   // per-day stats counter, not distinct words.
@@ -306,16 +306,18 @@ export default function VokabelnPage() {
 
   function makeItem(
     de: string,
-    es: string,
+    it: string,
     example: string,
     vocabId?: string,
     currentLevel = 0,
     extra?: { de?: string; conj?: string[] },
   ): SessionItem {
+    const asksItalian = askItalian(quizDir);
     return {
-      de, es, example, exampleDe: extra?.de, conj: extra?.conj, vocabId, currentLevel,
-      question: direction === 'es_to_de' ? es : de,
-      answer:   direction === 'es_to_de' ? de : es,
+      de, it, example, exampleDe: extra?.de, conj: extra?.conj, vocabId, currentLevel,
+      askItalian: asksItalian,
+      question: asksItalian ? it : de,
+      answer:   asksItalian ? de : it,
     };
   }
 
@@ -365,12 +367,12 @@ export default function VokabelnPage() {
   function startLernen() {
     if (!vocabLoaded) return;
     // One round of up to ROUND_SIZE new words (not the whole catalog).
-    const unseen = sourceCatalog.filter(e => !seenWords.has(norm(e.es))).slice(0, ROUND_SIZE);
+    const unseen = sourceCatalog.filter(e => !seenWords.has(norm(e.it))).slice(0, ROUND_SIZE);
     if (unseen.length === 0) return;
     // New words start at phase 1, so Hard keeps them at phase 1 and Good promotes to phase 2.
     setItems(unseen.map(e => {
-      const ex = examples.get(norm(e.es));
-      return makeItem(e.de, e.es, ex?.es || '', undefined, 1, { de: ex?.de, conj: ex?.conj });
+      const ex = examples.get(norm(e.it));
+      return makeItem(e.de, e.it, ex?.it || '', undefined, 1, { de: ex?.de, conj: presentForms(e.it, ex) });
     }));
     setCurrent(0);
     setDoneCount(0);
@@ -384,9 +386,9 @@ export default function VokabelnPage() {
     // Show due words in random order rather than fixed DB order.
     setItems(shuffle(dueToday).map(v => {
       const ex = examples.get(norm(v.word));
-      return makeItem(v.translation, v.word, ex?.es || v.example || '', v.id, getLevel(v), {
+      return makeItem(v.translation, v.word, ex?.it || v.example || '', v.id, getLevel(v), {
         de: ex?.de,
-        conj: ex?.conj,
+        conj: presentForms(v.word, ex),
       });
     }));
     setCurrent(0);
@@ -419,7 +421,7 @@ export default function VokabelnPage() {
     let changed: VocabEntry;
     let next: VocabEntry[];
     if (isLearn) {
-      const key = norm(item.es);
+      const key = norm(item.it);
       const idx = vocab.findIndex(v => norm(v.word) === key);
       if (idx >= 0) {
         changed = { ...vocab[idx], level: newLevel, nextReview: nr, lastReviewed: now, reviewCount: vocab[idx].reviewCount + 1 };
@@ -427,7 +429,7 @@ export default function VokabelnPage() {
       } else {
         changed = {
           id: crypto.randomUUID(),
-          word: item.es,
+          word: item.it,
           translation: item.de,
           example: item.example || undefined,
           level: newLevel,
@@ -489,20 +491,20 @@ export default function VokabelnPage() {
   function handleAddWord() {
     setAddError('');
     if (!vocabLoaded) { setAddError('Still loading your words — try again in a moment.'); return; }
-    const spanish = (direction === 'es_to_de' ? addNative : addTarget).trim();
-    const german = (direction === 'es_to_de' ? addTarget : addNative).trim();
-    if (!spanish || !german) {
+    const italian = addItalian.trim();
+    const german = addGerman.trim();
+    if (!italian || !german) {
       setAddError('Please fill in both words.');
       return;
     }
-    if (seenWords.has(norm(spanish))) {
+    if (seenWords.has(norm(italian))) {
       setAddError('That word is already in your list.');
       return;
     }
     const now = new Date().toISOString();
     const entry: VocabEntry = {
       id: crypto.randomUUID(),
-      word: spanish,
+      word: italian,
       translation: german,
       example: addExample.trim() || undefined,
       level: 1,
@@ -511,8 +513,8 @@ export default function VokabelnPage() {
       reviewCount: 0,
     };
     persistVocab([entry, ...vocab], entry);
-    setAddNative('');
-    setAddTarget('');
+    setAddGerman('');
+    setAddItalian('');
     setAddExample('');
     setShowAddForm(false);
   }
@@ -531,10 +533,8 @@ export default function VokabelnPage() {
         const rb = b.nextReview ? new Date(b.nextReview).getTime() : Infinity;
         cmp = ra - rb;
       } else {
-        // alphabetical by the language being learned
-        const la = (direction === 'es_to_de' ? a.translation : a.word).toLowerCase();
-        const lb = (direction === 'es_to_de' ? b.translation : b.word).toLowerCase();
-        cmp = la.localeCompare(lb);
+        // alphabetical by the Italian word
+        cmp = a.word.toLowerCase().localeCompare(b.word.toLowerCase());
       }
       return wordSortDir === 'asc' ? cmp : -cmp;
     });
@@ -600,14 +600,14 @@ export default function VokabelnPage() {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="font-semibold text-gray-900 text-sm">
-              {direction === 'es_to_de' ? entry.translation : entry.word}
+              {entry.word}
             </p>
             <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${LEVEL_COLORS[level]}`}>
               {LEVEL_LABELS[level]}
             </span>
           </div>
           <p className="text-gray-500 text-sm">
-            {direction === 'es_to_de' ? entry.word : entry.translation}
+            {entry.translation}
           </p>
           {level < VOCAB_KNOWN_LEVEL && reviewDate && (
             <p className="text-gray-400 text-xs mt-0.5">
@@ -652,16 +652,16 @@ export default function VokabelnPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
         <input
           type="text"
-          value={addNative}
-          onChange={e => setAddNative(e.target.value)}
-          placeholder={direction === 'es_to_de' ? 'Spanish word' : 'German word'}
+          value={addGerman}
+          onChange={e => setAddGerman(e.target.value)}
+          placeholder="German word"
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-red-400 outline-none"
         />
         <input
           type="text"
-          value={addTarget}
-          onChange={e => setAddTarget(e.target.value)}
-          placeholder={direction === 'es_to_de' ? 'German translation' : 'Spanish translation'}
+          value={addItalian}
+          onChange={e => setAddItalian(e.target.value)}
+          placeholder="Italian translation"
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-red-400 outline-none"
         />
         <input
@@ -696,7 +696,6 @@ export default function VokabelnPage() {
       <Flashcard
         key={current}
         item={items[current]}
-        answerPlaceholder={answerLang}
         position={current + 1}
         total={items.length}
         combo={combo}
@@ -855,6 +854,7 @@ export default function VokabelnPage() {
                   >
                     {!vocabLoaded ? 'Loading…' : unseenCount > 0 ? 'Start learning →' : 'All words learned'}
                   </button>
+                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
                 </div>
                 {addWordSection}
               </>
@@ -889,6 +889,7 @@ export default function VokabelnPage() {
                   >
                     Start review →
                   </button>
+                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
                 </div>
               )
             ) : (
@@ -1010,7 +1011,6 @@ export default function VokabelnPage() {
 
 function Flashcard({
   item,
-  answerPlaceholder,
   position,
   total,
   combo,
@@ -1018,7 +1018,6 @@ function Flashcard({
   onFinish,
 }: {
   item: SessionItem;
-  answerPlaceholder: string;
   position: number;
   total: number;
   combo: number;
@@ -1084,7 +1083,9 @@ function Flashcard({
 
       {/* Question */}
       <div className="text-center py-3">
-        <p className="text-xs text-gray-400 uppercase tracking-wide">Translate</p>
+        <p className="text-xs text-gray-400 uppercase tracking-wide">
+          Translate {item.askItalian ? '🇮🇹 → 🇩🇪' : '🇩🇪 → 🇮🇹'}
+        </p>
         <p className="text-3xl font-bold text-gray-900 mt-1">{item.question}</p>
       </div>
 
@@ -1096,7 +1097,7 @@ function Flashcard({
             value={answer}
             onChange={e => setAnswer(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') setChecked(true); }}
-            placeholder={answerPlaceholder}
+            placeholder={item.askItalian ? 'German…' : 'Italian…'}
             className="w-full border-b-2 border-gray-300 focus:border-red-600 bg-transparent text-lg text-center py-1.5 outline-none transition-colors"
           />
           <button
