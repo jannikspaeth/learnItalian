@@ -33,7 +33,7 @@ function pairs(file) {
 }
 
 // Starter first (beginners), then the catalog; dedupe by normalized Italian.
-const all = [...pairs('vocab-starter.ts'), ...pairs('vocab-catalog.ts')];
+const all = [...pairs('vocab-starter.ts'), ...pairs('vocab-catalog.ts'), ...pairs('vocab-imported.ts')];
 const seen = new Set();
 const unique = [];
 for (const p of all) {

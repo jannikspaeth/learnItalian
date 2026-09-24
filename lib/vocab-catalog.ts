@@ -1,12 +1,15 @@
+import { IMPORTED_VOCAB } from './vocab-imported';
+
 export interface CatalogWord {
   de: string;
   it: string;
 }
 
-// Main vocabulary catalog, walked in order by the "Learn" tab (common, concrete
-// themes first). Nouns carry their article so the gender is learned with the word;
-// "a / b" lists accepted alternatives.
-export const VOCAB_CATALOG: CatalogWord[] = [
+// Main vocabulary catalog, walked in order by the "Learn" tab: the hand-written
+// core (common, concrete themes first), then the imported Grund- and
+// Ausbauwortschatz (lib/vocab-imported.ts). Nouns carry their article so the
+// gender is learned with the word; "a / b" lists accepted alternatives.
+const CORE_VOCAB: CatalogWord[] = [
   // ── Häufige Verben ───────────────────────────────────────────────────────
   { de: 'sein', it: 'essere' },
   { de: 'sich befinden / bleiben', it: 'stare' },
@@ -696,3 +699,5 @@ export const VOCAB_CATALOG: CatalogWord[] = [
   { de: 'die Mehrheit', it: 'la maggioranza' },
   { de: 'die Minderheit', it: 'la minoranza' },
 ];
+
+export const VOCAB_CATALOG: CatalogWord[] = [...CORE_VOCAB, ...IMPORTED_VOCAB];

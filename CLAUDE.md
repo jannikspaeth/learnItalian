@@ -82,7 +82,10 @@ create table if not exists race        ( id text primary key, data jsonb not nul
 
 - `/vokabeln` — Vocabulary: SRS flashcards (one at a time), **Learn in rounds of 20**, Review
   (shuffled), Words list. Daily goal banner. Beginners (A1) learn an ordered starter set first
-  (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts`. Word keys come from
+  (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts` (hand-written core +
+  `lib/vocab-imported.ts`, **generated** by `node scripts/import-vocab.mjs` from the Grund-/Ausbau-
+  wortschatz CSVs in gitignored `scripts/data/`; correct entries in `scripts/vocab-import-fixes.mjs`
+  and re-run — never edit the generated file). Word keys come from
   `normWord` (`lib/norm.ts`: strips il/lo/la/l'/i/gli/le/un/uno/una/un' + German articles).
 - `/saetze` — translate example sentences (`public/vocab-examples.json`, keyed by `normWord`).
 - `/konjugation` — Verb conjugation from `lib/verb-catalog.ts`: short specs + a **rule engine**
