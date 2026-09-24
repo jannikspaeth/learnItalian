@@ -1102,6 +1102,8 @@ export const FIXES = {
   'Corano': ['il Corano', 'der Koran'],
   'causare': { de: 'verursachen / bewirken' },
   'analizzare': { de: 'analysieren' },
+  'camminare': { de: 'gehen / spazieren gehen' },
+  'perfetto': { de: 'perfekt / vollkommen' },
 };
 
 export const DROP = new Set([
