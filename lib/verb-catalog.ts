@@ -1,26 +1,54 @@
 import { ConjugationExercise } from './types';
 
 // ─── Italian verb catalog ───────────────────────────────────────────────────────
-// Each verb is a short spec; the forms for presente, passato prossimo and futuro
-// semplice are derived by the rule engine below. Regular verbs need only the
+// Each verb is a short spec; the forms for every tense up to B1 (presente,
+// passato prossimo, imperfetto, futuro, condizionale, congiuntivo presente,
+// imperativo) are derived by the rule engine below. Regular verbs need only the
 // infinitive and meaning. Irregular verbs get their real forms from IRREGULAR
 // (either directly by infinitive, or via `base` for prefixed verbs such as
 // ottenere → tenere). The ORDER of VERB_SPECS is the teaching order.
 
 type Six = [string, string, string, string, string, string];
+type Four = [string, string, string, string];
 
 export interface CatalogVerb {
   infinitive: string;
   de: string;
   presente: Six;
-  // Optional so present-only verbs stay possible (verbToExercise falls back).
-  passato?: Six;
-  futuro?: Six;
+  passato: Six;
+  imperfetto: Six;
+  futuro: Six;
+  condizionale: Six;
+  congiuntivo: Six;
+  imperativo?: Four; // tu, Lei, noi, voi — absent for reflexive and modal verbs
   notesPresente?: string;
   notesPassato?: string;
 }
 
 export const PRONOUNS = ['io', 'tu', 'lui / lei', 'noi', 'voi', 'loro'] as const;
+const CONG_PRONOUNS = ['che io', 'che tu', 'che lui / lei', 'che noi', 'che voi', 'che loro'];
+const IMPV_PRONOUNS = ['(tu)', '(Lei)', '(noi)', '(voi)'];
+
+export type TenseId =
+  | 'presente'
+  | 'passato_prossimo'
+  | 'imperfetto'
+  | 'futuro_semplice'
+  | 'imperativo'
+  | 'condizionale'
+  | 'congiuntivo';
+
+// Every drillable tense, in teaching order, with the CEFR level it belongs to.
+export const TENSES: { id: TenseId; label: string; level: 'A1' | 'A2' | 'B1' }[] = [
+  { id: 'presente', label: 'Presente', level: 'A1' },
+  { id: 'passato_prossimo', label: 'Passato prossimo', level: 'A2' },
+  { id: 'imperfetto', label: 'Imperfetto', level: 'A2' },
+  { id: 'futuro_semplice', label: 'Futuro semplice', level: 'A2' },
+  { id: 'imperativo', label: 'Imperativo', level: 'A2' },
+  { id: 'condizionale', label: 'Condizionale', level: 'B1' },
+  { id: 'congiuntivo', label: 'Congiuntivo presente', level: 'B1' },
+];
+export const TENSE_IDS = new Set<string>(TENSES.map(t => t.id));
 
 interface VerbSpec {
   i: string;            // infinitive; reflexives end in -si (alzarsi)
@@ -35,26 +63,31 @@ interface VerbSpec {
 
 interface Irregular {
   pres?: Six;
-  fut?: string;         // future stem, e.g. 'andr' → andrò
+  fut?: string;         // future (and conditional) stem, e.g. 'andr' → andrò, andrei
   pp?: string;
   aux?: 'essere';
+  imp?: string;         // imperfetto stem, e.g. 'fac' → facevo
+  impFull?: Six;        // fully irregular imperfetto (essere)
+  cong?: Six;           // fully irregular congiuntivo presente
+  impv?: [string, string]; // irregular imperativo tu / voi (Lei, noi are derived)
+  noImpv?: true;        // no imperativo drill (modal verbs)
 }
 
 const IRREGULAR: Record<string, Irregular> = {
-  essere:   { pres: ['sono', 'sei', 'è', 'siamo', 'siete', 'sono'], fut: 'sar', pp: 'stato', aux: 'essere' },
-  avere:    { pres: ['ho', 'hai', 'ha', 'abbiamo', 'avete', 'hanno'], fut: 'avr' },
-  andare:   { pres: ['vado', 'vai', 'va', 'andiamo', 'andate', 'vanno'], fut: 'andr', aux: 'essere' },
-  fare:     { pres: ['faccio', 'fai', 'fa', 'facciamo', 'fate', 'fanno'], fut: 'far', pp: 'fatto' },
-  dare:     { pres: ['do', 'dai', 'dà', 'diamo', 'date', 'danno'], fut: 'dar' },
-  stare:    { pres: ['sto', 'stai', 'sta', 'stiamo', 'state', 'stanno'], fut: 'star', aux: 'essere' },
-  dire:     { pres: ['dico', 'dici', 'dice', 'diciamo', 'dite', 'dicono'], fut: 'dir', pp: 'detto' },
+  essere:   { impFull: ['ero', 'eri', 'era', 'eravamo', 'eravate', 'erano'], cong: ['sia', 'sia', 'sia', 'siamo', 'siate', 'siano'], impv: ['sii', 'siate'],  pres: ['sono', 'sei', 'è', 'siamo', 'siete', 'sono'], fut: 'sar', pp: 'stato', aux: 'essere' },
+  avere:    { cong: ['abbia', 'abbia', 'abbia', 'abbiamo', 'abbiate', 'abbiano'], impv: ['abbi', 'abbiate'],  pres: ['ho', 'hai', 'ha', 'abbiamo', 'avete', 'hanno'], fut: 'avr' },
+  andare:   { impv: ["va' / vai", 'andate'],  pres: ['vado', 'vai', 'va', 'andiamo', 'andate', 'vanno'], fut: 'andr', aux: 'essere' },
+  fare:     { imp: 'fac', impv: ["fa' / fai", 'fate'],  pres: ['faccio', 'fai', 'fa', 'facciamo', 'fate', 'fanno'], fut: 'far', pp: 'fatto' },
+  dare:     { cong: ['dia', 'dia', 'dia', 'diamo', 'diate', 'diano'], impv: ["da' / dai", 'date'],  pres: ['do', 'dai', 'dà', 'diamo', 'date', 'danno'], fut: 'dar' },
+  stare:    { cong: ['stia', 'stia', 'stia', 'stiamo', 'stiate', 'stiano'], impv: ["sta' / stai", 'state'],  pres: ['sto', 'stai', 'sta', 'stiamo', 'state', 'stanno'], fut: 'star', aux: 'essere' },
+  dire:     { imp: 'dic', impv: ["di'", 'dite'],  pres: ['dico', 'dici', 'dice', 'diciamo', 'dite', 'dicono'], fut: 'dir', pp: 'detto' },
   venire:   { pres: ['vengo', 'vieni', 'viene', 'veniamo', 'venite', 'vengono'], fut: 'verr', pp: 'venuto', aux: 'essere' },
-  volere:   { pres: ['voglio', 'vuoi', 'vuole', 'vogliamo', 'volete', 'vogliono'], fut: 'vorr' },
-  potere:   { pres: ['posso', 'puoi', 'può', 'possiamo', 'potete', 'possono'], fut: 'potr' },
-  dovere:   { pres: ['devo', 'devi', 'deve', 'dobbiamo', 'dovete', 'devono'], fut: 'dovr' },
-  sapere:   { pres: ['so', 'sai', 'sa', 'sappiamo', 'sapete', 'sanno'], fut: 'sapr' },
+  volere:   { noImpv: true,  pres: ['voglio', 'vuoi', 'vuole', 'vogliamo', 'volete', 'vogliono'], fut: 'vorr' },
+  potere:   { noImpv: true,  pres: ['posso', 'puoi', 'può', 'possiamo', 'potete', 'possono'], fut: 'potr' },
+  dovere:   { noImpv: true, cong: ['debba', 'debba', 'debba', 'dobbiamo', 'dobbiate', 'debbano'],  pres: ['devo', 'devi', 'deve', 'dobbiamo', 'dovete', 'devono'], fut: 'dovr' },
+  sapere:   { cong: ['sappia', 'sappia', 'sappia', 'sappiamo', 'sappiate', 'sappiano'], impv: ['sappi', 'sappiate'],  pres: ['so', 'sai', 'sa', 'sappiamo', 'sapete', 'sanno'], fut: 'sapr' },
   uscire:   { pres: ['esco', 'esci', 'esce', 'usciamo', 'uscite', 'escono'], aux: 'essere' },
-  bere:     { pres: ['bevo', 'bevi', 'beve', 'beviamo', 'bevete', 'bevono'], fut: 'berr', pp: 'bevuto' },
+  bere:     { imp: 'bev',  pres: ['bevo', 'bevi', 'beve', 'beviamo', 'bevete', 'bevono'], fut: 'berr', pp: 'bevuto' },
   tenere:   { pres: ['tengo', 'tieni', 'tiene', 'teniamo', 'tenete', 'tengono'], fut: 'terr' },
   rimanere: { pres: ['rimango', 'rimani', 'rimane', 'rimaniamo', 'rimanete', 'rimangono'], fut: 'rimarr', pp: 'rimasto', aux: 'essere' },
   scegliere:{ pres: ['scelgo', 'scegli', 'sceglie', 'scegliamo', 'scegliete', 'scelgono'], pp: 'scelto' },
@@ -63,10 +96,10 @@ const IRREGULAR: Record<string, Irregular> = {
   salire:   { pres: ['salgo', 'sali', 'sale', 'saliamo', 'salite', 'salgono'], aux: 'essere' },
   morire:   { pres: ['muoio', 'muori', 'muore', 'moriamo', 'morite', 'muoiono'], pp: 'morto', aux: 'essere' },
   sedere:   { pres: ['siedo', 'siedi', 'siede', 'sediamo', 'sedete', 'siedono'] },
-  piacere:  { pres: ['piaccio', 'piaci', 'piace', 'piacciamo', 'piacete', 'piacciono'], aux: 'essere' },
+  piacere:  { noImpv: true, pres: ['piaccio', 'piaci', 'piace', 'piacciamo', 'piacete', 'piacciono'], aux: 'essere' },
   tacere:   { pres: ['taccio', 'taci', 'tace', 'tacciamo', 'tacete', 'tacciono'] },
-  porre:    { pres: ['pongo', 'poni', 'pone', 'poniamo', 'ponete', 'pongono'], fut: 'porr', pp: 'posto' },
-  durre:    { pres: ['duco', 'duci', 'duce', 'duciamo', 'ducete', 'ducono'], fut: 'durr', pp: 'dotto' },
+  porre:    { imp: 'pon',  pres: ['pongo', 'poni', 'pone', 'poniamo', 'ponete', 'pongono'], fut: 'porr', pp: 'posto' },
+  durre:    { imp: 'duc',  pres: ['duco', 'duci', 'duce', 'duciamo', 'ducete', 'ducono'], fut: 'durr', pp: 'dotto' },
   spegnere: { pres: ['spengo', 'spegni', 'spegne', 'spegniamo', 'spegnete', 'spengono'], pp: 'spento' },
   apparire: { pres: ['appaio', 'appari', 'appare', 'appariamo', 'apparite', 'appaiono'], pp: 'apparso', aux: 'essere' },
   riempire: { pres: ['riempio', 'riempi', 'riempie', 'riempiamo', 'riempite', 'riempiono'] },
@@ -171,6 +204,32 @@ function future(stem: string): Six {
   return [stem + 'ò', stem + 'ai', stem + 'à', stem + 'emo', stem + 'ete', stem + 'anno'];
 }
 
+function conditional(stem: string): Six {
+  return [stem + 'ei', stem + 'esti', stem + 'ebbe', stem + 'emmo', stem + 'este', stem + 'ebbero'];
+}
+
+function imperfect(stem: string, vowel: string): Six {
+  const s = stem + vowel + 'v';
+  return [s + 'o', s + 'i', s + 'a', s + 'amo', s + 'ate', s + 'ano'];
+}
+
+// Congiuntivo presente from the present tense: singular and loro build on the
+// io-form stem (vengo → venga), noi = presente noi, voi = noi with -iate.
+// Regular -are verbs take -i (parli), everything else -a (prenda, vada, faccia).
+function subjunctive(inf: string, pres: Six, irregularPresent: boolean): Six {
+  const stem = pres[0].replace(/o$/, '');
+  const noi = pres[3];
+  const voi = noi.replace(/mo$/, 'te');
+  if (inf.endsWith('are') && !irregularPresent) {
+    const endsI = stem.endsWith('i');
+    const hard = /[cg]$/.test(stem) ? 'h' : '';
+    const sg = endsI ? (STRESSED_I.has(inf) ? stem + 'i' : stem) : stem + hard + 'i';
+    const loro = (endsI && !STRESSED_I.has(inf) ? stem : stem + hard + 'i') + 'no';
+    return [sg, sg, sg, noi, voi, loro];
+  }
+  return [stem + 'a', stem + 'a', stem + 'a', noi, voi, stem + 'ano'];
+}
+
 function withPrefix(prefix: string, forms: Six): Six {
   return forms.map(f => prefix + f) as Six;
 }
@@ -190,7 +249,27 @@ function build(spec: VerbSpec): CatalogVerb {
   }
 
   let pres = irr.pres ? withPrefix(prefix, irr.pres) : regularPresent(inf, !!spec.isc);
-  let fut = future(irr.fut ? prefix + irr.fut : regularFutureStem(inf));
+  const futStem = irr.fut ? prefix + irr.fut : regularFutureStem(inf);
+  let fut = future(futStem);
+  let cond = conditional(futStem);
+  let imp = irr.impFull
+    ? withPrefix(prefix, irr.impFull)
+    : irr.imp
+    ? imperfect(prefix + irr.imp, 'e')
+    : imperfect(inf.slice(0, -3), inf.slice(-3, -2));
+  let cong = irr.cong ? withPrefix(prefix, irr.cong) : subjunctive(inf, pres, !!irr.pres);
+
+  // Imperativo (tu, Lei, noi, voi): tu is -a for regular -are verbs, else the
+  // presente tu-form; Lei = congiuntivo; noi/voi = presente. None for reflexives
+  // (enclitic pronouns) or modal verbs.
+  let impv: Four | undefined;
+  if (!reflexive && !irr.noImpv) {
+    const tu = irr.impv
+      ? prefix + irr.impv[0]
+      : inf.endsWith('are') && !irr.pres ? inf.slice(0, -3) + 'a' : pres[1];
+    const voi = irr.impv ? prefix + irr.impv[1] : pres[4];
+    impv = [tu, cong[2], pres[3], voi];
+  }
   const pp = spec.pp ?? (irr.pp ? prefix + irr.pp : regularParticiple(inf));
   const essere = reflexive || spec.aux === 'essere' || (!spec.aux && irr.aux === 'essere');
 
@@ -205,9 +284,13 @@ function build(spec: VerbSpec): CatalogVerb {
   }
 
   if (reflexive) {
-    pres = pres.map((f, n) => `${REFLEXIVE[n]} ${f}`) as Six;
-    fut = fut.map((f, n) => `${REFLEXIVE[n]} ${f}`) as Six;
-    passato = passato.map((f, n) => `${REFLEXIVE[n]} ${f}`) as Six;
+    const refl = (forms: Six) => forms.map((f, n) => `${REFLEXIVE[n]} ${f}`) as Six;
+    pres = refl(pres);
+    fut = refl(fut);
+    passato = refl(passato);
+    imp = refl(imp);
+    cond = refl(cond);
+    cong = refl(cong);
   }
 
   return {
@@ -215,7 +298,11 @@ function build(spec: VerbSpec): CatalogVerb {
     de: spec.de,
     presente: pres,
     passato,
+    imperfetto: imp,
     futuro: fut,
+    condizionale: cond,
+    congiuntivo: cong,
+    imperativo: impv,
     notesPresente: spec.notes,
     notesPassato: spec.notesPassato,
   };
@@ -578,50 +665,57 @@ const VERB_SPECS: VerbSpec[] = [
 
 export const VERB_CATALOG: CatalogVerb[] = VERB_SPECS.map(build);
 
-export function verbToExercise(
-  verb: CatalogVerb,
-  opts?: { presentOnly?: boolean }
-): ConjugationExercise {
-  const presentSection = {
-    tense: 'presente',
-    tenseName_de: 'Present (Presente)',
-    pronouns: [...PRONOUNS],
-    answers: [...verb.presente],
-    notes: verb.notesPresente,
-  };
+const TENSE_NAMES: Record<TenseId, string> = {
+  presente: 'Present (Presente)',
+  passato_prossimo: 'Perfect (Passato prossimo)',
+  imperfetto: 'Imperfect (Imperfetto)',
+  futuro_semplice: 'Future (Futuro semplice)',
+  imperativo: 'Imperative (Imperativo)',
+  condizionale: 'Conditional (Condizionale)',
+  congiuntivo: 'Subjunctive (Congiuntivo presente)',
+};
 
-  // Beginners (A1) drill only the present tense.
-  if (opts?.presentOnly || !verb.passato || !verb.futuro) {
-    return {
-      type: 'conjugation',
-      title: `${verb.infinitive} – Conjugation`,
-      verb: verb.infinitive,
-      instruction: `Conjugate "${verb.infinitive}" (${verb.de}) in the present tense.`,
-      sections: [presentSection],
-    };
+// Default tenses for a profile that hasn't picked any: beginners start with the
+// present only, everyone else with the three core tenses.
+export function defaultTenses(beginner: boolean): TenseId[] {
+  return beginner ? ['presente'] : ['presente', 'passato_prossimo', 'imperfetto'];
+}
+
+function tenseSection(verb: CatalogVerb, t: TenseId) {
+  const six = (answers: Six, notes?: string, pronouns: readonly string[] = PRONOUNS) => ({
+    tense: t,
+    tenseName_de: TENSE_NAMES[t],
+    pronouns: [...pronouns],
+    answers: [...answers],
+    notes,
+  });
+  switch (t) {
+    case 'presente': return six(verb.presente, verb.notesPresente);
+    case 'passato_prossimo': return six(verb.passato, verb.notesPassato);
+    case 'imperfetto': return six(verb.imperfetto);
+    case 'futuro_semplice': return six(verb.futuro);
+    case 'condizionale': return six(verb.condizionale);
+    case 'congiuntivo': return six(verb.congiuntivo, undefined, CONG_PRONOUNS);
+    case 'imperativo':
+      return verb.imperativo
+        ? { tense: t, tenseName_de: TENSE_NAMES[t], pronouns: [...IMPV_PRONOUNS], answers: [...verb.imperativo] }
+        : null;
   }
+}
 
+export function verbToExercise(verb: CatalogVerb, tenses: TenseId[]): ConjugationExercise {
+  const wanted = TENSES.map(t => t.id).filter(id => tenses.includes(id));
+  let sections = wanted
+    .map(t => tenseSection(verb, t))
+    .filter((s): s is NonNullable<typeof s> => s !== null);
+  if (sections.length === 0) sections = [tenseSection(verb, 'presente')!];
+  const names = sections.map(s => TENSES.find(t => t.id === s.tense)!.label).join(', ');
   return {
     type: 'conjugation',
     title: `${verb.infinitive} – Conjugation`,
     verb: verb.infinitive,
-    instruction: `Conjugate "${verb.infinitive}" (${verb.de}) in the present, passato prossimo and future.`,
-    sections: [
-      presentSection,
-      {
-        tense: 'passato_prossimo',
-        tenseName_de: 'Perfect (Passato prossimo)',
-        pronouns: [...PRONOUNS],
-        answers: [...verb.passato],
-        notes: verb.notesPassato,
-      },
-      {
-        tense: 'futuro_semplice',
-        tenseName_de: 'Future (Futuro semplice)',
-        pronouns: [...PRONOUNS],
-        answers: [...verb.futuro],
-      },
-    ],
+    instruction: `Conjugate "${verb.infinitive}" (${verb.de}): ${names}.`,
+    sections,
   };
 }
 
