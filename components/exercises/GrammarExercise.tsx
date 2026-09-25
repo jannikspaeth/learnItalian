@@ -50,7 +50,7 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
   const [answers, setAnswers] = useState<string[]>(() => round.map(() => ''));
   const [retypes, setRetypes] = useState<string[]>(() => round.map(() => ''));
   const [checked, setChecked] = useState(false);
-  const [showExplanation, setShowExplanation] = useState(false);
+  const [showRule, setShowRule] = useState(true);
 
   const results = checked ? round.map((r, i) => isCorrect(answers[i], r.item)) : [];
   const correct = results.filter(Boolean).length;
@@ -63,7 +63,6 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
     setAnswers(r.map(() => ''));
     setRetypes(r.map(() => ''));
     setChecked(false);
-    setShowExplanation(false);
   }
 
   function setAt(list: string[], set: (v: string[]) => void, i: number, value: string) {
@@ -109,6 +108,31 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
             {label}
           </button>
         ))}
+      </div>
+
+      {/* Rule + examples (collapsible) */}
+      <div className="rounded-xl bg-blue-50 border border-blue-100">
+        <button
+          onClick={() => setShowRule(v => !v)}
+          className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-semibold text-blue-900"
+        >
+          <span>📘 Regel</span>
+          <span className="text-blue-400">{showRule ? '▲' : '▼'}</span>
+        </button>
+        {showRule && (
+          <div className="px-4 pb-4 space-y-2">
+            <p className="text-sm text-blue-900 leading-relaxed">{topic.explanation}</p>
+            <div className="space-y-1">
+              {topic.examples.map((ex, i) => (
+                <p key={i} className="text-sm">
+                  <span className="font-semibold text-gray-900">{ex.it}</span>
+                  <span className="text-gray-400"> → </span>
+                  <span className="text-gray-600">{ex.de}</span>
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <p className="text-gray-600 text-sm">{topic.instruction}</p>
@@ -237,17 +261,6 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
             {correct} of {round.length} correct
             {correct === round.length && ' – Perfetto! 🎉'}
           </div>
-          <button
-            onClick={() => setShowExplanation(v => !v)}
-            className="w-full py-2 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-xl text-sm transition-colors"
-          >
-            {showExplanation ? 'Hide rule' : 'Show rule'}
-          </button>
-          {showExplanation && (
-            <div className="p-4 bg-blue-50 rounded-xl text-sm text-blue-900 leading-relaxed">
-              {topic.explanation}
-            </div>
-          )}
           <button
             onClick={() => restart()}
             className="w-full py-2 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"

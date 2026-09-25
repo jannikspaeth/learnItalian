@@ -3,11 +3,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { GRAMMAR_LESSONS } from '@/lib/grammar-lessons';
-import { GRAMMAR_TOPICS, GrammarTopic } from '@/lib/grammar-exercises';
+import { GRAMMAR_TOPICS, GRAMMAR_LEVELS, GrammarTopic } from '@/lib/grammar-exercises';
 import { getGrammarRecords, recordExercise } from '@/lib/storage';
 import { GrammarRecord } from '@/lib/types';
 import { useProfile } from '@/lib/use-profile';
-import { isBeginner } from '@/lib/profiles';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
 
 type Tab = 'exercises' | 'lessons';
@@ -37,10 +36,8 @@ export default function GrammarPage() {
     );
   }
 
-  const beginner = isBeginner(profile);
   const recordOf = new Map(records.map(r => [r.id, r]));
-  const unlocked = GRAMMAR_TOPICS.filter(t => !(beginner && t.level === 'B1'));
-  const mastered = unlocked.filter(t => recordOf.get(t.id)?.mastered).length;
+  const mastered = GRAMMAR_TOPICS.filter(t => recordOf.get(t.id)?.mastered).length;
   const active = practicing ? GRAMMAR_TOPICS.find(t => t.id === practicing) : undefined;
 
   function toggle(set: Set<string>, update: (s: Set<string>) => void, id: string) {
@@ -62,13 +59,12 @@ export default function GrammarPage() {
 
   function topicCard(t: GrammarTopic) {
     const rec = recordOf.get(t.id);
-    const locked = beginner && t.level === 'B1';
     const pct = rec && rec.lastTotal > 0 ? Math.round((rec.lastCorrect / rec.lastTotal) * 100) : null;
     const lesson = t.lessonId ? GRAMMAR_LESSONS.find(l => l.id === t.lessonId) : undefined;
     return (
       <div
         key={t.id}
-        className={`bg-white rounded-xl border shadow-sm p-4 space-y-3 ${locked ? 'border-gray-100 opacity-60' : 'border-gray-100'}`}
+        className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -82,16 +78,12 @@ export default function GrammarPage() {
               {rec?.mastered && ' · ✓ mastered'}
             </p>
           </div>
-          {locked ? (
-            <span className="shrink-0 text-xs text-gray-400 px-2 py-1">🔒 after beginner level</span>
-          ) : (
-            <button
-              onClick={() => setPracticing(t.id)}
-              className="shrink-0 text-sm font-medium px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors"
-            >
-              {rec ? 'Practise' : 'Start'}
-            </button>
-          )}
+          <button
+            onClick={() => setPracticing(t.id)}
+            className="shrink-0 text-sm font-medium px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors"
+          >
+            {rec ? 'Practise' : 'Start'}
+          </button>
         </div>
 
         {pct !== null && (
@@ -147,7 +139,7 @@ export default function GrammarPage() {
           <h1 className="text-2xl font-bold text-gray-900">Grammar</h1>
           <p className="text-gray-400 text-sm mt-0.5">
             {tab === 'exercises'
-              ? `${mastered} of ${unlocked.length} topics mastered`
+              ? `${mastered} of ${GRAMMAR_TOPICS.length} topics mastered · A1 to B1`
               : 'Die ersten Schritte auf Italienisch – kurz erklärt.'}
           </p>
         </div>
@@ -187,7 +179,21 @@ export default function GrammarPage() {
               <GrammarExercise key={active.id} topic={active} onComplete={handleComplete} />
             </div>
           ) : (
-            <div className="space-y-3">{GRAMMAR_TOPICS.map(topicCard)}</div>
+            <div className="space-y-6">
+              {GRAMMAR_LEVELS.map(level => {
+                const topics = GRAMMAR_TOPICS.filter(t => t.level === level.id);
+                const done = topics.filter(t => recordOf.get(t.id)?.mastered).length;
+                return (
+                  <section key={level.id} className="space-y-3">
+                    <h2 className="flex items-baseline justify-between px-1">
+                      <span className="text-sm font-bold text-gray-800">{level.label}</span>
+                      <span className="text-xs text-gray-400">{done}/{topics.length} mastered</span>
+                    </h2>
+                    {topics.map(topicCard)}
+                  </section>
+                );
+              })}
+            </div>
           )
         )}
 
