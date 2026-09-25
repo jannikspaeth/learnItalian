@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Profile, getProfile, PROFILE_STORAGE_KEY } from './profiles';
+import { getProfiles } from './storage';
 
 const PROFILE_EVENT = 'italienisch-profile-changed';
 
@@ -11,8 +12,18 @@ export function useProfile() {
 
   useEffect(() => {
     const id = localStorage.getItem(PROFILE_STORAGE_KEY);
-    setProfileState(id ? getProfile(id) : null);
-    setReady(true);
+    const cached = id ? getProfile(id) : null;
+    setProfileState(cached);
+    if (id && !cached) {
+      // A profile created in the app that this device hasn't cached yet — fetch the
+      // list before reporting ready, so pages don't bounce to the profile picker.
+      getProfiles().then(() => {
+        setProfileState(getProfile(id));
+        setReady(true);
+      });
+    } else {
+      setReady(true);
+    }
 
     function sync() {
       const newId = localStorage.getItem(PROFILE_STORAGE_KEY);

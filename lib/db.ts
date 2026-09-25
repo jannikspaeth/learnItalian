@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress, GrammarRecord } from './types';
 import { normWord } from './norm';
+import { Profile, PROFILES, mergeProfiles } from './profiles';
 
 // ─── client ──────────────────────────────────────────────────────────────────
 
@@ -287,4 +288,36 @@ export async function setRaceState(state: RaceState): Promise<void> {
     .from('race')
     .upsert({ id: RACE_ROW_ID, data: state }, { onConflict: 'id' });
   if (error) throw new Error(error.message);
+}
+
+// ─── custom profiles (created in the app; stored as row id='profiles' in `race`) ──
+
+const PROFILES_ROW_ID = 'profiles';
+
+export async function getCustomProfiles(): Promise<Profile[]> {
+  const { data, error } = await db()
+    .from('race')
+    .select('data')
+    .eq('id', PROFILES_ROW_ID)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return ((data?.data as { profiles?: Profile[] } | undefined)?.profiles ?? []);
+}
+
+export async function setCustomProfiles(profiles: Profile[]): Promise<void> {
+  const { error } = await db()
+    .from('race')
+    .upsert({ id: PROFILES_ROW_ID, data: { profiles } }, { onConflict: 'id' });
+  if (error) throw new Error(error.message);
+}
+
+// Built-in profiles plus the ones created in the app. Falls back to the built-ins
+// if the database is unavailable.
+export async function getAllProfiles(): Promise<Profile[]> {
+  if (!dbConfigured()) return PROFILES;
+  try {
+    return mergeProfiles(await getCustomProfiles());
+  } catch {
+    return PROFILES;
+  }
 }

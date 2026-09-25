@@ -4,6 +4,7 @@ import {
   getRaceState,
   setRaceState,
   getAllRaceStats,
+  getAllProfiles,
 } from '@/lib/db';
 import {
   berlinDayStart,
@@ -13,7 +14,6 @@ import {
   monthlyTotals,
   settleStars,
 } from '@/lib/race';
-import { PROFILES } from '@/lib/profiles';
 import { RaceResponse, RaceHighscore, RaceHistory } from '@/lib/types';
 
 // Keep ~30 days of settled snapshots so the global row can't grow without bound.
@@ -26,8 +26,9 @@ const KEEP_DAILY_DAYS = 30;
 export async function GET() {
   const { date: today } = berlinDayStart();
   const currentMonth = berlinMonth();
+  const profiles = await getAllProfiles();
 
-  const nameOf = (id: string) => PROFILES.find(p => p.id === id)?.name ?? id;
+  const nameOf = (id: string) => profiles.find(p => p.id === id)?.name ?? id;
   const EMPTY_HISTORY: RaceHistory = { dates: [], series: [] };
 
   // Cumulative daily-activity per profile over a continuous date range, for the
@@ -39,7 +40,7 @@ export async function GET() {
     // Per-profile daily maps, with today's live count overlaid.
     const maps: Record<string, Record<string, number>> = {};
     let minDate: string | null = null;
-    for (const p of PROFILES) {
+    for (const p of profiles) {
       const m = { ...(dailyMaps[p.id] ?? {}) };
       if (live[p.id]) m[today] = live[p.id];
       maps[p.id] = m;
@@ -56,7 +57,7 @@ export async function GET() {
       if (d >= today) break;
     }
 
-    const series = PROFILES.map(p => {
+    const series = profiles.map(p => {
       const m = maps[p.id];
       let run = 0;
       const cumulative = dates.map(d => (run += m[d] ?? 0));
@@ -77,7 +78,7 @@ export async function GET() {
     profileStats: Record<string, { streak: number; lastActivity: string }> = {}
   ): RaceResponse {
     const todayPoints = awardPoints(live);
-    const racers = PROFILES.map(p => ({
+    const racers = profiles.map(p => ({
       id: p.id,
       name: p.name,
       points: monthPoints[p.id] ?? 0,
@@ -105,7 +106,7 @@ export async function GET() {
 
     // Each person's own best single day ever, from retained daily history + today's
     // live count + persisted records. Shown under the top-5 so everyone's best is visible.
-    const ids = new Set(PROFILES.map(p => p.id));
+    const ids = new Set(profiles.map(p => p.id));
     const best: Record<string, { date: string; count: number }> = {};
     const consider = (id: string, date: string, count: number) => {
       if (!ids.has(id) || count <= 0) return;
@@ -115,7 +116,7 @@ export async function GET() {
       for (const [d, c] of Object.entries(days)) consider(id, d, c);
     for (const [id, c] of Object.entries(live)) consider(id, today, c);
     for (const h of persisted) consider(h.userId, h.date, h.count);
-    const personalBests = PROFILES.filter(p => best[p.id])
+    const personalBests = profiles.filter(p => best[p.id])
       .map(p => ({ date: best[p.id].date, name: p.name, count: best[p.id].count }))
       .sort((a, b) => b.count - a.count || a.date.localeCompare(b.date));
 
@@ -138,7 +139,7 @@ export async function GET() {
 
     // Daily activity per profile = every flashcard and every conjugated form done
     // today (repeats included), tallied in the per-day stats counter.
-    const ids = new Set(PROFILES.map(p => p.id));
+    const ids = new Set(profiles.map(p => p.id));
     const liveTracked: Record<string, number> = {};
     for (const id of ids) {
       const total = profileStats[id]?.daily[today] ?? 0;

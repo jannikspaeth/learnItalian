@@ -8,7 +8,7 @@ import {
   SentenceProgress,
   GrammarRecord,
 } from './types';
-import { PROFILE_STORAGE_KEY } from './profiles';
+import { PROFILE_STORAGE_KEY, Profile, cacheProfiles, mergeProfiles } from './profiles';
 import { berlinToday } from './race';
 import { conjugationMatches } from './conjugation-match';
 
@@ -310,4 +310,28 @@ export async function getStars(): Promise<{ stars: Record<string, number>; month
     stars: {},
     month: '',
   });
+}
+
+// ─── profiles ─────────────────────────────────────────────────────────────────
+
+// All profiles (built-in + created in the app); refreshes the local cache.
+export async function getProfiles(): Promise<Profile[]> {
+  const all = await getJson<Profile[] | null>('/api/profiles', null);
+  if (!all) return mergeProfiles([]);
+  cacheProfiles(all);
+  return all;
+}
+
+// Create a profile with just a name. Throws with a user-facing message on failure.
+export async function createProfile(name: string): Promise<Profile> {
+  const res = await fetch('/api/profiles', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+  if (res.status === 409) throw new Error('This name is already taken.');
+  if (!res.ok) throw new Error('Could not create profile. Please try again.');
+  const { profile, profiles } = (await res.json()) as { profile: Profile; profiles: Profile[] };
+  cacheProfiles(profiles);
+  return profile;
 }
