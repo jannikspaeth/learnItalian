@@ -87,9 +87,10 @@ export default function HelpPage() {
             Your accuracy is tracked per verb and per tense. Verbs with recent mistakes are shown in the <strong>Errors</strong> tab.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
-            You practice the <strong>presente</strong>, <strong>passato prossimo</strong> and <strong>futuro semplice</strong>.
-            Beginner profiles practice the present tense only. Accents don&apos;t matter when checking,
-            and for verbs with <em>essere</em> both endings count (e.g. <em>sono andato/a</em>).
+            Choose which tenses to practise at the top of the page – all tenses up to B1: presente, passato prossimo,
+            imperfetto, futuro, imperativo, condizionale and congiuntivo (each chip shows its level). Beginner profiles
+            start with the present tense only. Accents don&apos;t matter when checking, and for verbs with <em>essere</em>
+            both endings count (e.g. <em>sono andato/a</em>).
           </p>
         </section>
 
@@ -99,14 +100,14 @@ export default function HelpPage() {
             <span>📘</span> Grammar
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            <strong>Exercises</strong>: pick a topic (articles, plural, essere/avere, prepositions, possessives …)
-            and fill in the gaps – by choosing or typing. Each answer shows a short hint, and your last score and
+            <strong>Exercises</strong>: 34 topics covering the grammar from A1 to B1, grouped by level – from articles
+            and plural up to congiuntivo, pronouns and se-clauses. Each topic opens with a short rule and examples;
+            then fill in the gaps – by choosing or typing. Each answer shows a short hint, and your last score and
             mistakes are saved per topic. Grammar answers count for the race like verbs (half a point each).
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
             <strong>Lessons</strong>: short first-steps explanations in German (pronunciation, pronouns, articles,
-            essere vs. avere, present tense). Beginner profiles also get an ordered starter set of words and
-            present-tense-only verbs; the passato prossimo exercise unlocks after the beginner level.
+            essere vs. avere, present tense). Beginner profiles also get an ordered starter set of words first.
           </p>
         </section>
 

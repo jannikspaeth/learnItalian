@@ -80,7 +80,7 @@ function cleanGerman(s) {
 const STR = `'((?:[^'\\\\]|\\\\.)*)'|"((?:[^"\\\\]|\\\\.)*)"`;
 const PAIR = new RegExp(`de:\\s*(?:${STR}),\\s*it:\\s*(?:${STR})`, 'g');
 const existing = new Set();
-for (const file of ['vocab-starter.ts', 'vocab-catalog.ts']) {
+for (const file of ['vocab-starter.ts', 'vocab-catalog.ts', 'vocab-b1.ts']) {
   const txt = fs.readFileSync(path.join(root, 'lib', file), 'utf8');
   for (const m of txt.matchAll(PAIR)) {
     for (const k of keysOf((m[3] ?? m[4]).replace(/\\(['"])/g, '$1'))) existing.add(k);

@@ -92,23 +92,24 @@ alter table grammar     enable row level security;
 
 - `/vokabeln` — Vocabulary: SRS flashcards (one at a time), **Learn in rounds of 20**, Review
   (shuffled), Words list. Daily goal banner. Beginners (A1) learn an ordered starter set first
-  (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts` (hand-written core +
-  `lib/vocab-imported.ts`, **generated** by `node scripts/import-vocab.mjs` from the Grund-/Ausbau-
+  (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts` (~2,900 words, A1–B1:
+  hand-written core + `lib/vocab-b1.ts` B1 extension + `lib/vocab-imported.ts`, **generated** by `node scripts/import-vocab.mjs` from the Grund-/Ausbau-
   wortschatz CSVs in gitignored `scripts/data/`; correct entries in `scripts/vocab-import-fixes.mjs`
   and re-run — never edit the generated file). Word keys come from
   `normWord` (`lib/norm.ts`: strips il/lo/la/l'/i/gli/le/un/uno/una/un' + German articles).
 - `/saetze` — translate example sentences (`public/vocab-examples.json`, keyed by `normWord`).
 - `/konjugation` — Verb conjugation from `lib/verb-catalog.ts`: short specs + a **rule engine**
-  derives presente / passato prossimo / futuro semplice; irregulars live in `IRREGULAR` (or via
-  `base` for prefixed verbs). A1 profiles drill present tense only. Answer checking
+  derives every tense up to B1 (presente, passato prossimo, imperfetto, futuro, imperativo,
+  condizionale, congiuntivo); irregulars live in `IRREGULAR` (or via `base` for prefixed verbs).
+  A per-device tense picker chooses what to drill (default: present for A1, else pres/pp/imperf). Answer checking
   (`lib/conjugation-match.ts`) is **accent-insensitive** and accepts either ending of
   essere-participles written `andato/a` / `andati/e`.
   Every catalog word has a `topic` (`lib/vocab-topics.ts`); Learn can be narrowed to one topic
   (per-device choice) and the Words list grouped by topic. Imported words get their topic from
   `scripts/vocab-import-topics.mjs` (verbs auto-detected by ending).
-- `/grammar` — two tabs: **Exercises** (hand-written cloze sets per topic in
-  `lib/grammar-exercises.ts`, choose/type modes, progress per topic in the `grammar` table; `level: 'B1'`
-  topics are locked for A1 profiles) and **Lessons** (Grundlagen, `lib/grammar-lessons.ts`, for all).
+- `/grammar` — two tabs: **Exercises** (34 hand-written cloze sets covering A1–B1 in
+  `lib/grammar-exercises.ts`, grouped by level, each with rule + examples; choose/type modes, progress
+  per topic in the `grammar` table) and **Lessons** (Grundlagen, `lib/grammar-lessons.ts`, for all).
 - `/race` — **THE RACE**: global competitive leaderboard (see below).
 - `/help`, `/profile`. Nav in `components/Navigation.tsx` (filters items by `onlyDirection`/`onlyLevel`).
 

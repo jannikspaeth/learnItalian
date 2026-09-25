@@ -1,4 +1,5 @@
 import { IMPORTED_VOCAB } from './vocab-imported';
+import { B1_VOCAB } from './vocab-b1';
 import type { TopicId } from './vocab-topics';
 
 export interface CatalogWord {
@@ -7,10 +8,11 @@ export interface CatalogWord {
   topic: TopicId;
 }
 
-// Main vocabulary catalog, walked in order by the "Learn" tab: the hand-written
-// core (common, concrete themes first), then the imported Grund- and
-// Ausbauwortschatz (lib/vocab-imported.ts). Nouns carry their article so the
-// gender is learned with the word; "a / b" lists accepted alternatives.
+// Main vocabulary catalog (~2,900 words, A1–B1), walked in order by the "Learn"
+// tab: the hand-written core (common, concrete themes first), then the imported
+// Grund- and Ausbauwortschatz (lib/vocab-imported.ts), then the B1 extension
+// (lib/vocab-b1.ts). Nouns carry their article so the gender is learned with the
+// word; "a / b" lists accepted alternatives.
 const CORE_VOCAB: CatalogWord[] = [
   // ── Häufige Verben ───────────────────────────────────────────────────────
   { de: 'sein', it: 'essere', topic: 'verben' },
@@ -702,4 +704,4 @@ const CORE_VOCAB: CatalogWord[] = [
   { de: 'die Minderheit', it: 'la minoranza', topic: 'abstrakt' },
 ];
 
-export const VOCAB_CATALOG: CatalogWord[] = [...CORE_VOCAB, ...IMPORTED_VOCAB];
+export const VOCAB_CATALOG: CatalogWord[] = [...CORE_VOCAB, ...IMPORTED_VOCAB, ...B1_VOCAB];
