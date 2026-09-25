@@ -1,5 +1,5 @@
 // ─── Grundlagen (A1 grammar mini-lessons) ──────────────────────────────────────
-// Short, readable first-steps lessons for true beginners (Emmi). Written in German
+// Short, readable first-steps lessons for true beginners (A1 profiles). Written in German
 // (the learner's L1) and rendered on /grammar as collapsible cards. Keep each
 // lesson tight: a one-line intro, a few sections, and concrete it→de examples.
 
@@ -88,7 +88,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
           'io = ich · tu = du · lui = er · lei = sie · Lei = Sie (höflich) · ' +
           'noi = wir · voi = ihr · loro = sie (Mehrzahl).',
         examples: [
-          { it: 'io sono Emmi', de: 'ich bin Emmi' },
+          { it: 'io sono Anna', de: 'ich bin Anna' },
           { it: 'tu sei mia amica', de: 'du bist meine Freundin' },
         ],
       },
@@ -96,7 +96,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
         heading: 'Tipp: meistens lässt man sie weg',
         body:
           'Weil die Verbendung schon zeigt, wer gemeint ist, lässt man das Pronomen im Italienischen meistens weg. ' +
-          '„Sono Emmi" reicht völlig. Man benutzt es nur zur Betonung.',
+          '„Sono Anna" reicht völlig. Man benutzt es nur zur Betonung.',
         examples: [
           { it: 'sono tedesca', de: '(ich) bin Deutsche' },
           { it: 'parli italiano?', de: 'sprichst du Italienisch?' },
@@ -174,7 +174,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
         heading: 'essere = sein',
         body: 'sono, sei, è, siamo, siete, sono. Achtung: „è" (er/sie ist) hat einen Akzent, „e" ohne heißt „und".',
         examples: [
-          { it: 'sono Emmi', de: 'ich bin Emmi' },
+          { it: 'sono Anna', de: 'ich bin Anna' },
           { it: 'sono di Berlino', de: 'ich bin aus Berlin' },
           { it: 'la casa è grande', de: 'das Haus ist groß' },
         ],
@@ -253,7 +253,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
         body: 'Ein paar Sätze für den Anfang:',
         examples: [
           { it: 'Come ti chiami?', de: 'Wie heißt du?' },
-          { it: 'Mi chiamo Emmi', de: 'Ich heiße Emmi' },
+          { it: 'Mi chiamo Anna', de: 'Ich heiße Anna' },
           { it: 'Piacere!', de: 'Freut mich!' },
           { it: 'Non capisco', de: 'Ich verstehe nicht' },
           { it: 'Parli tedesco?', de: 'Sprichst du Deutsch?' },

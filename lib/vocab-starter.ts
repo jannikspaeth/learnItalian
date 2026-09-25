@@ -2,7 +2,7 @@ import { CatalogWord } from './vocab-catalog';
 import { normWord } from './norm';
 
 // ─── A1 → A2 starter path ───────────────────────────────────────────────────────
-// A gentle, ordered on-ramp for complete beginners (Emmi). The Vocabulary "Learn"
+// A gentle, ordered on-ramp for complete beginners (A1 profiles). The Vocabulary "Learn"
 // tab walks this array in order, so the ORDER here is the teaching order: start with
 // greetings, courtesy, question words, pronouns and numbers — the things the main
 // VOCAB_CATALOG lacks and that a true beginner needs first — then move through the

@@ -9,12 +9,8 @@ export interface Profile {
 }
 
 export const PROFILES: Profile[] = [
-  { id: 'mattis', name: 'Mattis' },
-  { id: 'emmi', name: 'Emmi', level: 'A1' },
-  { id: 'jakob', name: 'Jakob' },
-  { id: 'robert', name: 'Robert' },
-  { id: 'jake', name: 'Jake' },
-  { id: 'max', name: 'Max' },
+  { id: 'jannik', name: 'Jannik' },
+  { id: 'socha', name: 'Socha' },
 ];
 
 export function getProfile(id: string): Profile | null {
