@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress } from './types';
+import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress, GrammarRecord } from './types';
 import { normWord } from './norm';
 
 // ─── client ──────────────────────────────────────────────────────────────────
@@ -235,6 +235,25 @@ export async function setSentenceProgress(userId: string, rows: SentenceProgress
   const { error } = await db()
     .from('sentences')
     .upsert({ user_id: userId, data: rows }, { onConflict: 'user_id' });
+  if (error) throw new Error(error.message);
+}
+
+// ─── grammar (exercise progress, one jsonb row per user) ────────────────────────
+
+export async function getGrammar(userId: string): Promise<GrammarRecord[]> {
+  const { data, error } = await db()
+    .from('grammar')
+    .select('data')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return ((data?.data as GrammarRecord[]) ?? []);
+}
+
+export async function setGrammar(userId: string, records: GrammarRecord[]): Promise<void> {
+  const { error } = await db()
+    .from('grammar')
+    .upsert({ user_id: userId, data: records }, { onConflict: 'user_id' });
   if (error) throw new Error(error.message);
 }
 

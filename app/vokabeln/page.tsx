@@ -20,6 +20,9 @@ import { loadExamples, VocabExample } from '@/lib/vocab-examples';
 import { normWord as norm } from '@/lib/norm';
 import { useQuizDirection, askItalian } from '@/lib/use-quiz-direction';
 import QuizDirectionToggle from '@/components/QuizDirectionToggle';
+import TopicPicker, { TopicProgress } from '@/components/TopicPicker';
+import { TOPICS, TOPIC_IDS, topicInfo } from '@/lib/vocab-topics';
+import { useLocalSetting } from '@/lib/use-local-setting';
 import {
   Confidence,
   VOCAB_KNOWN_LEVEL,
@@ -53,7 +56,10 @@ function bestPriorDay(daily: Record<string, number> | undefined, todayKey: strin
 type Tab = 'lernen' | 'wiederholen' | 'words';
 type Phase = 'idle' | 'active' | 'done';
 type WordSort = 'alpha' | 'review';
-type WordGroup = 'none' | 'phase' | 'due';
+type WordGroup = 'none' | 'phase' | 'due' | 'topic';
+
+// Chosen Learn topic: 'all' or a topic id (validated so stale storage can't break it).
+const isTopicChoice = (v: string): v is string => v === 'all' || TOPIC_IDS.has(v);
 
 interface SessionItem {
   de: string;
@@ -219,6 +225,7 @@ export default function VokabelnPage() {
   const streakSeen = useRef<number | null>(null);
 
   const [quizDir, setQuizDir] = useQuizDirection();
+  const [topic, setTopic] = useLocalSetting<string>('italienisch_vocab_topic', 'all', isTopicChoice);
 
   // Add-your-own-word form state
   const [showAddForm, setShowAddForm] = useState(false);
@@ -285,7 +292,22 @@ export default function VokabelnPage() {
   });
 
   const seenWords = new Set(vocab.map(v => norm(v.word)));
-  const unseenCount = sourceCatalog.filter(e => !seenWords.has(norm(e.it))).length;
+
+  // Learn can be narrowed to one topic; order within the topic stays catalog order.
+  const topicCatalog = topic === 'all' ? sourceCatalog : sourceCatalog.filter(w => w.topic === topic);
+  const unseenCount = topicCatalog.filter(e => !seenWords.has(norm(e.it))).length;
+  const topicProgress: Record<string, TopicProgress> = { all: { seen: 0, total: 0 } };
+  for (const w of sourceCatalog) {
+    const seen = seenWords.has(norm(w.it)) ? 1 : 0;
+    const p = (topicProgress[w.topic] ??= { seen: 0, total: 0 });
+    p.total++; p.seen += seen;
+    topicProgress.all.total++; topicProgress.all.seen += seen;
+  }
+  // Topic of any known catalog word (for grouping the Words list); own words have none.
+  const topicOfWord = new Map<string, string>();
+  for (const w of [...STARTER_VOCAB, ...VOCAB_CATALOG]) {
+    if (!topicOfWord.has(norm(w.it))) topicOfWord.set(norm(w.it), w.topic);
+  }
 
   // Every flashcard done today counts (repeats included) — sourced from the
   // per-day stats counter, not distinct words.
@@ -367,7 +389,7 @@ export default function VokabelnPage() {
   function startLernen() {
     if (!vocabLoaded) return;
     // One round of up to ROUND_SIZE new words (not the whole catalog).
-    const unseen = sourceCatalog.filter(e => !seenWords.has(norm(e.it))).slice(0, ROUND_SIZE);
+    const unseen = topicCatalog.filter(e => !seenWords.has(norm(e.it))).slice(0, ROUND_SIZE);
     if (unseen.length === 0) return;
     // New words start at phase 1, so Hard keeps them at phase 1 and Good promotes to phase 2.
     setItems(unseen.map(e => {
@@ -577,6 +599,23 @@ export default function VokabelnPage() {
     wordSections = [...buckets.entries()]
       .sort((a, b) => a[1].sortKey.localeCompare(b[1].sortKey))
       .map(([key, b]) => ({ key, label: b.label, badgeClass: 'bg-gray-100 text-gray-600', entries: b.entries }));
+  } else if (wordGroup === 'topic') {
+    const byTopic = new Map<string, VocabEntry[]>();
+    for (const w of wordsFiltered) {
+      const t = topicOfWord.get(norm(w.word)) ?? 'own';
+      byTopic.set(t, [...(byTopic.get(t) ?? []), w]);
+    }
+    wordSections = [...TOPICS.map(t => t.id as string), 'own']
+      .filter(id => byTopic.has(id))
+      .map(id => {
+        const info = topicInfo(id);
+        return {
+          key: `topic:${id}`,
+          label: info ? `${info.icon} ${info.label}` : '✏️ Own words',
+          badgeClass: 'bg-gray-100 text-gray-600',
+          entries: byTopic.get(id)!,
+        };
+      });
   }
 
   function toggleExpanded(key: string) {
@@ -833,16 +872,19 @@ export default function VokabelnPage() {
                 <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
                   <div>
                     <p className="text-sm text-gray-600">Learn new words one at a time.</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <div className="mt-3">
+                      <TopicPicker value={topic} onChange={setTopic} progress={topicProgress} />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-3">
                       {unseenCount > 0
-                        ? `${unseenCount} of ${sourceCatalog.length} words not seen yet`
-                        : `All ${sourceCatalog.length} catalog words already seen 🎉`}
+                        ? `${unseenCount} of ${topicCatalog.length} words not seen yet`
+                        : `All ${topicCatalog.length} words in this topic already seen 🎉`}
                     </p>
-                    {sourceCatalog.length > 0 && (
+                    {topicCatalog.length > 0 && (
                       <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-green-500 rounded-full"
-                          style={{ width: `${Math.round((vocab.length / sourceCatalog.length) * 100)}%` }}
+                          style={{ width: `${Math.round(((topicCatalog.length - unseenCount) / topicCatalog.length) * 100)}%` }}
                         />
                       </div>
                     )}
@@ -953,6 +995,7 @@ export default function VokabelnPage() {
                       ['none', 'None'],
                       ['phase', 'Phase'],
                       ['due', 'Due day'],
+                      ['topic', 'Topic'],
                     ] as [WordGroup, string][]).map(([id, label]) => (
                       <button
                         key={id}

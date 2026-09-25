@@ -58,7 +58,8 @@ export default function HelpPage() {
           <div className="space-y-2 text-sm text-gray-600">
             <div>
               <p className="font-semibold text-gray-800">Learn</p>
-              <p>Introduces 20 new words you haven&apos;t seen yet. Start here every day.</p>
+              <p>Introduces 20 new words you haven&apos;t seen yet. Start here every day. Use <strong>Topic</strong>
+                to learn one area at a time (food, family, travel, verbs …) – each topic shows how much of it you&apos;ve seen.</p>
             </div>
             <div>
               <p className="font-semibold text-gray-800">Ask 🇩🇪 → 🇮🇹 / 🇮🇹 → 🇩🇪 / Mixed</p>
@@ -92,15 +93,20 @@ export default function HelpPage() {
           </p>
         </section>
 
-        {/* Grundlagen (beginners) */}
+        {/* Grammar */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
           <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
-            <span>📘</span> Grundlagen
+            <span>📘</span> Grammar
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Brand-new to Italian? Beginner profiles get a <strong>Grundlagen</strong> page with short
-            first-steps lessons (pronunciation, pronouns, articles, essere vs. avere, present-tense verbs)
-            and a gentler, ordered set of starter words to learn first.
+            <strong>Exercises</strong>: pick a topic (articles, plural, essere/avere, prepositions, possessives …)
+            and fill in the gaps – by choosing or typing. Each answer shows a short hint, and your last score and
+            mistakes are saved per topic. Grammar answers count for the race like verbs (half a point each).
+          </p>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            <strong>Lessons</strong>: short first-steps explanations in German (pronunciation, pronouns, articles,
+            essere vs. avere, present tense). Beginner profiles also get an ordered starter set of words and
+            present-tense-only verbs; the passato prossimo exercise unlocks after the beginner level.
           </p>
         </section>
 

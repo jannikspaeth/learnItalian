@@ -6,6 +6,7 @@ import {
   ConjugationSectionRecord,
   RaceResponse,
   SentenceProgress,
+  GrammarRecord,
 } from './types';
 import { PROFILE_STORAGE_KEY } from './profiles';
 import { berlinToday } from './race';
@@ -119,13 +120,13 @@ export async function recordExercise(
   const yesterday = new Date(Date.now() - 86400000).toDateString();
 
   // Per-day activity tally: every vocabulary flashcard (+1); every conjugated form
-  // counts for half credit, repeats included.
+  // or grammar item counts for half credit, repeats included.
   // Drives the daily goal and the race.
   const dayKey = berlinToday();
   const daily = pruneDaily({ ...(stats.daily ?? {}) });
   if (type === 'vocabulary') {
     daily[dayKey] = (daily[dayKey] ?? 0) + total;
-  } else if (type === 'conjugation') {
+  } else if (type === 'conjugation' || type === 'grammar') {
     daily[dayKey] = (daily[dayKey] ?? 0) + Math.round(total / 2); // half credit per item
   } else if (type === 'sentence') {
     daily[dayKey] = (daily[dayKey] ?? 0) + total * 2; // 2 points per translated sentence
@@ -244,6 +245,46 @@ export async function upsertConjugationAttempt(
   }
 
   await putJson('/api/data/conjugation', records);
+}
+
+// ─── grammar exercises ─────────────────────────────────────────────────────────
+
+function isGrammarRecord(r: unknown): r is GrammarRecord {
+  return typeof r === 'object' && r !== null && typeof (r as GrammarRecord).id === 'string';
+}
+
+export async function getGrammarRecords(): Promise<GrammarRecord[]> {
+  const data = await getJson<unknown[]>('/api/data/grammar', []);
+  return data.filter(isGrammarRecord);
+}
+
+// Records one attempt at a topic (read-modify-write of the per-user JSONB row).
+export async function upsertGrammarAttempt(
+  topicId: string,
+  correct: number,
+  total: number,
+  mistakes: GrammarRecord['recentMistakes'],
+): Promise<void> {
+  const records = (await getJsonStrict<unknown[]>('/api/data/grammar')).filter(isGrammarRecord);
+  const now = new Date().toISOString();
+  const existing = records.find(r => r.id === topicId);
+  const attempt = {
+    lastCorrect: correct,
+    lastTotal: total,
+    recentMistakes: mistakes,
+    lastAttempted: now,
+    mastered: mistakes.length === 0,
+  };
+  if (existing) {
+    Object.assign(existing, attempt, {
+      totalAttempts: existing.totalAttempts + 1,
+      totalCorrect: existing.totalCorrect + correct,
+      totalQuestions: existing.totalQuestions + total,
+    });
+  } else {
+    records.unshift({ id: topicId, totalAttempts: 1, totalCorrect: correct, totalQuestions: total, ...attempt });
+  }
+  await putJson('/api/data/grammar', records);
 }
 
 // ─── the race (global standings) ───────────────────────────────────────────────

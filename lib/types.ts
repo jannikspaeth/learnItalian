@@ -1,4 +1,4 @@
-export type ExerciseType = 'vocabulary' | 'conjugation' | 'sentence';
+export type ExerciseType = 'vocabulary' | 'conjugation' | 'sentence' | 'grammar';
 
 // SRS state for translating an example sentence, keyed by the normalized Italian
 // word the sentence belongs to. Stored as one JSONB row per user (table `sentences`).
@@ -79,6 +79,26 @@ export interface ConjugationRecord {
   totalAttempts: number;
   lastAttempted: string;
   mastered: boolean;    // true when all sections had 0 mistakes in last attempt
+}
+
+// ─── Grammar exercises (per-topic progress, one JSONB row per user) ─────────────
+
+export interface GrammarMistake {
+  prompt: string;       // the sentence with "___" marking the blank
+  correct: string;
+  userAnswer: string;
+}
+
+export interface GrammarRecord {
+  id: string;           // topic id (lib/grammar-exercises.ts)
+  totalAttempts: number;
+  totalCorrect: number;
+  totalQuestions: number;
+  lastCorrect: number;  // score of the most recent attempt
+  lastTotal: number;
+  recentMistakes: GrammarMistake[]; // from the most recent attempt
+  lastAttempted: string;
+  mastered: boolean;    // true when the most recent attempt had no mistakes
 }
 
 // ─── The Race (cross-user competitive vocab leaderboard) ───────────────────────

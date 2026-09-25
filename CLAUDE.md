@@ -43,7 +43,7 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
 ### Supabase tables
 - `vocab` — one row per user+word (SRS: levels 1–7 learning, 8 known; `next_review`, `last_reviewed`, `review_count`).
 - `stats` — one row per user. Cumulative totals + `streak` + **`daily` jsonb** (Berlin-date → activity count).
-- `conjugation`, `sentences` — one JSONB row per user (arrays of records).
+- `conjugation`, `sentences`, `grammar` — one JSONB row per user (arrays of records).
 - `race` — **one global row** `id='global'` holding `{ points, dailyCounts, settledDates, highscores }`.
 
 ### ⚠️ Manual SQL migrations (no migrations dir — tables are created by hand)
@@ -76,6 +76,7 @@ create table if not exists stats (
 create table if not exists conjugation ( user_id text primary key, data jsonb not null default '[]'::jsonb );
 create table if not exists sentences   ( user_id text primary key, data jsonb not null default '[]'::jsonb );
 create table if not exists race        ( id text primary key, data jsonb not null default '{}'::jsonb );
+create table if not exists grammar     ( user_id text primary key, data jsonb not null default '[]'::jsonb );
 
 -- Lock the tables against the public (anon) API; the app uses the service_role
 -- key server-side, which bypasses RLS.
@@ -84,6 +85,7 @@ alter table stats       enable row level security;
 alter table conjugation enable row level security;
 alter table sentences   enable row level security;
 alter table race        enable row level security;
+alter table grammar     enable row level security;
 ```
 
 ## Features / pages
@@ -101,7 +103,12 @@ alter table race        enable row level security;
   `base` for prefixed verbs). A1 profiles drill present tense only. Answer checking
   (`lib/conjugation-match.ts`) is **accent-insensitive** and accepts either ending of
   essere-participles written `andato/a` / `andati/e`.
-- `/grammar` — "Grundlagen" first-steps lessons (A1 only, `lib/grammar-lessons.ts`).
+  Every catalog word has a `topic` (`lib/vocab-topics.ts`); Learn can be narrowed to one topic
+  (per-device choice) and the Words list grouped by topic. Imported words get their topic from
+  `scripts/vocab-import-topics.mjs` (verbs auto-detected by ending).
+- `/grammar` — two tabs: **Exercises** (hand-written cloze sets per topic in
+  `lib/grammar-exercises.ts`, choose/type modes, progress per topic in the `grammar` table; `level: 'B1'`
+  topics are locked for A1 profiles) and **Lessons** (Grundlagen, `lib/grammar-lessons.ts`, for all).
 - `/race` — **THE RACE**: global competitive leaderboard (see below).
 - `/help`, `/profile`. Nav in `components/Navigation.tsx` (filters items by `onlyDirection`/`onlyLevel`).
 
@@ -109,7 +116,7 @@ alter table race        enable row level security;
 
 Global standings everyone sees; cars race to **100 points**.
 - **Daily activity** per user = every vocab flashcard (+1) + every conjugated form (**half credit**,
-  `round(total/2)`) + every translated sentence (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
+  `round(total/2)`) + every grammar item (half credit) + every translated sentence (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
   keyed by **Europe/Berlin date**.
 - Each finished day awards **5/4/3/2/1** to the top daily scorers; **ties split the tiers evenly**;
   0 activity earns nothing. Logic is pure in `lib/race.ts` (`awardPoints`, `berlinDayStart`/`berlinToday`).

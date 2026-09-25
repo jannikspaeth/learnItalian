@@ -7,15 +7,16 @@ import { useProfile } from '@/lib/use-profile';
 import { useStars } from '@/lib/use-stars';
 import { formatStars } from '@/lib/race';
 
+// The first four are the mobile bottom bar; the rest live under "More".
 const nav = [
   { href: '/vokabeln', label: 'Vocabulary', icon: '📖' },
-  { href: '/saetze', label: 'Sentences', icon: '✍️' },
   { href: '/konjugation', label: 'Verbs', icon: '🔤' },
+  // Grammar exercises + the Grundlagen lessons.
+  { href: '/grammar', label: 'Grammar', icon: '📘' },
   // Global competitive leaderboard — everyone sees the same standings.
   { href: '/race', label: 'The Race', icon: '🏁' },
+  { href: '/saetze', label: 'Sentences', icon: '✍️' },
   { href: '/erfolge', label: 'Achievements', icon: '🏆' },
-  // Grammar first-steps — only for true beginners (A1).
-  { href: '/grammar', label: 'Grundlagen', icon: '📘', onlyLevel: 'A1' as const },
   { href: '/help', label: 'Help', icon: '❓' },
 ];
 
@@ -26,7 +27,7 @@ export default function Navigation() {
   const myStars = profile ? formatStars(stars[profile.id] ?? 0) : '';
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const items = nav.filter(n => !('onlyLevel' in n) || n.onlyLevel === profile?.level);
+  const items = nav;
 
   // Mobile: keep the core practice/engagement tabs visible; tuck the rest behind "More".
   const primary = items.slice(0, 4);
