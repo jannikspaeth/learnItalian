@@ -76,6 +76,14 @@ create table if not exists stats (
 create table if not exists conjugation ( user_id text primary key, data jsonb not null default '[]'::jsonb );
 create table if not exists sentences   ( user_id text primary key, data jsonb not null default '[]'::jsonb );
 create table if not exists race        ( id text primary key, data jsonb not null default '{}'::jsonb );
+
+-- Lock the tables against the public (anon) API; the app uses the service_role
+-- key server-side, which bypasses RLS.
+alter table vocab       enable row level security;
+alter table stats       enable row level security;
+alter table conjugation enable row level security;
+alter table sentences   enable row level security;
+alter table race        enable row level security;
 ```
 
 ## Features / pages
