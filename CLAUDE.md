@@ -23,7 +23,7 @@ learning Italian. Plain, mobile-first UI in English with German/Italian content.
 ## Profiles & multi-user model (important)
 
 There is **no auth**. A "profile" is just an entry in `lib/profiles.ts`; the chosen profile id is
-stored in `localStorage['spanisch_profile']` and sent as the **`x-user-id` header** on every API
+stored in `localStorage['italienisch_profile']` and sent as the **`x-user-id` header** on every API
 call. That header becomes the Supabase **`user_id`**, which isolates each person's data. Adding a
 learner = one entry in `PROFILES` (no DB change).
 
