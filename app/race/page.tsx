@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getRace } from '@/lib/storage';
+import { useProfile } from '@/lib/use-profile';
+import { langInfo } from '@/lib/lang';
 import { formatStars } from '@/lib/race';
 import { RaceResponse, RaceHistory } from '@/lib/types';
 
@@ -167,6 +169,8 @@ function ProgressOverTime({
 }
 
 export default function RacePage() {
+  // Each language has its own race; the board shows the one being learned.
+  const { lang } = useProfile();
   const [race, setRace] = useState<RaceResponse | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -218,6 +222,7 @@ export default function RacePage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <span>🏁</span> THE RACE
+            {lang && <span title={`${langInfo(lang).name} race`}>{langInfo(lang).flag}</span>}
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
             Most points this calendar month wins a ⭐ — then it resets on the 1st. Most learning

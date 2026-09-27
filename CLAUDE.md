@@ -2,9 +2,10 @@
 
 # Italienisch — language-learning web app
 
-A small, personal Italian learning app used by a handful of friends — all German speakers
-learning Italian. Plain, mobile-first UI in English with German/Italian content.
-(Converted from an earlier Spanish version of the same app.)
+A small, personal Italian **and Spanish** learning app used by a handful of friends — all German
+speakers. Plain, mobile-first UI in English with German/Italian/Spanish content.
+(Converted from an earlier Spanish app, github.com/mattiss01/spanisch; its Spanish content now
+lives in `lib/es/` + `public/vocab-examples-es.json`.)
 
 ## Stack & environment
 
@@ -22,13 +23,22 @@ learning Italian. Plain, mobile-first UI in English with German/Italian content.
 
 ## Profiles & multi-user model (important)
 
-There is **no auth**. A "profile" is just an entry in `lib/profiles.ts`; the chosen profile id is
-stored in `localStorage['italienisch_profile']` and sent as the **`x-user-id` header** on every API
-call. That header becomes the Supabase **`user_id`**, which isolates each person's data. Adding a
-learner = one entry in `PROFILES` (no DB change).
+There is **no auth**. Profiles = built-ins in `lib/profiles.ts` + profiles created by name on
+`/profile` (stored in the `race` table, row `id='profiles'`: `{ profiles, levels }`). The chosen
+profile id is in `localStorage['italienisch_profile']`, the chosen language (`'it' | 'es'`,
+`lib/lang.ts`) in `localStorage['italienisch_lang']`. Flow: `/profile` → `/sprache` (language +
+level) → practice pages.
 
-- Fields: `id`, `name`, optional `level` (`'A1'` | `'B1'`; absent ⇒ B1). `isBeginner(profile)` ⇒
-  `level === 'A1'`. There is no per-profile language direction — everyone learns de→it.
+- **Data per language:** `x-user-id` = `dataUserId(profile, lang)` → `jannik` for Italian (legacy,
+  unchanged) and `jannik:es` for Spanish. That becomes the Supabase **`user_id`**, so every table
+  isolates per person *and* language with no schema change.
+- **Level per language:** `profile.levels[lang]` (`'A1'` | `'B1'`), chosen on `/sprache` and saved via
+  `PUT /api/profiles`. Legacy `level` = Italian level. `isBeginner(profile, lang)`.
+- Practice pages use `useLearner()` (`lib/use-profile.ts`): gives `{ profile, lang, beginner }` and
+  redirects to `/profile` / `/sprache` when something is missing.
+- **Content per language** is loaded on demand: `usePack('vocab' | 'verbs', lang)` (`lib/content.ts`,
+  packs in `lib/packs/`). Tenses per language in `lib/tenses.ts`; `normWord(s, lang)` strips that
+  language's articles. Spanish has no word topics and no grammar exercises yet (lessons only).
 - Which side of a card is asked is a per-device setting (`useQuizDirection`, localStorage):
   🇩🇪→🇮🇹 / 🇮🇹→🇩🇪 / Mixed (default). The SRS level stays one per word either way.
 - `useProfile()` (`lib/use-profile.ts`) reads/sets the active profile and syncs across tabs.
@@ -44,7 +54,8 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
 - `vocab` — one row per user+word (SRS: levels 1–7 learning, 8 known; `next_review`, `last_reviewed`, `review_count`).
 - `stats` — one row per user. Cumulative totals + `streak` + **`daily` jsonb** (Berlin-date → activity count).
 - `conjugation`, `sentences`, `grammar` — one JSONB row per user (arrays of records).
-- `race` — **one global row** `id='global'` holding `{ points, dailyCounts, settledDates, highscores }`.
+- `race` — one global row **per language**: `id='global'` (Italian), `id='global-es'` (Spanish), holding
+  `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. Also the `id='profiles'` row (see above).
 
 ### ⚠️ Manual SQL migrations (no migrations dir — tables are created by hand)
 Full setup for a fresh Supabase project (column names match `lib/db.ts`):
@@ -115,7 +126,8 @@ alter table grammar     enable row level security;
 
 ## THE RACE (scoring model)
 
-Global standings everyone sees; cars race to **100 points**.
+Global standings everyone sees; **one separate race per language** (`/api/race?lang=es`, racers =
+profiles with a level or activity in that language).
 - **Daily activity** per user = every vocab flashcard (+1) + every conjugated form (**half credit**,
   `round(total/2)`) + every grammar item (half credit) + every translated sentence (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
   keyed by **Europe/Berlin date**.

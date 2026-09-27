@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { getStars } from './storage';
+import { useProfile } from './use-profile';
 
-// App-wide ⭐ counts (months won) per user id. Fetched once on mount; the race
-// resets monthly so this rarely changes within a session.
+// App-wide ⭐ counts (months won) per user id in the active language's race.
+// Fetched on mount and whenever the language changes; the race resets monthly so
+// this rarely changes within a session.
 export function useStars(): Record<string, number> {
+  const { lang } = useProfile();
   const [stars, setStars] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -16,7 +19,7 @@ export function useStars(): Record<string, number> {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [lang]);
 
   return stars;
 }

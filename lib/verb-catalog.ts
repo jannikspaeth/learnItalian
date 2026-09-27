@@ -1,4 +1,5 @@
 import { ConjugationExercise } from './types';
+import { IT_TENSES, ItTenseId } from './tenses';
 
 // ─── Italian verb catalog ───────────────────────────────────────────────────────
 // Each verb is a short spec; the forms for every tense up to B1 (presente,
@@ -29,25 +30,10 @@ export const PRONOUNS = ['io', 'tu', 'lui / lei', 'noi', 'voi', 'loro'] as const
 const CONG_PRONOUNS = ['che io', 'che tu', 'che lui / lei', 'che noi', 'che voi', 'che loro'];
 const IMPV_PRONOUNS = ['(tu)', '(Lei)', '(noi)', '(voi)'];
 
-export type TenseId =
-  | 'presente'
-  | 'passato_prossimo'
-  | 'imperfetto'
-  | 'futuro_semplice'
-  | 'imperativo'
-  | 'condizionale'
-  | 'congiuntivo';
+export type TenseId = ItTenseId;
 
 // Every drillable tense, in teaching order, with the CEFR level it belongs to.
-export const TENSES: { id: TenseId; label: string; level: 'A1' | 'A2' | 'B1' }[] = [
-  { id: 'presente', label: 'Presente', level: 'A1' },
-  { id: 'passato_prossimo', label: 'Passato prossimo', level: 'A2' },
-  { id: 'imperfetto', label: 'Imperfetto', level: 'A2' },
-  { id: 'futuro_semplice', label: 'Futuro semplice', level: 'A2' },
-  { id: 'imperativo', label: 'Imperativo', level: 'A2' },
-  { id: 'condizionale', label: 'Condizionale', level: 'B1' },
-  { id: 'congiuntivo', label: 'Congiuntivo presente', level: 'B1' },
-];
+export const TENSES = IT_TENSES;
 export const TENSE_IDS = new Set<string>(TENSES.map(t => t.id));
 
 interface VerbSpec {
@@ -674,12 +660,6 @@ const TENSE_NAMES: Record<TenseId, string> = {
   condizionale: 'Conditional (Condizionale)',
   congiuntivo: 'Subjunctive (Congiuntivo presente)',
 };
-
-// Default tenses for a profile that hasn't picked any: beginners start with the
-// present only, everyone else with the three core tenses.
-export function defaultTenses(beginner: boolean): TenseId[] {
-  return beginner ? ['presente'] : ['presente', 'passato_prossimo', 'imperfetto'];
-}
 
 function tenseSection(verb: CatalogVerb, t: TenseId) {
   const six = (answers: Six, notes?: string, pronouns: readonly string[] = PRONOUNS) => ({

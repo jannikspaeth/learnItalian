@@ -8,15 +8,25 @@ import {
   SentenceProgress,
   GrammarRecord,
 } from './types';
-import { PROFILE_STORAGE_KEY, Profile, cacheProfiles, mergeProfiles } from './profiles';
+import { PROFILE_STORAGE_KEY, Profile, Level, cacheProfiles, mergeProfiles } from './profiles';
+import { Lang, LANG_STORAGE_KEY, dataUserId, isLang } from './lang';
 import { berlinToday } from './race';
 import { conjugationMatches } from './conjugation-match';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
+// The language being learned on this device (defaults to Italian).
+export function currentLang(): Lang {
+  if (typeof window === 'undefined') return 'it';
+  const v = localStorage.getItem(LANG_STORAGE_KEY);
+  return isLang(v) ? v : 'it';
+}
+
+// Supabase user_id for the active profile in the active language.
 function getUserId(): string {
   if (typeof window === 'undefined') return 'default';
-  return localStorage.getItem(PROFILE_STORAGE_KEY) ?? 'default';
+  const profileId = localStorage.getItem(PROFILE_STORAGE_KEY);
+  return profileId ? dataUserId(profileId, currentLang()) : 'default';
 }
 
 // Tolerant read — returns fallback on any error. Use only for display.
@@ -299,14 +309,14 @@ const emptyRace: RaceResponse = {
   stars: {},
 };
 
-// Global leaderboard — no user header needed. Tolerant read for display only.
+// Global leaderboard of the active language — no user header needed. Tolerant read.
 export async function getRace(): Promise<RaceResponse> {
-  return getJson<RaceResponse>('/api/race', emptyRace);
+  return getJson<RaceResponse>(`/api/race?lang=${currentLang()}`, emptyRace);
 }
 
 // Accumulated months-won (⭐) per user, for app-wide display. Tolerant read.
 export async function getStars(): Promise<{ stars: Record<string, number>; month: string }> {
-  return getJson<{ stars: Record<string, number>; month: string }>('/api/race/stars', {
+  return getJson<{ stars: Record<string, number>; month: string }>(`/api/race/stars?lang=${currentLang()}`, {
     stars: {},
     month: '',
   });
@@ -334,4 +344,16 @@ export async function createProfile(name: string): Promise<Profile> {
   const { profile, profiles } = (await res.json()) as { profile: Profile; profiles: Profile[] };
   cacheProfiles(profiles);
   return profile;
+}
+
+// Set a profile's level for one language; refreshes the local cache.
+export async function setProfileLevel(id: string, lang: Lang, level: Level): Promise<void> {
+  const res = await fetch('/api/profiles', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, lang, level }),
+  });
+  if (!res.ok) throw new Error('Could not save the level. Please try again.');
+  const { profiles } = (await res.json()) as { profiles: Profile[] };
+  cacheProfiles(profiles);
 }

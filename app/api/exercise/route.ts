@@ -1,28 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ExerciseType } from '@/lib/types';
-import {
-  verbToExercise,
-  pickNextVerb,
-  findVerb,
-  defaultTenses,
-  TENSE_IDS,
-  TenseId,
-} from '@/lib/verb-catalog';
+import * as it from '@/lib/verb-catalog';
+import * as es from '@/lib/es/verb-catalog';
+import { defaultTenses, ES_TENSES, IT_TENSES, EsTenseId, ItTenseId } from '@/lib/tenses';
+import { isLang } from '@/lib/lang';
 
 export async function POST(req: NextRequest) {
-  const { type, verb, knownVerbs, beginner, tenses } = (await req.json()) as {
+  const { type, verb, knownVerbs, beginner, tenses, lang: langParam } = (await req.json()) as {
     type: ExerciseType;
     verb?: string;
     knownVerbs?: string[];
     beginner?: boolean;
     tenses?: string[];
+    lang?: string;
   };
+  const lang = isLang(langParam) ? langParam : 'it';
 
   if (type === 'conjugation') {
-    const catalogVerb = verb ? findVerb(verb) : null;
-    const target = catalogVerb ?? pickNextVerb(knownVerbs ?? []);
-    const chosen = (tenses ?? []).filter((t): t is TenseId => TENSE_IDS.has(t));
-    return NextResponse.json(verbToExercise(target, chosen.length ? chosen : defaultTenses(!!beginner)));
+    if (lang === 'es') {
+      const target = (verb ? es.findVerb(verb) : null) ?? es.pickNextVerb(knownVerbs ?? []);
+      const ids = new Set<string>(ES_TENSES.map(t => t.id));
+      const chosen = (tenses ?? []).filter((t): t is EsTenseId => ids.has(t));
+      const use = chosen.length ? chosen : (defaultTenses(lang, !!beginner) as EsTenseId[]);
+      return NextResponse.json(es.verbToExercise(target, use));
+    }
+    const target = (verb ? it.findVerb(verb) : null) ?? it.pickNextVerb(knownVerbs ?? []);
+    const ids = new Set<string>(IT_TENSES.map(t => t.id));
+    const chosen = (tenses ?? []).filter((t): t is ItTenseId => ids.has(t));
+    const use = chosen.length ? chosen : (defaultTenses(lang, !!beginner) as ItTenseId[]);
+    return NextResponse.json(it.verbToExercise(target, use));
   }
 
   return NextResponse.json({ error: 'Nicht unterstützt.' }, { status: 400 });

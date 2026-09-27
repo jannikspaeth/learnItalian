@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   loadVocabStrict,
   getSentenceProgress,
@@ -11,9 +10,10 @@ import {
 import { VocabEntry, SentenceProgress } from '@/lib/types';
 import { loadExamples, VocabExample } from '@/lib/vocab-examples';
 import { Confidence, isDue, computeNewLevel, nextReviewDate } from '@/lib/srs';
-import { useProfile } from '@/lib/use-profile';
-import { normWord as norm } from '@/lib/norm';
-import { useQuizDirection, askItalian } from '@/lib/use-quiz-direction';
+import { useLearner } from '@/lib/use-profile';
+import { normWord } from '@/lib/norm';
+import { langInfo } from '@/lib/lang';
+import { useQuizDirection, askTarget } from '@/lib/use-quiz-direction';
 import QuizDirectionToggle from '@/components/QuizDirectionToggle';
 
 type Tab = 'learn' | 'review';
@@ -22,13 +22,13 @@ const ROUND_SIZE = 15;
 
 interface Pair {
   key: string;
-  it: string;
+  text: string; // target-language sentence
   de: string;
 }
 
 interface SItem {
   key: string;
-  askItalian: boolean; // true ⇒ Italian sentence shown, translate into German
+  askTarget: boolean;  // true ⇒ target-language sentence shown, translate into German
   source: string;      // sentence shown
   target: string;      // model translation
 }
@@ -43,8 +43,8 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function SaetzePage() {
-  const { profile, ready } = useProfile();
-  const router = useRouter();
+  const { profile, lang, ready } = useLearner();
+  const flag = langInfo(lang).flag;
 
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
   const [examples, setExamples] = useState<Map<string, VocabExample>>(new Map());
@@ -61,13 +61,9 @@ export default function SaetzePage() {
   const saveChain = useRef<Promise<unknown>>(Promise.resolve());
   const [quizDir, setQuizDir] = useQuizDirection();
 
-  useEffect(() => {
-    if (ready && !profile) router.push('/profile');
-  }, [ready, profile, router]);
-
   const refresh = useCallback(async () => {
     try {
-      const [v, ex, p] = await Promise.all([loadVocabStrict(), loadExamples(), getSentenceProgress()]);
+      const [v, ex, p] = await Promise.all([loadVocabStrict(), loadExamples(lang), getSentenceProgress()]);
       setVocab(v);
       setExamples(ex);
       setProgress(p);
@@ -76,7 +72,7 @@ export default function SaetzePage() {
       setLoadError(true);
     }
     setLoaded(true);
-  }, []);
+  }, [lang]);
   useEffect(() => { refresh(); }, [refresh]);
 
   if (!ready || !profile) {
@@ -91,12 +87,12 @@ export default function SaetzePage() {
   const pool: Pair[] = [];
   const seenKeys = new Set<string>();
   for (const v of vocab) {
-    const key = norm(v.word);
+    const key = normWord(v.word, lang);
     if (seenKeys.has(key)) continue;
     const ex = examples.get(key);
-    if (!ex || !ex.it || !ex.de) continue;
+    if (!ex || !ex.text || !ex.de) continue;
     seenKeys.add(key);
-    pool.push({ key, it: ex.it, de: ex.de });
+    pool.push({ key, text: ex.text, de: ex.de });
   }
 
   const progressMap = new Map(progress.map(p => [p.key, p]));
@@ -112,10 +108,9 @@ export default function SaetzePage() {
     if (src.length === 0) return;
     setTab(which);
     setItems(src.map(p => {
-      const asksItalian = askItalian(quizDir);
-      return asksItalian
-        ? { key: p.key, askItalian: true, source: p.it, target: p.de }
-        : { key: p.key, askItalian: false, source: p.de, target: p.it };
+      return askTarget(quizDir)
+        ? { key: p.key, askTarget: true, source: p.text, target: p.de }
+        : { key: p.key, askTarget: false, source: p.de, target: p.text };
     }));
     setCurrent(0);
     setDoneCount(0);
@@ -221,6 +216,7 @@ export default function SaetzePage() {
           <SentenceCard
             key={current}
             item={items[current]}
+            flag={flag}
             position={current + 1}
             total={items.length}
             onRate={rate}
@@ -252,7 +248,7 @@ export default function SaetzePage() {
                     Start learning →
                   </button>
                   <div className="flex justify-center">
-                    <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
+                    <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={flag} />
                   </div>
                 </>
               ) : (
@@ -268,7 +264,7 @@ export default function SaetzePage() {
                   Start review →
                 </button>
                 <div className="flex justify-center">
-                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
+                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={flag} />
                 </div>
               </>
             ) : (
@@ -283,11 +279,13 @@ export default function SaetzePage() {
 
 function SentenceCard({
   item,
+  flag,
   position,
   total,
   onRate,
 }: {
   item: SItem;
+  flag: string;
   position: number;
   total: number;
   onRate: (correct: boolean, conf: Confidence) => void;
@@ -298,7 +296,7 @@ function SentenceCard({
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
       <div className="flex justify-between text-xs text-gray-400">
-        <span>Translate {item.askItalian ? '🇮🇹 → 🇩🇪' : '🇩🇪 → 🇮🇹'}</span>
+        <span>Translate {item.askTarget ? `${flag} → 🇩🇪` : `🇩🇪 → ${flag}`}</span>
         <span className="tabular-nums">{position} / {total}</span>
       </div>
 

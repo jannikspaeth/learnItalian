@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useProfile } from '@/lib/use-profile';
 import { useStars } from '@/lib/use-stars';
 import { formatStars } from '@/lib/race';
+import { langInfo } from '@/lib/lang';
 
 // The first four are the mobile bottom bar; the rest live under "More".
 const nav = [
@@ -22,7 +23,8 @@ const nav = [
 
 export default function Navigation() {
   const path = usePathname();
-  const { profile } = useProfile();
+  const { profile, lang } = useProfile();
+  const info = lang ? langInfo(lang) : null;
   const stars = useStars();
   const myStars = profile ? formatStars(stars[profile.id] ?? 0) : '';
   const [moreOpen, setMoreOpen] = useState(false);
@@ -33,7 +35,9 @@ export default function Navigation() {
   const primary = items.slice(0, 4);
   const overflow = items.slice(4);
   const moreActive =
-    overflow.some(o => path.startsWith(o.href)) || path.startsWith('/profile');
+    overflow.some(o => path.startsWith(o.href)) ||
+    path.startsWith('/profile') ||
+    path.startsWith('/sprache');
 
   // Close the "More" sheet on Escape.
   useEffect(() => {
@@ -50,15 +54,15 @@ export default function Navigation() {
       {/* ── Desktop sidebar ── */}
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-100 z-50">
         <div className="p-5 border-b border-gray-100">
-          <div className="flex items-center gap-2.5">
-            <span className="text-2xl">🇮🇹</span>
+          <Link href="/sprache" title="Switch language" className="flex items-center gap-2.5">
+            <span className="text-2xl">{info?.flag ?? '🌍'}</span>
             <div>
               <p className="font-bold text-gray-900 text-sm leading-none">
                 {profile ? profile.name + myStars : 'Language Learning'}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">German → Italian</p>
+              <p className="text-xs text-gray-400 mt-0.5">German → {info?.name ?? '…'}</p>
             </div>
-          </div>
+          </Link>
         </div>
         <nav className="flex-1 p-3 space-y-0.5">
           {items.map(({ href, label, icon }) => {
@@ -79,7 +83,13 @@ export default function Navigation() {
             );
           })}
         </nav>
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-gray-100 space-y-2">
+          <Link
+            href="/sprache"
+            className="block text-xs text-gray-400 hover:text-gray-600 text-center transition-colors"
+          >
+            Switch Language
+          </Link>
           <Link
             href="/profile"
             className="block text-xs text-gray-400 hover:text-gray-600 text-center transition-colors"
@@ -115,6 +125,16 @@ export default function Navigation() {
                   </Link>
                 );
               })}
+              <Link
+                href="/sprache"
+                onClick={() => setMoreOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                  path.startsWith('/sprache') ? 'bg-red-50 text-red-700' : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <span className="text-lg">{info?.flag ?? '🌍'}</span>
+                {info ? `Learning ${info.name} · switch` : 'Choose language'}
+              </Link>
               <Link
                 href="/profile"
                 onClick={() => setMoreOpen(false)}

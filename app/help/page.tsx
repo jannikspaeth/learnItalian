@@ -63,8 +63,8 @@ export default function HelpPage() {
             </div>
             <div>
               <p className="font-semibold text-gray-800">Ask 🇩🇪 → 🇮🇹 / 🇮🇹 → 🇩🇪 / Mixed</p>
-              <p>Choose which side of the card you&apos;re asked. Italian → German trains recognition,
-                German → Italian trains actively using the word. Mixed (the default) picks at random per card.</p>
+              <p>Choose which side of the card you&apos;re asked. Italian/Spanish → German trains recognition,
+                German → Italian/Spanish trains actively using the word. Mixed (the default) picks at random per card.</p>
             </div>
             <div>
               <p className="font-semibold text-gray-800">Review</p>
@@ -121,6 +121,23 @@ export default function HelpPage() {
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
             Progress is saved to the cloud, so it syncs across all your devices automatically.
+          </p>
+        </section>
+
+        {/* Languages */}
+        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+          <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
+            <span>🌍</span> Languages
+          </h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            After choosing your profile you pick a language: 🇮🇹 Italian or 🇪🇸 Spanish. Each language has
+            its own level (Beginner A1 or Intermediate B1), its own progress and its own race. Tap{' '}
+            <strong>Switch Language</strong> in the sidebar (or the flag under ☰ More on mobile) to change it
+            or your level.
+          </p>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            Spanish currently has vocabulary, sentences, verbs (presente, indefinido, futuro) and grammar
+            lessons; the grammar exercises and word topics are Italian-only for now.
           </p>
         </section>
       </div>

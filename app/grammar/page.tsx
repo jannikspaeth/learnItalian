@@ -1,29 +1,33 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { GRAMMAR_LESSONS } from '@/lib/grammar-lessons';
-import { GRAMMAR_TOPICS, GRAMMAR_LEVELS, GrammarTopic } from '@/lib/grammar-exercises';
+import { GRAMMAR_LESSONS as IT_LESSONS, GrammarLesson } from '@/lib/grammar-lessons';
+import { GRAMMAR_LESSONS as ES_LESSONS } from '@/lib/es/grammar-lessons';
+import { GRAMMAR_TOPICS as IT_TOPICS, GRAMMAR_LEVELS, GrammarTopic } from '@/lib/grammar-exercises';
 import { getGrammarRecords, recordExercise } from '@/lib/storage';
 import { GrammarRecord } from '@/lib/types';
-import { useProfile } from '@/lib/use-profile';
+import { useLearner } from '@/lib/use-profile';
+import { Lang, langInfo } from '@/lib/lang';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
 
 type Tab = 'exercises' | 'lessons';
 
+// Lessons exist for every language; the cloze exercises only for Italian so far.
+const LESSONS: Record<Lang, GrammarLesson[]> = { it: IT_LESSONS, es: ES_LESSONS };
+const TOPICS: Record<Lang, GrammarTopic[]> = { it: IT_TOPICS, es: [] };
+
 export default function GrammarPage() {
-  const { profile, ready } = useProfile();
-  const router = useRouter();
-  const [tab, setTab] = useState<Tab>('exercises');
+  const { profile, lang, ready } = useLearner();
+  const GRAMMAR_LESSONS = LESSONS[lang];
+  const GRAMMAR_TOPICS = TOPICS[lang];
+  const hasExercises = GRAMMAR_TOPICS.length > 0;
+  const [tabChoice, setTab] = useState<Tab>('exercises');
+  const tab: Tab = hasExercises ? tabChoice : 'lessons';
   // First lesson open by default; the rest collapsed.
   const [open, setOpen] = useState<Set<string>>(new Set([GRAMMAR_LESSONS[0]?.id]));
   const [records, setRecords] = useState<GrammarRecord[]>([]);
   const [practicing, setPracticing] = useState<string | null>(null);
   const [showMistakes, setShowMistakes] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (ready && !profile) router.push('/profile');
-  }, [ready, profile, router]);
 
   const refresh = useCallback(async () => setRecords(await getGrammarRecords()), []);
   useEffect(() => { refresh(); }, [refresh]);
@@ -140,10 +144,11 @@ export default function GrammarPage() {
           <p className="text-gray-400 text-sm mt-0.5">
             {tab === 'exercises'
               ? `${mastered} of ${GRAMMAR_TOPICS.length} topics mastered · A1 to B1`
-              : 'Die ersten Schritte auf Italienisch – kurz erklärt.'}
+              : `Die ersten Schritte auf ${langInfo(lang).nameDe} – kurz erklärt.`}
           </p>
         </div>
 
+        {hasExercises && (
         <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
           {([
             ['exercises', 'Exercises'],
@@ -160,6 +165,7 @@ export default function GrammarPage() {
             </button>
           ))}
         </div>
+        )}
 
         {/* ===== EXERCISES ===== */}
         {tab === 'exercises' && (
@@ -237,7 +243,7 @@ export default function GrammarPage() {
                                 key={j}
                                 className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 bg-gray-50 rounded-lg px-3 py-2"
                               >
-                                <span className="font-semibold text-gray-900 text-sm">{ex.it}</span>
+                                <span className="font-semibold text-gray-900 text-sm">{ex.target}</span>
                                 <span className="text-gray-300 text-sm">→</span>
                                 <span className="text-gray-500 text-sm">{ex.de}</span>
                               </div>

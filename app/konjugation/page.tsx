@@ -1,21 +1,29 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { getConjugationRecords, recordExercise } from '@/lib/storage';
 import { ConjugationRecord, ConjugationExercise } from '@/lib/types';
 import Conjugation from '@/components/exercises/Conjugation';
-import { VERB_CATALOG, TENSES, TENSE_IDS, TenseId, defaultTenses } from '@/lib/verb-catalog';
+import { TENSES_BY_LANG, defaultTenses } from '@/lib/tenses';
 import { useLocalSetting } from '@/lib/use-local-setting';
-import { useProfile } from '@/lib/use-profile';
-import { isBeginner } from '@/lib/profiles';
+import { useLearner } from '@/lib/use-profile';
+import { usePack } from '@/lib/content';
+import { Lang } from '@/lib/lang';
 
 type Tab = 'lernen' | 'all' | 'mistakes';
 type VerbSort = 'alpha' | 'accuracy' | 'recent' | 'practiced';
 
-// Chosen tenses, stored as "presente,imperfetto"; '' means "the default for my level".
-const isTenseChoice = (v: string): v is string =>
-  v === '' || v.split(',').every(t => TENSE_IDS.has(t));
+// Chosen tenses per language, stored as "presente,imperfetto"; '' means "the
+// default for my level".
+const TENSE_KEY: Record<Lang, string> = { it: 'italienisch_verb_tenses', es: 'italienisch_verb_tenses_es' };
+const TENSE_VALIDATORS: Record<Lang, (v: string) => v is string> = {
+  it: tenseValidator('it'),
+  es: tenseValidator('es'),
+};
+function tenseValidator(lang: Lang) {
+  const ids = new Set(TENSES_BY_LANG[lang].map(t => t.id));
+  return (v: string): v is string => v === '' || v.split(',').every(t => ids.has(t));
+}
 
 // Score of the most recent attempt only (not lifetime cumulative). Each section
 // stores the last attempt's questions (`pronouns`) and mistakes (`recentMistakes`),
@@ -62,8 +70,8 @@ function TotalBar({ record }: { record: ConjugationRecord }) {
 }
 
 export default function KonjugationPage() {
-  const { profile, ready } = useProfile();
-  const router = useRouter();
+  const { profile, lang, beginner, ready } = useLearner();
+  const verbPack = usePack('verbs', lang);
 
   const [records, setRecords] = useState<ConjugationRecord[]>([]);
   const [tab, setTab] = useState<Tab>('lernen');
@@ -73,7 +81,7 @@ export default function KonjugationPage() {
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   // Ordered list of active sort keys; each is a tie-breaker for the previous one.
-  const [tenseChoice, setTenseChoice] = useLocalSetting<string>('italienisch_verb_tenses', '', isTenseChoice);
+  const [tenseChoice, setTenseChoice] = useLocalSetting<string>(TENSE_KEY[lang], '', TENSE_VALIDATORS[lang]);
   const [sorts, setSorts] = useState<{ key: VerbSort; dir: 'asc' | 'desc' }[]>([
     { key: 'recent', dir: 'desc' },
   ]);
@@ -95,14 +103,10 @@ export default function KonjugationPage() {
     });
   }
 
-  useEffect(() => {
-    if (ready && !profile) router.push('/profile');
-  }, [ready, profile, router]);
-
   const refresh = useCallback(async () => setRecords(await getConjugationRecords()), []);
   useEffect(() => { refresh(); }, [refresh]);
 
-  if (!ready || !profile) {
+  if (!ready || !profile || !verbPack) {
     return (
       <main className="md:ml-56 min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-gray-400 text-sm">Laden…</p>
@@ -110,12 +114,11 @@ export default function KonjugationPage() {
     );
   }
 
-  const catalog = VERB_CATALOG;
-  const tenses: TenseId[] = tenseChoice
-    ? (tenseChoice.split(',') as TenseId[])
-    : defaultTenses(isBeginner(profile));
+  const catalog = verbPack.verbs;
+  const TENSES = TENSES_BY_LANG[lang];
+  const tenses: string[] = tenseChoice ? tenseChoice.split(',') : defaultTenses(lang, beginner);
 
-  function toggleTense(id: TenseId) {
+  function toggleTense(id: string) {
     const next = tenses.includes(id) ? tenses.filter(t => t !== id) : [...tenses, id];
     if (next.length === 0) return; // keep at least one tense
     setTenseChoice(TENSES.map(t => t.id).filter(t => next.includes(t)).join(','));
@@ -152,7 +155,7 @@ export default function KonjugationPage() {
       const res = await fetch('/api/exercise', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'conjugation', knownVerbs, beginner: isBeginner(profile), tenses }),
+        body: JSON.stringify({ type: 'conjugation', knownVerbs, beginner, tenses, lang }),
       });
       const data = await res.json();
       if (data.error) setError(data.error);
@@ -190,8 +193,9 @@ export default function KonjugationPage() {
         body: JSON.stringify({
           type: 'conjugation',
           verb: record.verb,
-          beginner: isBeginner(profile),
+          beginner,
           tenses,
+          lang,
         }),
       });
       const data = await res.json();

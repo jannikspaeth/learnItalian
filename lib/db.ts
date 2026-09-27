@@ -1,7 +1,8 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress, GrammarRecord } from './types';
 import { normWord } from './norm';
-import { Profile, PROFILES, mergeProfiles } from './profiles';
+import { Profile, LevelOverrides, Level, mergeProfiles } from './profiles';
+import { Lang, dataUserId, parseDataUserId } from './lang';
 
 // ─── client ──────────────────────────────────────────────────────────────────
 
@@ -59,7 +60,7 @@ function entryToRow(userId: string, e: VocabEntry): Omit<VocabRow, 'id'> & { id?
   return {
     id: e.id && !e.id.startsWith('local-') ? e.id : undefined,
     user_id: userId,
-    norm_word: normWord(e.word),
+    norm_word: normWord(e.word, parseDataUserId(userId).lang),
     word: e.word,
     translation: e.translation,
     example: e.example ?? null,
@@ -171,9 +172,10 @@ export async function getDailyActionCounts(date: string): Promise<Record<string,
   return counts;
 }
 
-// Every user's race-relevant stats in one read: daily activity powers the chart,
-// while streak + last activity let the standings show each active learning streak.
-export async function getAllRaceStats(): Promise<
+// Every user's race-relevant stats for one language in one read, keyed by profile
+// id: daily activity powers the chart, while streak + last activity let the
+// standings show each active learning streak.
+export async function getAllRaceStats(lang: Lang): Promise<
   Record<string, { daily: Record<string, number>; streak: number; lastActivity: string }>
 > {
   const { data, error } = await db()
@@ -192,7 +194,9 @@ export async function getAllRaceStats(): Promise<
       streak: number;
       last_activity: string | null;
     }[]) ?? []) {
-    out[row.user_id] = {
+    const { profileId, lang: rowLang } = parseDataUserId(row.user_id);
+    if (rowLang !== lang || dataUserId(profileId, lang) !== row.user_id) continue;
+    out[profileId] = {
       daily: row.daily ?? {},
       streak: row.streak ?? 0,
       lastActivity: row.last_activity ?? '',
@@ -258,18 +262,18 @@ export async function setGrammar(userId: string, records: GrammarRecord[]): Prom
   if (error) throw new Error(error.message);
 }
 
-// ─── race (one global jsonb row, id='global') ────────────────────────────────────
+// ─── race (one global jsonb row per language: id='global' for Italian, 'global-es'…) ─
 
-const RACE_ROW_ID = 'global';
+const raceRowId = (lang: Lang) => (lang === 'it' ? 'global' : `global-${lang}`);
 // Note: `settledMonths` is intentionally left undefined here — the race route treats
 // "undefined" as "first run on the monthly model" and seeds it (no retroactive stars).
 const EMPTY_RACE: RaceState = { dailyCounts: {}, settledDates: [], highscores: [], stars: {} };
 
-export async function getRaceState(): Promise<RaceState> {
+export async function getRaceState(lang: Lang): Promise<RaceState> {
   const { data, error } = await db()
     .from('race')
     .select('data')
-    .eq('id', RACE_ROW_ID)
+    .eq('id', raceRowId(lang))
     .maybeSingle();
   if (error) throw new Error(error.message);
   const s = data?.data as Partial<RaceState> | undefined;
@@ -283,41 +287,54 @@ export async function getRaceState(): Promise<RaceState> {
   };
 }
 
-export async function setRaceState(state: RaceState): Promise<void> {
+export async function setRaceState(state: RaceState, lang: Lang): Promise<void> {
   const { error } = await db()
     .from('race')
-    .upsert({ id: RACE_ROW_ID, data: state }, { onConflict: 'id' });
+    .upsert({ id: raceRowId(lang), data: state }, { onConflict: 'id' });
   if (error) throw new Error(error.message);
 }
 
-// ─── custom profiles (created in the app; stored as row id='profiles' in `race`) ──
+// ─── profiles (created in the app + level choices; row id='profiles' in `race`) ──
 
 const PROFILES_ROW_ID = 'profiles';
 
-export async function getCustomProfiles(): Promise<Profile[]> {
+export interface ProfilesRow {
+  profiles: Profile[];    // custom profiles created in the app
+  levels: LevelOverrides; // level per language chosen in the app, by profile id
+}
+
+export async function getProfilesRow(): Promise<ProfilesRow> {
   const { data, error } = await db()
     .from('race')
     .select('data')
     .eq('id', PROFILES_ROW_ID)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return ((data?.data as { profiles?: Profile[] } | undefined)?.profiles ?? []);
+  const d = data?.data as Partial<ProfilesRow> | undefined;
+  return { profiles: d?.profiles ?? [], levels: d?.levels ?? {} };
 }
 
-export async function setCustomProfiles(profiles: Profile[]): Promise<void> {
+export async function setProfilesRow(row: ProfilesRow): Promise<void> {
   const { error } = await db()
     .from('race')
-    .upsert({ id: PROFILES_ROW_ID, data: { profiles } }, { onConflict: 'id' });
+    .upsert({ id: PROFILES_ROW_ID, data: row }, { onConflict: 'id' });
   if (error) throw new Error(error.message);
 }
 
-// Built-in profiles plus the ones created in the app. Falls back to the built-ins
-// if the database is unavailable.
+export async function setProfileLevel(profileId: string, lang: Lang, level: Level): Promise<void> {
+  const row = await getProfilesRow();
+  row.levels[profileId] = { ...row.levels[profileId], [lang]: level };
+  await setProfilesRow(row);
+}
+
+// Built-in profiles plus the ones created in the app, with level choices applied.
+// Falls back to the built-ins if the database is unavailable.
 export async function getAllProfiles(): Promise<Profile[]> {
-  if (!dbConfigured()) return PROFILES;
+  if (!dbConfigured()) return mergeProfiles([]);
   try {
-    return mergeProfiles(await getCustomProfiles());
+    const row = await getProfilesRow();
+    return mergeProfiles(row.profiles, row.levels);
   } catch {
-    return PROFILES;
+    return mergeProfiles([]);
   }
 }

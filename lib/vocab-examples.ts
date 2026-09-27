@@ -1,29 +1,39 @@
+import type { Lang } from './lang';
+
 // Static example sentences + present-tense conjugations for catalog words, keyed by
-// the normalized Italian word (same key as normWord in lib/norm.ts). Shipped as a
-// static file in /public, fetched once and memoized so it stays out of the JS bundle.
-// A word missing here simply shows no example/table — callers must handle undefined.
+// the normalized target-language word (normWord in lib/norm.ts, same language).
+// Shipped as static files in /public (one per language), fetched once and memoized
+// so they stay out of the JS bundle. A word missing here simply shows no
+// example/table — callers must handle undefined.
 
 export interface VocabExample {
-  it: string;            // short, natural Italian sentence using the word
+  text: string;          // short, natural sentence in the target language using the word
   de: string;            // German translation of that sentence
-  conj?: string[];       // 6 present-tense forms (verbs only): io, tu, lui/lei, noi, voi, loro
+  conj?: string[];       // 6 present-tense forms (verbs only)
 }
 
-let cache: Map<string, VocabExample> | null = null;
-let inflight: Promise<Map<string, VocabExample>> | null = null;
+// The files name the sentence field after the language ("it" / "es").
+type RawExample = { de: string; conj?: string[] } & Partial<Record<Lang, string>>;
 
-export async function loadExamples(): Promise<Map<string, VocabExample>> {
-  if (cache) return cache;
-  if (inflight) return inflight;
-  inflight = fetch('/vocab-examples.json')
-    .then(r => (r.ok ? r.json() : {}))
-    .then((obj: Record<string, VocabExample>) => {
-      cache = new Map(Object.entries(obj));
-      return cache;
-    })
-    .catch(() => {
-      cache = new Map();
-      return cache;
-    });
-  return inflight;
+const FILES: Record<Lang, string> = {
+  it: '/vocab-examples.json',
+  es: '/vocab-examples-es.json',
+};
+
+const cache = new Map<Lang, Promise<Map<string, VocabExample>>>();
+
+export function loadExamples(lang: Lang): Promise<Map<string, VocabExample>> {
+  let p = cache.get(lang);
+  if (!p) {
+    p = fetch(FILES[lang])
+      .then(r => (r.ok ? r.json() : {}))
+      .then((obj: Record<string, RawExample>) =>
+        new Map(
+          Object.entries(obj).map(([k, v]) => [k, { text: v[lang] ?? '', de: v.de, conj: v.conj }])
+        )
+      )
+      .catch(() => new Map<string, VocabExample>());
+    cache.set(lang, p);
+  }
+  return p;
 }

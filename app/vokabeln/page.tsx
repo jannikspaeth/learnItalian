@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   loadVocabStrict,
   upsertVocabWord,
@@ -10,15 +9,13 @@ import {
   getRace,
 } from '@/lib/storage';
 import { VocabEntry, ProgressStats, RaceResponse } from '@/lib/types';
-import { VOCAB_CATALOG } from '@/lib/vocab-catalog';
-import { STARTER_VOCAB } from '@/lib/vocab-starter';
-import { useProfile } from '@/lib/use-profile';
-import { isBeginner } from '@/lib/profiles';
+import { useLearner } from '@/lib/use-profile';
 import { berlinToday } from '@/lib/race';
-import { PRONOUNS, findVerb } from '@/lib/verb-catalog';
+import { usePack, presentOf, VerbPack } from '@/lib/content';
+import { Lang, langInfo } from '@/lib/lang';
 import { loadExamples, VocabExample } from '@/lib/vocab-examples';
-import { normWord as norm } from '@/lib/norm';
-import { useQuizDirection, askItalian } from '@/lib/use-quiz-direction';
+import { normWord } from '@/lib/norm';
+import { useQuizDirection, askTarget } from '@/lib/use-quiz-direction';
 import QuizDirectionToggle from '@/components/QuizDirectionToggle';
 import TopicPicker, { TopicProgress } from '@/components/TopicPicker';
 import { TOPICS, TOPIC_IDS, topicInfo } from '@/lib/vocab-topics';
@@ -63,13 +60,13 @@ const isTopicChoice = (v: string): v is string => v === 'all' || TOPIC_IDS.has(v
 
 interface SessionItem {
   de: string;
-  it: string;
-  example: string;       // Italian example sentence
+  target: string;        // the word in the language being learned
+  example: string;       // example sentence in the target language
   exampleDe?: string;    // German translation of the example
-  conj?: string[];       // present-tense forms (verbs only)
+  conj?: readonly string[]; // present-tense forms (verbs only)
   vocabId?: string;
   currentLevel: number;
-  askItalian: boolean;   // true ⇒ Italian shown, German is the answer
+  askTarget: boolean;    // true ⇒ target word shown, German is the answer
   question: string;
   answer: string;
 }
@@ -107,8 +104,8 @@ function getLevel(v: VocabEntry): number {
 // ─── Answer checking ─────────────────────────────────────────────────────────
 
 // Grading only: catalog phrases often include .?! … — ignore them when comparing.
-function answerNorm(s: string): string {
-  return norm(s)
+function answerNorm(s: string, lang: Lang): string {
+  return normWord(s, lang)
     .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -149,15 +146,15 @@ function splitVariants(s: string): string[] {
     .filter(Boolean);
 }
 
-function checkAnswer(user: string, correct: string): { correct: boolean; accentHint?: string } {
-  const u = answerNorm(user);
+function checkAnswer(user: string, correct: string, lang: Lang): { correct: boolean; accentHint?: string } {
+  const u = answerNorm(user, lang);
   if (u.length === 0) return { correct: false };
 
   const variants = splitVariants(correct);
 
   // Exact match against any variant (articles/parentheticals already stripped by norm)
   for (const variant of variants) {
-    const c = answerNorm(variant);
+    const c = answerNorm(variant, lang);
     if (c.length === 0) continue;
     if (u === c) return { correct: true };
   }
@@ -166,7 +163,7 @@ function checkAnswer(user: string, correct: string): { correct: boolean; accentH
   const su = stripAccents(u);
   const fu = germanFold(u);
   for (const variant of variants) {
-    const c = answerNorm(variant);
+    const c = answerNorm(variant, lang);
     if (c.length === 0) continue;
     if (stripAccents(c) === su || germanFold(c) === fu) {
       return { correct: true, accentHint: variant };
@@ -178,15 +175,18 @@ function checkAnswer(user: string, correct: string): { correct: boolean; accentH
 
 // Present-tense table for a verb card: the verb catalog is authoritative, the
 // examples file only fills in verbs the catalog lacks.
-function presentForms(word: string, ex?: VocabExample): string[] | undefined {
-  return findVerb(word.trim())?.presente ?? ex?.conj;
+function presentForms(verbs: VerbPack | null, word: string, ex?: VocabExample): readonly string[] | undefined {
+  return presentOf(verbs, word) ?? ex?.conj;
 }
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function VokabelnPage() {
-  const { profile, ready } = useProfile();
-  const router = useRouter();
+  const { profile, lang, beginner, ready } = useLearner();
+  const info = langInfo(lang);
+  const norm = (s: string) => normWord(s, lang);
+  const pack = usePack('vocab', lang);
+  const verbs = usePack('verbs', lang);
 
   const [tab, setTab] = useState<Tab>('lernen');
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
@@ -210,9 +210,9 @@ export default function VokabelnPage() {
   const [vocabLoaded, setVocabLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
-  // Static example sentences + conjugations, keyed by normalized Italian word.
+  // Static example sentences + conjugations, keyed by normalized target word.
   const [examples, setExamples] = useState<Map<string, VocabExample>>(new Map());
-  useEffect(() => { loadExamples().then(setExamples); }, []);
+  useEffect(() => { loadExamples(lang).then(setExamples); }, [lang]);
 
   // Gamification: race standings for the Challenges strip (tolerant; never block).
   const [race, setRace] = useState<RaceResponse | null>(null);
@@ -225,18 +225,14 @@ export default function VokabelnPage() {
   const streakSeen = useRef<number | null>(null);
 
   const [quizDir, setQuizDir] = useQuizDirection();
-  const [topic, setTopic] = useLocalSetting<string>('italienisch_vocab_topic', 'all', isTopicChoice);
+  const [topicSetting, setTopic] = useLocalSetting<string>('italienisch_vocab_topic', 'all', isTopicChoice);
 
   // Add-your-own-word form state
   const [showAddForm, setShowAddForm] = useState(false);
   const [addGerman, setAddGerman] = useState('');
-  const [addItalian, setAddItalian] = useState('');
+  const [addTarget, setAddTarget] = useState('');
   const [addExample, setAddExample] = useState('');
   const [addError, setAddError] = useState('');
-
-  useEffect(() => {
-    if (ready && !profile) router.push('/profile');
-  }, [ready, profile, router]);
 
   const refresh = useCallback(async () => {
     try {
@@ -266,7 +262,7 @@ export default function VokabelnPage() {
   }, [celebrate]);
   useEffect(() => { refresh(); }, [refresh]);
 
-  if (!ready || !profile) {
+  if (!ready || !profile || !pack) {
     return (
       <main className="md:ml-56 min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-gray-400 text-sm">Loading…</p>
@@ -276,10 +272,12 @@ export default function VokabelnPage() {
 
   // Beginners (A1) learn from an ordered starter set first, then flow into the full
   // catalog (deduped) so they never run out. Everyone else uses the full catalog.
-  const starterKeys = new Set(STARTER_VOCAB.map(w => norm(w.it)));
-  const sourceCatalog = isBeginner(profile)
-    ? [...STARTER_VOCAB, ...VOCAB_CATALOG.filter(w => !starterKeys.has(norm(w.it)))]
-    : VOCAB_CATALOG;
+  const starterKeys = new Set(pack.starter.map(w => norm(w.target)));
+  const sourceCatalog = beginner
+    ? [...pack.starter, ...pack.catalog.filter(w => !starterKeys.has(norm(w.target)))]
+    : pack.catalog;
+  // Topics exist only for languages whose catalog carries them.
+  const topic = pack.hasTopics ? topicSetting : 'all';
 
   const bekanntWords = vocab.filter(v => getLevel(v) >= VOCAB_KNOWN_LEVEL);
   const dueToday = vocab.filter(v => {
@@ -295,19 +293,22 @@ export default function VokabelnPage() {
 
   // Learn can be narrowed to one topic; order within the topic stays catalog order.
   const topicCatalog = topic === 'all' ? sourceCatalog : sourceCatalog.filter(w => w.topic === topic);
-  const unseenCount = topicCatalog.filter(e => !seenWords.has(norm(e.it))).length;
+  const unseenCount = topicCatalog.filter(e => !seenWords.has(norm(e.target))).length;
   const topicProgress: Record<string, TopicProgress> = { all: { seen: 0, total: 0 } };
   for (const w of sourceCatalog) {
-    const seen = seenWords.has(norm(w.it)) ? 1 : 0;
-    const p = (topicProgress[w.topic] ??= { seen: 0, total: 0 });
-    p.total++; p.seen += seen;
+    const seen = seenWords.has(norm(w.target)) ? 1 : 0;
+    if (w.topic) {
+      const p = (topicProgress[w.topic] ??= { seen: 0, total: 0 });
+      p.total++; p.seen += seen;
+    }
     topicProgress.all.total++; topicProgress.all.seen += seen;
   }
   // Topic of any known catalog word (for grouping the Words list); own words have none.
   const topicOfWord = new Map<string, string>();
-  for (const w of [...STARTER_VOCAB, ...VOCAB_CATALOG]) {
-    if (!topicOfWord.has(norm(w.it))) topicOfWord.set(norm(w.it), w.topic);
+  for (const w of [...pack.starter, ...pack.catalog]) {
+    if (w.topic && !topicOfWord.has(norm(w.target))) topicOfWord.set(norm(w.target), w.topic);
   }
+  const group: WordGroup = wordGroup === 'topic' && !pack.hasTopics ? 'none' : wordGroup;
 
   // Every flashcard done today counts (repeats included) — sourced from the
   // per-day stats counter, not distinct words.
@@ -328,18 +329,18 @@ export default function VokabelnPage() {
 
   function makeItem(
     de: string,
-    it: string,
+    target: string,
     example: string,
     vocabId?: string,
     currentLevel = 0,
-    extra?: { de?: string; conj?: string[] },
+    extra?: { de?: string; conj?: readonly string[] },
   ): SessionItem {
-    const asksItalian = askItalian(quizDir);
+    const asksTarget = askTarget(quizDir);
     return {
-      de, it, example, exampleDe: extra?.de, conj: extra?.conj, vocabId, currentLevel,
-      askItalian: asksItalian,
-      question: asksItalian ? it : de,
-      answer:   asksItalian ? de : it,
+      de, target, example, exampleDe: extra?.de, conj: extra?.conj, vocabId, currentLevel,
+      askTarget: asksTarget,
+      question: asksTarget ? target : de,
+      answer:   asksTarget ? de : target,
     };
   }
 
@@ -389,12 +390,12 @@ export default function VokabelnPage() {
   function startLernen() {
     if (!vocabLoaded) return;
     // One round of up to ROUND_SIZE new words (not the whole catalog).
-    const unseen = topicCatalog.filter(e => !seenWords.has(norm(e.it))).slice(0, ROUND_SIZE);
+    const unseen = topicCatalog.filter(e => !seenWords.has(norm(e.target))).slice(0, ROUND_SIZE);
     if (unseen.length === 0) return;
     // New words start at phase 1, so Hard keeps them at phase 1 and Good promotes to phase 2.
     setItems(unseen.map(e => {
-      const ex = examples.get(norm(e.it));
-      return makeItem(e.de, e.it, ex?.it || '', undefined, 1, { de: ex?.de, conj: presentForms(e.it, ex) });
+      const ex = examples.get(norm(e.target));
+      return makeItem(e.de, e.target, ex?.text || '', undefined, 1, { de: ex?.de, conj: presentForms(verbs, e.target, ex) });
     }));
     setCurrent(0);
     setDoneCount(0);
@@ -408,9 +409,9 @@ export default function VokabelnPage() {
     // Show due words in random order rather than fixed DB order.
     setItems(shuffle(dueToday).map(v => {
       const ex = examples.get(norm(v.word));
-      return makeItem(v.translation, v.word, ex?.it || v.example || '', v.id, getLevel(v), {
+      return makeItem(v.translation, v.word, ex?.text || v.example || '', v.id, getLevel(v), {
         de: ex?.de,
-        conj: presentForms(v.word, ex),
+        conj: presentForms(verbs, v.word, ex),
       });
     }));
     setCurrent(0);
@@ -443,7 +444,7 @@ export default function VokabelnPage() {
     let changed: VocabEntry;
     let next: VocabEntry[];
     if (isLearn) {
-      const key = norm(item.it);
+      const key = norm(item.target);
       const idx = vocab.findIndex(v => norm(v.word) === key);
       if (idx >= 0) {
         changed = { ...vocab[idx], level: newLevel, nextReview: nr, lastReviewed: now, reviewCount: vocab[idx].reviewCount + 1 };
@@ -451,7 +452,7 @@ export default function VokabelnPage() {
       } else {
         changed = {
           id: crypto.randomUUID(),
-          word: item.it,
+          word: item.target,
           translation: item.de,
           example: item.example || undefined,
           level: newLevel,
@@ -513,20 +514,20 @@ export default function VokabelnPage() {
   function handleAddWord() {
     setAddError('');
     if (!vocabLoaded) { setAddError('Still loading your words — try again in a moment.'); return; }
-    const italian = addItalian.trim();
+    const targetWord = addTarget.trim();
     const german = addGerman.trim();
-    if (!italian || !german) {
+    if (!targetWord || !german) {
       setAddError('Please fill in both words.');
       return;
     }
-    if (seenWords.has(norm(italian))) {
+    if (seenWords.has(norm(targetWord))) {
       setAddError('That word is already in your list.');
       return;
     }
     const now = new Date().toISOString();
     const entry: VocabEntry = {
       id: crypto.randomUUID(),
-      word: italian,
+      word: targetWord,
       translation: german,
       example: addExample.trim() || undefined,
       level: 1,
@@ -536,7 +537,7 @@ export default function VokabelnPage() {
     };
     persistVocab([entry, ...vocab], entry);
     setAddGerman('');
-    setAddItalian('');
+    setAddTarget('');
     setAddExample('');
     setShowAddForm(false);
   }
@@ -555,7 +556,7 @@ export default function VokabelnPage() {
         const rb = b.nextReview ? new Date(b.nextReview).getTime() : Infinity;
         cmp = ra - rb;
       } else {
-        // alphabetical by the Italian word
+        // alphabetical by the target-language word
         cmp = a.word.toLowerCase().localeCompare(b.word.toLowerCase());
       }
       return wordSortDir === 'asc' ? cmp : -cmp;
@@ -568,7 +569,7 @@ export default function VokabelnPage() {
 
   type WordSection = { key: string; label: string; badgeClass: string; entries: VocabEntry[] };
   let wordSections: WordSection[] = [];
-  if (wordGroup === 'phase') {
+  if (group === 'phase') {
     wordSections = [1, 2, 3, 4, 5, 6, 7, 8]
       .map(level => ({
         key: `phase:${level}`,
@@ -577,7 +578,7 @@ export default function VokabelnPage() {
         entries: wordsFiltered.filter(w => getLevel(w) === level),
       }))
       .filter(s => s.entries.length > 0);
-  } else if (wordGroup === 'due') {
+  } else if (group === 'due') {
     const buckets = new Map<string, { sortKey: string; label: string; entries: VocabEntry[] }>();
     for (const w of wordsFiltered) {
       let key: string, sortKey: string, label: string;
@@ -599,7 +600,7 @@ export default function VokabelnPage() {
     wordSections = [...buckets.entries()]
       .sort((a, b) => a[1].sortKey.localeCompare(b[1].sortKey))
       .map(([key, b]) => ({ key, label: b.label, badgeClass: 'bg-gray-100 text-gray-600', entries: b.entries }));
-  } else if (wordGroup === 'topic') {
+  } else if (group === 'topic') {
     const byTopic = new Map<string, VocabEntry[]>();
     for (const w of wordsFiltered) {
       const t = topicOfWord.get(norm(w.word)) ?? 'own';
@@ -698,9 +699,9 @@ export default function VokabelnPage() {
         />
         <input
           type="text"
-          value={addItalian}
-          onChange={e => setAddItalian(e.target.value)}
-          placeholder="Italian translation"
+          value={addTarget}
+          onChange={e => setAddTarget(e.target.value)}
+          placeholder={`${info.name} translation`}
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-red-400 outline-none"
         />
         <input
@@ -735,6 +736,8 @@ export default function VokabelnPage() {
       <Flashcard
         key={current}
         item={items[current]}
+        lang={lang}
+        pronouns={verbs?.pronouns ?? []}
         position={current + 1}
         total={items.length}
         combo={combo}
@@ -872,9 +875,11 @@ export default function VokabelnPage() {
                 <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
                   <div>
                     <p className="text-sm text-gray-600">Learn new words one at a time.</p>
-                    <div className="mt-3">
-                      <TopicPicker value={topic} onChange={setTopic} progress={topicProgress} />
-                    </div>
+                    {pack.hasTopics && (
+                      <div className="mt-3">
+                        <TopicPicker value={topic} onChange={setTopic} progress={topicProgress} />
+                      </div>
+                    )}
                     <p className="text-xs text-gray-400 mt-3">
                       {unseenCount > 0
                         ? `${unseenCount} of ${topicCatalog.length} words not seen yet`
@@ -896,7 +901,7 @@ export default function VokabelnPage() {
                   >
                     {!vocabLoaded ? 'Loading…' : unseenCount > 0 ? 'Start learning →' : 'All words learned'}
                   </button>
-                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
+                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                 </div>
                 {addWordSection}
               </>
@@ -931,7 +936,7 @@ export default function VokabelnPage() {
                   >
                     Start review →
                   </button>
-                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} />
+                  <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                 </div>
               )
             ) : (
@@ -995,13 +1000,13 @@ export default function VokabelnPage() {
                       ['none', 'None'],
                       ['phase', 'Phase'],
                       ['due', 'Due day'],
-                      ['topic', 'Topic'],
+                      ...(pack.hasTopics ? [['topic', 'Topic']] : []),
                     ] as [WordGroup, string][]).map(([id, label]) => (
                       <button
                         key={id}
                         onClick={() => setWordGroup(id)}
                         className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
-                          wordGroup === id
+                          group === id
                             ? 'bg-red-700 text-white'
                             : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                         }`}
@@ -1011,7 +1016,7 @@ export default function VokabelnPage() {
                     ))}
                   </div>
                 </div>
-                {wordGroup === 'none' ? (
+                {group === 'none' ? (
                   <div className="space-y-2">
                     {wordsFiltered.map(renderCard)}
                   </div>
@@ -1054,6 +1059,8 @@ export default function VokabelnPage() {
 
 function Flashcard({
   item,
+  lang,
+  pronouns,
   position,
   total,
   combo,
@@ -1061,6 +1068,8 @@ function Flashcard({
   onFinish,
 }: {
   item: SessionItem;
+  lang: Lang;
+  pronouns: readonly string[];
   position: number;
   total: number;
   combo: number;
@@ -1079,11 +1088,12 @@ function Flashcard({
     inputRef.current?.focus();
   }, []);
 
-  const evaluation = checked ? checkAnswer(answer, item.answer) : null;
+  const evaluation = checked ? checkAnswer(answer, item.answer, lang) : null;
+  const flag = langInfo(lang).flag;
   const correct = evaluation?.correct ?? false;
 
   // On a wrong answer, the learner must type the correct word once before rating.
-  const retypeOk = checkAnswer(retype, item.answer).correct;
+  const retypeOk = checkAnswer(retype, item.answer, lang).correct;
 
   useEffect(() => {
     if (checked && !correct) retypeRef.current?.focus();
@@ -1127,7 +1137,7 @@ function Flashcard({
       {/* Question */}
       <div className="text-center py-3">
         <p className="text-xs text-gray-400 uppercase tracking-wide">
-          Translate {item.askItalian ? '🇮🇹 → 🇩🇪' : '🇩🇪 → 🇮🇹'}
+          Translate {item.askTarget ? `${flag} → 🇩🇪` : `🇩🇪 → ${flag}`}
         </p>
         <p className="text-3xl font-bold text-gray-900 mt-1">{item.question}</p>
       </div>
@@ -1140,7 +1150,7 @@ function Flashcard({
             value={answer}
             onChange={e => setAnswer(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') setChecked(true); }}
-            placeholder={item.askItalian ? 'German…' : 'Italian…'}
+            placeholder={item.askTarget ? 'German…' : `${langInfo(lang).name}…`}
             className="w-full border-b-2 border-gray-300 focus:border-red-600 bg-transparent text-lg text-center py-1.5 outline-none transition-colors"
           />
           <button
@@ -1185,7 +1195,7 @@ function Flashcard({
                   )}
                 </div>
               )}
-              {item.conj && item.conj.length === PRONOUNS.length && (
+              {item.conj && item.conj.length === pronouns.length && (
                 <div>
                   <button
                     type="button"
@@ -1196,7 +1206,7 @@ function Flashcard({
                   </button>
                   {showConj && (
                     <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 mt-1">
-                      {PRONOUNS.map((p, i) => (
+                      {pronouns.map((p, i) => (
                         <div key={p} className="flex justify-between gap-2 text-sm">
                           <span className="text-gray-400">{p}</span>
                           <span className="font-medium text-gray-800 tabular-nums">{item.conj![i]}</span>

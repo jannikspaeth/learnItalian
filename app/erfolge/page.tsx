@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   loadVocabStrict,
   getStats,
@@ -11,7 +10,8 @@ import {
 } from '@/lib/storage';
 import { VocabEntry, ProgressStats, RaceResponse } from '@/lib/types';
 import { computeBadges } from '@/lib/achievements';
-import { useProfile } from '@/lib/use-profile';
+import { useLearner } from '@/lib/use-profile';
+import { dataUserId } from '@/lib/lang';
 import Achievements from '@/components/Achievements';
 import Celebration from '@/components/Celebration';
 
@@ -23,8 +23,7 @@ function levelOf(v: VocabEntry): number {
 }
 
 export default function ErfolgePage() {
-  const { profile, ready } = useProfile();
-  const router = useRouter();
+  const { profile, lang, ready } = useLearner();
 
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
   const [stats, setStats] = useState<ProgressStats | null>(null);
@@ -35,10 +34,6 @@ export default function ErfolgePage() {
   const [celebration, setCelebration] = useState<string | null>(null);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
   const seeded = useRef(false);
-
-  useEffect(() => {
-    if (ready && !profile) router.push('/profile');
-  }, [ready, profile, router]);
 
   const refresh = useCallback(async () => {
     const [v, s, r, sent, verbs] = await Promise.all([
@@ -76,7 +71,7 @@ export default function ErfolgePage() {
       daysActive,
       inTop5: !!race?.highscores.some(h => h.name === profile.name),
     }).filter(b => b.unlocked).map(b => b.id);
-    const k = `italienisch_badges_${profile.id}`;
+    const k = `italienisch_badges_${dataUserId(profile.id, lang)}`;
     const raw = localStorage.getItem(k);
     if (raw === null) {
       localStorage.setItem(k, JSON.stringify(ids)); // first visit: seed silently
@@ -89,7 +84,7 @@ export default function ErfolgePage() {
       setNewIds(new Set(fresh));
       setCelebration(fresh.length === 1 ? 'Achievement unlocked! 🏆' : `${fresh.length} achievements unlocked! 🏆`);
     }
-  }, [loaded, profile, vocab, stats, race, sentencesDone, verbsDone]);
+  }, [loaded, profile, lang, vocab, stats, race, sentencesDone, verbsDone]);
 
   if (!ready || !profile) {
     return (
