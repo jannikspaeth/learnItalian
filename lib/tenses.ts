@@ -13,6 +13,15 @@ export type ItTenseId =
   | 'condizionale'
   | 'congiuntivo';
 
+export type FrTenseId =
+  | 'present'
+  | 'passe_compose'
+  | 'imparfait'
+  | 'futur'
+  | 'imperatif'
+  | 'conditionnel'
+  | 'subjonctif';
+
 export type EsTenseId =
   | 'presente'
   | 'perfecto'
@@ -50,11 +59,22 @@ export const ES_TENSES: TenseInfo<EsTenseId>[] = [
   { id: 'subjuntivo', label: 'Subjuntivo presente', level: 'B1' },
 ];
 
-export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES };
+export const FR_TENSES: TenseInfo<FrTenseId>[] = [
+  { id: 'present', label: 'Présent', level: 'A1' },
+  { id: 'passe_compose', label: 'Passé composé', level: 'A2' },
+  { id: 'imparfait', label: 'Imparfait', level: 'A2' },
+  { id: 'futur', label: 'Futur simple', level: 'A2' },
+  { id: 'imperatif', label: 'Impératif', level: 'A2' },
+  { id: 'conditionnel', label: 'Conditionnel', level: 'B1' },
+  { id: 'subjonctif', label: 'Subjonctif présent', level: 'B1' },
+];
+
+export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES, fr: FR_TENSES };
 
 // Default tenses for a learner who hasn't picked any: beginners start with the
 // present only, everyone else with the core tenses of their language.
 export function defaultTenses(lang: Lang, beginner: boolean): string[] {
+  if (lang === 'fr') return beginner ? ['present'] : ['present', 'passe_compose', 'imparfait'];
   if (beginner) return ['presente'];
   return lang === 'it' ? ['presente', 'passato_prossimo', 'imperfetto'] : ['presente', 'indefinido', 'futuro'];
 }

@@ -1,7 +1,7 @@
 // Target languages. Everyone is a German speaker; after choosing a profile they
 // pick which language to learn (per device, see useProfile). Each language has its
 // own content, progress, level and race.
-export type Lang = 'it' | 'es';
+export type Lang = 'it' | 'es' | 'fr';
 
 export interface LanguageInfo {
   id: Lang;
@@ -13,10 +13,11 @@ export interface LanguageInfo {
 export const LANGUAGES: LanguageInfo[] = [
   { id: 'it', flag: '🇮🇹', name: 'Italian', nameDe: 'Italienisch' },
   { id: 'es', flag: '🇪🇸', name: 'Spanish', nameDe: 'Spanisch' },
+  { id: 'fr', flag: '🇫🇷', name: 'French', nameDe: 'Französisch' },
 ];
 
 export function isLang(v: unknown): v is Lang {
-  return v === 'it' || v === 'es';
+  return v === 'it' || v === 'es' || v === 'fr';
 }
 
 export function langInfo(lang: Lang): LanguageInfo {

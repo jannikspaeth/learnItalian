@@ -13,6 +13,7 @@ import { useLearner } from '@/lib/use-profile';
 import { berlinToday } from '@/lib/race';
 import { usePack, presentOf, VerbPack } from '@/lib/content';
 import { Lang, langInfo } from '@/lib/lang';
+import { TENSES_BY_LANG } from '@/lib/tenses';
 import { loadExamples, VocabExample } from '@/lib/vocab-examples';
 import { normWord } from '@/lib/norm';
 import { useQuizDirection, askTarget } from '@/lib/use-quiz-direction';
@@ -1202,7 +1203,7 @@ function Flashcard({
                     onClick={() => setShowConj(v => !v)}
                     className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide hover:text-gray-600 transition-colors"
                   >
-                    Presente {showConj ? '▲' : '▼'}
+                    {TENSES_BY_LANG[lang][0].label} {showConj ? '▲' : '▼'}
                   </button>
                   {showConj && (
                     <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 mt-1">

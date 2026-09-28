@@ -12,12 +12,13 @@ export interface VocabExample {
   conj?: string[];       // 6 present-tense forms (verbs only)
 }
 
-// The files name the sentence field after the language ("it" / "es").
+// The files name the sentence field after the language ("it" / "es" / "fr").
 type RawExample = { de: string; conj?: string[] } & Partial<Record<Lang, string>>;
 
 const FILES: Record<Lang, string> = {
   it: '/vocab-examples.json',
   es: '/vocab-examples-es.json',
+  fr: '/vocab-examples-fr.json',
 };
 
 const cache = new Map<Lang, Promise<Map<string, VocabExample>>>();

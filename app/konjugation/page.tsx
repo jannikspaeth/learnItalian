@@ -15,10 +15,15 @@ type VerbSort = 'alpha' | 'accuracy' | 'recent' | 'practiced';
 
 // Chosen tenses per language, stored as "presente,imperfetto"; '' means "the
 // default for my level".
-const TENSE_KEY: Record<Lang, string> = { it: 'italienisch_verb_tenses', es: 'italienisch_verb_tenses_es' };
+const TENSE_KEY: Record<Lang, string> = {
+  it: 'italienisch_verb_tenses',
+  es: 'italienisch_verb_tenses_es',
+  fr: 'italienisch_verb_tenses_fr',
+};
 const TENSE_VALIDATORS: Record<Lang, (v: string) => v is string> = {
   it: tenseValidator('it'),
   es: tenseValidator('es'),
+  fr: tenseValidator('fr'),
 };
 function tenseValidator(lang: Lang) {
   const ids = new Set(TENSES_BY_LANG[lang].map(t => t.id));

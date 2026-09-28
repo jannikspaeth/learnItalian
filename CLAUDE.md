@@ -2,8 +2,8 @@
 
 # Italienisch — language-learning web app
 
-A small, personal Italian **and Spanish** learning app used by a handful of friends — all German
-speakers. Plain, mobile-first UI in English with German/Italian/Spanish content.
+A small, personal Italian, **Spanish and French** learning app used by a handful of friends — all German
+speakers. Plain, mobile-first UI in English with German/Italian/Spanish/French content.
 (Converted from an earlier Spanish app, github.com/mattiss01/spanisch; its Spanish content now
 lives in `lib/es/` + `public/vocab-examples-es.json`.)
 
@@ -28,12 +28,12 @@ There is **no auth**. Profiles = built-ins in `lib/profiles.ts` + profiles creat
 "Manage profiles" on `/profile` deletes a profile (`DELETE /api/profiles`, `deleteProfile` in
 `lib/db.ts`): all its rows in every table and language plus its race highscores/stars; deleted
 built-ins are hidden via `deleted`, and ids are never reused. The chosen
-profile id is in `localStorage['italienisch_profile']`, the chosen language (`'it' | 'es'`,
+profile id is in `localStorage['italienisch_profile']`, the chosen language (`'it' | 'es' | 'fr'`,
 `lib/lang.ts`) in `localStorage['italienisch_lang']`. Flow: `/profile` → `/sprache` (language +
 level) → practice pages.
 
 - **Data per language:** `x-user-id` = `dataUserId(profile, lang)` → `jannik` for Italian (legacy,
-  unchanged) and `jannik:es` for Spanish. That becomes the Supabase **`user_id`**, so every table
+  unchanged), `jannik:es` / `jannik:fr` for Spanish / French. That becomes the Supabase **`user_id`**, so every table
   isolates per person *and* language with no schema change.
 - **Level per language:** `profile.levels[lang]` (`'A1'` | `'B1'`), chosen on `/sprache` and saved via
   `PUT /api/profiles`. Legacy `level` = Italian level. `isBeginner(profile, lang)`.
@@ -47,6 +47,10 @@ level) → practice pages.
   presente/indefinido/futuro and a rule engine (`derivedForms`) derives perfecto, imperfecto,
   condicional, subjuntivo and imperativo from them; `grammar-exercises.ts` has 34 cloze sets A1–B1
   (same `GrammarTopic` type as Italian; example field is `target`).
+- **French content** (`lib/fr/`): catalog + starter (~2,900 words, the Italian catalog translated with the
+  same German meanings/topics/order), `public/vocab-examples-fr.json`, `verb-catalog.ts` (329 verbs, rule
+  engine for all 7 tenses incl. -er spelling changes; être-agreement written `allé(e)` / `allé(e)s` /
+  `assis(es)`, accepted either way by `conjugation-match.ts`), 34 grammar sets and the lessons.
 - Which side of a card is asked is a per-device setting (`useQuizDirection`, localStorage):
   🇩🇪→🇮🇹 / 🇮🇹→🇩🇪 / Mixed (default). The SRS level stays one per word either way.
 - `useProfile()` (`lib/use-profile.ts`) reads/sets the active profile and syncs across tabs.
@@ -62,7 +66,7 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
 - `vocab` — one row per user+word (SRS: levels 1–7 learning, 8 known; `next_review`, `last_reviewed`, `review_count`).
 - `stats` — one row per user. Cumulative totals + `streak` + **`daily` jsonb** (Berlin-date → activity count).
 - `conjugation`, `sentences`, `grammar` — one JSONB row per user (arrays of records).
-- `race` — one global row **per language**: `id='global'` (Italian), `id='global-es'` (Spanish), holding
+- `race` — one global row **per language**: `id='global'` (Italian), `id='global-es'`, `id='global-fr'`, holding
   `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. Also the `id='profiles'` row (see above).
 
 ### ⚠️ Manual SQL migrations (no migrations dir — tables are created by hand)

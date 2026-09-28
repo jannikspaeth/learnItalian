@@ -89,9 +89,10 @@ export default function HelpPage() {
           <p className="text-sm text-gray-600 leading-relaxed">
             Choose which tenses to practise at the top of the page – all tenses up to B1 (each chip shows its level).
             Italian: presente, passato prossimo, imperfetto, futuro, imperativo, condizionale, congiuntivo. Spanish:
-            presente, perfecto, indefinido, imperfecto, futuro, imperativo, condicional, subjuntivo. Beginner profiles
+            presente, perfecto, indefinido, imperfecto, futuro, imperativo, condicional, subjuntivo. French: présent,
+            passé composé, imparfait, futur, impératif, conditionnel, subjonctif. Beginner profiles
             start with the present tense only. Accents don&apos;t matter when checking, and for verbs with <em>essere</em>
-            both endings count (e.g. <em>sono andato/a</em>).
+            both endings count (e.g. <em>sono andato/a</em>, <em>je suis allé(e)</em>).
           </p>
         </section>
 
@@ -131,13 +132,13 @@ export default function HelpPage() {
             <span>🌍</span> Languages
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            After choosing your profile you pick a language: 🇮🇹 Italian or 🇪🇸 Spanish. Each language has
+            After choosing your profile you pick a language: 🇮🇹 Italian, 🇪🇸 Spanish or 🇫🇷 French. Each language has
             its own level (Beginner A1 or Intermediate B1), its own progress and its own race. Tap{' '}
             <strong>Switch Language</strong> in the sidebar (or the flag under ☰ More on mobile) to change it
             or your level.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Both languages have the full set: vocabulary with topics, sentences, verbs in every tense up to B1
+            All three languages have the full set: vocabulary with topics, sentences, verbs in every tense up to B1
             and grammar exercises plus lessons.
           </p>
         </section>

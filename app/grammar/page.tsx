@@ -5,6 +5,8 @@ import { GRAMMAR_LESSONS as IT_LESSONS, GrammarLesson } from '@/lib/grammar-less
 import { GRAMMAR_LESSONS as ES_LESSONS } from '@/lib/es/grammar-lessons';
 import { GRAMMAR_TOPICS as IT_TOPICS, GRAMMAR_LEVELS, GrammarTopic } from '@/lib/grammar-exercises';
 import { ES_GRAMMAR_TOPICS } from '@/lib/es/grammar-exercises';
+import { FR_GRAMMAR_TOPICS } from '@/lib/fr/grammar-exercises';
+import { GRAMMAR_LESSONS as FR_LESSONS } from '@/lib/fr/grammar-lessons';
 import { getGrammarRecords, recordExercise } from '@/lib/storage';
 import { GrammarRecord } from '@/lib/types';
 import { useLearner } from '@/lib/use-profile';
@@ -14,8 +16,8 @@ import GrammarExercise from '@/components/exercises/GrammarExercise';
 type Tab = 'exercises' | 'lessons';
 
 // Grammar per language: cloze exercises (A1–B1) and the Grundlagen lessons.
-const LESSONS: Record<Lang, GrammarLesson[]> = { it: IT_LESSONS, es: ES_LESSONS };
-const TOPICS: Record<Lang, GrammarTopic[]> = { it: IT_TOPICS, es: ES_GRAMMAR_TOPICS };
+const LESSONS: Record<Lang, GrammarLesson[]> = { it: IT_LESSONS, es: ES_LESSONS, fr: FR_LESSONS };
+const TOPICS: Record<Lang, GrammarTopic[]> = { it: IT_TOPICS, es: ES_GRAMMAR_TOPICS, fr: FR_GRAMMAR_TOPICS };
 
 export default function GrammarPage() {
   const { profile, lang, ready } = useLearner();

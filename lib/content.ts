@@ -27,10 +27,12 @@ const loaders = {
   vocab: {
     it: () => import('./packs/it-vocab').then(m => m.default),
     es: () => import('./packs/es-vocab').then(m => m.default),
+    fr: () => import('./packs/fr-vocab').then(m => m.default),
   },
   verbs: {
     it: () => import('./packs/it-verbs').then(m => m.default),
     es: () => import('./packs/es-verbs').then(m => m.default),
+    fr: () => import('./packs/fr-verbs').then(m => m.default),
   },
 };
 
