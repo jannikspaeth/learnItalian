@@ -13,7 +13,15 @@ export type ItTenseId =
   | 'condizionale'
   | 'congiuntivo';
 
-export type EsTenseId = 'presente' | 'indefinido' | 'futuro';
+export type EsTenseId =
+  | 'presente'
+  | 'perfecto'
+  | 'indefinido'
+  | 'imperfecto'
+  | 'futuro'
+  | 'imperativo'
+  | 'condicional'
+  | 'subjuntivo';
 
 export interface TenseInfo<Id extends string = string> {
   id: Id;
@@ -33,8 +41,13 @@ export const IT_TENSES: TenseInfo<ItTenseId>[] = [
 
 export const ES_TENSES: TenseInfo<EsTenseId>[] = [
   { id: 'presente', label: 'Presente', level: 'A1' },
+  { id: 'perfecto', label: 'Pretérito perfecto', level: 'A2' },
   { id: 'indefinido', label: 'Pretérito indefinido', level: 'A2' },
+  { id: 'imperfecto', label: 'Pretérito imperfecto', level: 'A2' },
   { id: 'futuro', label: 'Futuro simple', level: 'A2' },
+  { id: 'imperativo', label: 'Imperativo', level: 'A2' },
+  { id: 'condicional', label: 'Condicional', level: 'B1' },
+  { id: 'subjuntivo', label: 'Subjuntivo presente', level: 'B1' },
 ];
 
 export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES };

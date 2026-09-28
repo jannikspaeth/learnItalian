@@ -7,10 +7,10 @@ import { LANGUAGES } from '@/lib/lang';
 import { useProfile } from '@/lib/use-profile';
 import { useStars } from '@/lib/use-stars';
 import { formatStars } from '@/lib/race';
-import { createProfile, getProfiles } from '@/lib/storage';
+import { createProfile, deleteProfile, getProfiles } from '@/lib/storage';
 
 export default function ProfilePage() {
-  const { setProfile } = useProfile();
+  const { profile: active, setProfile, clearProfile } = useProfile();
   const stars = useStars();
   const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>(() => mergeProfiles([]));
@@ -18,6 +18,11 @@ export default function ProfilePage() {
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  // Manage mode shows a delete button per profile; deleting needs a second confirm.
+  const [managing, setManaging] = useState(false);
+  const [confirming, setConfirming] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     let alive = true;
@@ -33,6 +38,21 @@ export default function ProfilePage() {
   function select(id: string) {
     setProfile(id);
     router.push('/sprache');
+  }
+
+  async function remove(id: string) {
+    if (deleting) return;
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      setProfiles(await deleteProfile(id));
+      if (active?.id === id) clearProfile();
+      setConfirming(null);
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Could not delete the profile.');
+    } finally {
+      setDeleting(false);
+    }
   }
 
   async function create(e: React.FormEvent) {
@@ -59,20 +79,68 @@ export default function ProfilePage() {
           <p className="text-sm text-gray-400 mt-1">Choose your profile to continue.</p>
         </div>
         <div className="space-y-3">
-          {profiles.map(p => (
-            <button
-              key={p.id}
-              onClick={() => select(p.id)}
-              className="w-full bg-white border-2 border-gray-100 hover:border-red-300 rounded-2xl p-5 text-left transition-colors shadow-sm hover:shadow-md"
-            >
-              <p className="font-bold text-gray-900 text-lg">{p.name + formatStars(stars[p.id] ?? 0)}</p>
-              <p className="text-sm text-gray-400 mt-0.5">
-                {LANGUAGES.filter(l => levelFor(p, l.id))
-                  .map(l => `${l.flag} ${levelFor(p, l.id)}`)
-                  .join(' · ') || 'New learner'}
-              </p>
-            </button>
-          ))}
+          {profiles.map(p => {
+            const info = (
+              <>
+                <p className="font-bold text-gray-900 text-lg">{p.name + formatStars(stars[p.id] ?? 0)}</p>
+                <p className="text-sm text-gray-400 mt-0.5">
+                  {LANGUAGES.filter(l => levelFor(p, l.id))
+                    .map(l => `${l.flag} ${levelFor(p, l.id)}`)
+                    .join(' · ') || 'New learner'}
+                </p>
+              </>
+            );
+            if (!managing) {
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => select(p.id)}
+                  className="w-full bg-white border-2 border-gray-100 hover:border-red-300 rounded-2xl p-5 text-left transition-colors shadow-sm hover:shadow-md"
+                >
+                  {info}
+                </button>
+              );
+            }
+            return (
+              <div key={p.id} className="bg-white border-2 border-gray-100 rounded-2xl p-5 shadow-sm space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">{info}</div>
+                  {confirming !== p.id && (
+                    <button
+                      onClick={() => { setConfirming(p.id); setDeleteError(''); }}
+                      className="shrink-0 text-sm font-medium px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100"
+                    >
+                      🗑 Delete
+                    </button>
+                  )}
+                </div>
+                {confirming === p.id && (
+                  <div className="rounded-xl bg-red-50 border border-red-100 p-3 space-y-2">
+                    <p className="text-sm text-red-800">
+                      Delete <strong>{p.name}</strong> and all progress in every language? This can&apos;t be undone.
+                    </p>
+                    {deleteError && <p className="text-sm text-red-600">{deleteError}</p>}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setConfirming(null)}
+                        disabled={deleting}
+                        className="flex-1 rounded-lg py-1.5 text-sm font-semibold text-gray-600 bg-white hover:bg-gray-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => remove(p.id)}
+                        disabled={deleting}
+                        className="flex-1 rounded-lg py-1.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50"
+                      >
+                        {deleting ? 'Deleting…' : 'Delete for good'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
 
           {adding ? (
             <form
@@ -122,6 +190,13 @@ export default function ProfilePage() {
             </button>
           )}
         </div>
+
+        <button
+          onClick={() => { setManaging(m => !m); setConfirming(null); setDeleteError(''); }}
+          className="block mx-auto text-xs text-gray-400 hover:text-gray-600"
+        >
+          {managing ? 'Done' : 'Manage profiles'}
+        </button>
       </div>
     </main>
   );

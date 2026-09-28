@@ -357,3 +357,16 @@ export async function setProfileLevel(id: string, lang: Lang, level: Level): Pro
   const { profiles } = (await res.json()) as { profiles: Profile[] };
   cacheProfiles(profiles);
 }
+
+// Permanently delete a profile and all its progress; refreshes the local cache.
+export async function deleteProfile(id: string): Promise<Profile[]> {
+  const res = await fetch('/api/profiles', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+  if (!res.ok) throw new Error('Could not delete the profile. Please try again.');
+  const { profiles } = (await res.json()) as { profiles: Profile[] };
+  cacheProfiles(profiles);
+  return profiles;
+}

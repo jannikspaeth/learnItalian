@@ -1339,25 +1339,222 @@ export const VERB_CATALOG: CatalogVerb[] = [
   { infinitive: 'esconderse', de: 'sich verstecken', presente: ['me escondo', 'te escondes', 'se esconde', 'nos escondemos', 'os escondéis', 'se esconden'], indefinido: ['me escondí', 'te escondiste', 'se escondió', 'nos escondimos', 'os escondisteis', 'se escondieron'], futuro: ['me esconderé', 'te esconderás', 'se esconderá', 'nos esconderemos', 'os esconderéis', 'se esconderán'] },
 ];
 
+// ─── Rule engine for the tenses the catalog doesn't spell out ────────────────────
+// imperfecto, pretérito perfecto, condicional, subjuntivo presente and imperativo
+// are derived from the infinitive plus the catalog's own presente/futuro forms
+// (so irregular stems come for free: tengo → tenga, tendré → tendría). Checked
+// verb by verb against an independent conjugator; every remaining difference was
+// an error on its side (it misses stem changes such as quiera/sintamos).
+
 type Six = [string, string, string, string, string, string];
+type Four = [string, string, string, string];
+
+const REFLEXIVE: Six = ['me', 'te', 'se', 'nos', 'os', 'se'];
+const HABER: Six = ['he', 'has', 'ha', 'hemos', 'habéis', 'han'];
+const SUBJ_PRONOUNS = ['que yo', 'que tú', 'que él / ella', 'que nosotros', 'que vosotros', 'que ellos / ellas'];
+const IMPV_PRONOUNS = ['(tú)', '(usted)', '(nosotros)', '(vosotros)'];
+
+const strip = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').normalize('NFC');
+
+interface Parts {
+  base: string;       // infinitive without -se
+  reflexive: boolean;
+  stem: string;       // infinitive stem (base minus -ar/-er/-ir)
+  conj: 'ar' | 'er' | 'ir';
+}
+
+function parts(v: CatalogVerb): Parts {
+  const reflexive = v.infinitive.endsWith('se');
+  const base = reflexive ? v.infinitive.slice(0, -2) : v.infinitive;
+  const end = strip(base.slice(-2));
+  return { base, reflexive, stem: base.slice(0, -2), conj: end === 'ar' ? 'ar' : end === 'er' ? 'er' : 'ir' };
+}
+
+// Catalog forms without the reflexive pronoun ("me levanto" → "levanto").
+function bare(forms: Six, reflexive: boolean): Six {
+  return (reflexive ? forms.map(f => f.replace(/^(me|te|se|nos|os) /, '')) : forms) as Six;
+}
+
+function withPronouns(forms: Six, p: Parts): Six {
+  return (p.reflexive ? forms.map((f, i) => `${REFLEXIVE[i]} ${f}`) : forms) as Six;
+}
+
+// Stem + ending with the -ar spelling changes before e: c→qu, g→gu, z→c, gu→gü.
+function arSpelling(stem: string): string {
+  if (stem.endsWith('gu')) return stem.slice(0, -2) + 'gü';
+  if (stem.endsWith('c')) return stem.slice(0, -1) + 'qu';
+  if (stem.endsWith('g')) return stem.slice(0, -1) + 'gu';
+  if (stem.endsWith('z')) return stem.slice(0, -1) + 'c';
+  return stem;
+}
+
+// Stem + ending with the -er/-ir spelling changes before a: c→z, g→j, gu→g, qu→c.
+function erSpelling(stem: string): string {
+  if (stem.endsWith('gu')) return stem.slice(0, -1);
+  if (stem.endsWith('qu')) return stem.slice(0, -2) + 'c';
+  if (stem.endsWith('c')) return stem.slice(0, -1) + 'z';
+  if (stem.endsWith('g')) return stem.slice(0, -1) + 'j';
+  return stem;
+}
+
+// ── imperfecto ──
+function imperfecto(p: Parts): Six {
+  if (p.base === 'ser') return ['era', 'eras', 'era', 'éramos', 'erais', 'eran'];
+  if (p.base === 'ir') return ['iba', 'ibas', 'iba', 'íbamos', 'ibais', 'iban'];
+  if (p.conj === 'ar') {
+    const s = p.stem;
+    return [s + 'aba', s + 'abas', s + 'aba', s + 'ábamos', s + 'abais', s + 'aban'];
+  }
+  // ver and its compounds keep the e: veía, preveía
+  const s = /^(pre|re)?ver$/.test(p.base) ? p.base.slice(0, -1) : p.stem;
+  return [s + 'ía', s + 'ías', s + 'ía', s + 'íamos', s + 'íais', s + 'ían'];
+}
+
+// ── participle (for the pretérito perfecto) ──
+const IRREGULAR_PP: [RegExp, string][] = [
+  [/^(.*)abrir$/, '$1abierto'],
+  [/^(.*)cubrir$/, '$1cubierto'],
+  [/^(.*)scribir$/, '$1scrito'],
+  [/^(des|re)?hacer$/, '$1hecho'],
+  [/^satisfacer$/, 'satisfecho'],
+  [/^(contra|pre)?decir$/, '$1dicho'],
+  [/^(.*)poner$/, '$1puesto'],
+  [/^(.*)morir$/, '$1muerto'],
+  [/^(.*)volver$/, '$1vuelto'],
+  [/^(re|di|ab)solver$/, '$1suelto'],
+  [/^(pre|re)?ver$/, '$1visto'],
+  [/^romper$/, 'roto'],
+  [/^imprimir$/, 'impreso / imprimido'],
+  [/^freír$/, 'frito / freído'],
+  [/^proveer$/, 'provisto / proveído'],
+];
+
+function participle(p: Parts): string {
+  for (const [re, out] of IRREGULAR_PP) if (re.test(p.base)) return p.base.replace(re, out);
+  if (p.conj === 'ar') return p.stem + 'ado';
+  // caer → caído, leer → leído, oír → oído (but construir → construido)
+  return /[aeo]$/.test(p.stem) ? p.stem + 'ído' : p.stem + 'ido';
+}
+
+function perfecto(p: Parts): Six {
+  const pp = participle(p);
+  return HABER.map(h => `${h} ${pp}`) as Six;
+}
+
+// ── condicional (futuro stem + ía) ──
+function condicional(v: CatalogVerb, p: Parts): Six {
+  const yo = bare(v.futuro!, p.reflexive)[0];
+  const s = yo.slice(0, -1); // tendré → tendr
+  return [s + 'ía', s + 'ías', s + 'ía', s + 'íamos', s + 'íais', s + 'ían'];
+}
+
+// ── subjuntivo presente ──
+const SUBJ_SPECIAL: Record<string, Six> = {
+  ser: ['sea', 'seas', 'sea', 'seamos', 'seáis', 'sean'],
+  ir: ['vaya', 'vayas', 'vaya', 'vayamos', 'vayáis', 'vayan'],
+  saber: ['sepa', 'sepas', 'sepa', 'sepamos', 'sepáis', 'sepan'],
+  haber: ['haya', 'hayas', 'haya', 'hayamos', 'hayáis', 'hayan'],
+  estar: ['esté', 'estés', 'esté', 'estemos', 'estéis', 'estén'],
+  dar: ['dé', 'des', 'dé', 'demos', 'deis', 'den'],
+  reír: ['ría', 'rías', 'ría', 'riamos', 'riáis', 'rían'],
+  sonreír: ['sonría', 'sonrías', 'sonría', 'sonriamos', 'sonriáis', 'sonrían'],
+  freír: ['fría', 'frías', 'fría', 'friamos', 'friáis', 'frían'],
+};
+
+function subjuntivo(v: CatalogVerb, p: Parts): Six {
+  if (SUBJ_SPECIAL[p.base]) return SUBJ_SPECIAL[p.base];
+  const yo = bare(v.presente, p.reflexive)[0];
+  const yoStem = yo.endsWith('o') ? yo.slice(0, -1) : p.stem;
+  // Nosotros/vosotros drop the boot-shaped stem change (quiera → queramos) and a
+  // written accent (envíe → enviemos); -ir verbs keep a weakened change
+  // (sienta → sintamos, duerma → durmamos). Irregular yo stems stay (tenga → tengamos).
+  const stems = [p.stem, p.conj === 'ar' ? arSpelling(p.stem) : erSpelling(p.stem)]; // torcer: torc/torz
+  const eToIe = [yoStem.replace('ie', 'e'), yoStem.replace('ie', 'i')].some(x => stems.includes(x));
+  const oToUe = [yoStem.replace('ue', 'o'), yoStem.replace('ue', 'u'), yoStem.replace('üe', 'o'), yoStem.replace(/^hue/, 'o')]
+    .some(x => stems.includes(x));
+  let usStem: string;
+  if (strip(yoStem) === p.stem || (p.conj !== 'ir' && (eToIe || oToUe))) {
+    usStem = p.conj === 'ar' ? p.stem : erSpelling(p.stem);
+  } else if (p.conj === 'ir' && eToIe) {
+    usStem = yoStem.replace('ie', 'i');
+  } else if (p.conj === 'ir' && oToUe) {
+    usStem = yoStem.replace('ue', 'u');
+  } else {
+    usStem = yoStem;
+  }
+  if (p.conj === 'ar') {
+    const a = arSpelling(yoStem);
+    const b = arSpelling(usStem);
+    return [a + 'e', a + 'es', a + 'e', b + 'emos', b + 'éis', a + 'en'];
+  }
+  return [yoStem + 'a', yoStem + 'as', yoStem + 'a', usStem + 'amos', usStem + 'áis', yoStem + 'an'];
+}
+
+// ── imperativo afirmativo: tú, usted, nosotros, vosotros ──
+const TU_IRREGULAR: [RegExp, string][] = [
+  [/^decir$/, 'di'], [/^ir$/, 've'], [/^ser$/, 'sé'], [/^salir$/, 'sal'],
+  [/^(des|re)?hacer$/, '$1haz'],
+  [/^poner$/, 'pon'], [/^(.+)poner$/, '$1pón'],
+  [/^tener$/, 'ten'], [/^(.+)tener$/, '$1tén'],
+  [/^venir$/, 'ven'], [/^(.+)venir$/, '$1vén'],
+];
+// Reflexives (levántate …) and verbs without a natural imperative are skipped.
+const NO_IMPERATIVE = new Set([
+  'haber', 'poder', 'soler',
+  'llover', 'nevar', 'gustar', 'doler', 'encantar', 'ocurrir', 'suceder', // impersonal
+]);
+
+function imperativo(v: CatalogVerb, p: Parts): Four | undefined {
+  if (p.reflexive || NO_IMPERATIVE.has(p.base)) return undefined;
+  const pres = v.presente;
+  let tu = pres[2];
+  for (const [re, out] of TU_IRREGULAR) if (re.test(p.base)) { tu = p.base.replace(re, out); break; }
+  const subj = subjuntivo(v, p);
+  const nosotros = p.base === 'ir' ? 'vamos' : subj[3];
+  const vosotros = p.base === 'ir' ? 'id' : p.base.slice(0, -1) + 'd'; // oíd, reíd
+  return [tu, subj[2], nosotros, vosotros];
+}
+
+// Every derived tense for a verb (exported for checks/tests).
+export function derivedForms(v: CatalogVerb) {
+  const p = parts(v);
+  return {
+    imperfecto: withPronouns(imperfecto(p), p),
+    perfecto: withPronouns(perfecto(p), p),
+    condicional: withPronouns(condicional(v, p), p),
+    subjuntivo: withPronouns(subjuntivo(v, p), p),
+    imperativo: imperativo(v, p),
+  };
+}
 
 const TENSE_NAMES: Record<EsTenseId, string> = {
   presente: 'Present (Presente)',
+  perfecto: 'Perfect (Pretérito perfecto)',
   indefinido: 'Preterite (Pretérito indefinido)',
+  imperfecto: 'Imperfect (Pretérito imperfecto)',
   futuro: 'Future (Futuro simple)',
+  imperativo: 'Imperative (Imperativo)',
+  condicional: 'Conditional (Condicional)',
+  subjuntivo: 'Subjunctive (Subjuntivo presente)',
 };
 
 function tenseSection(verb: CatalogVerb, t: EsTenseId) {
-  const forms: Six | undefined =
-    t === 'presente' ? verb.presente : t === 'indefinido' ? verb.indefinido : verb.futuro;
-  if (!forms) return null;
-  return {
-    tense: t,
-    tenseName_de: TENSE_NAMES[t],
-    pronouns: [...PRONOUNS],
-    answers: [...forms],
-    notes: t === 'presente' ? verb.notesPresente : t === 'indefinido' ? verb.notesIndefinido : undefined,
-  };
+  const six = (answers: Six | undefined, notes?: string, pronouns: readonly string[] = PRONOUNS) =>
+    answers ? { tense: t, tenseName_de: TENSE_NAMES[t], pronouns: [...pronouns], answers: [...answers], notes } : null;
+  const hasDerived = !!verb.futuro; // frequency verbs carry only the present
+  switch (t) {
+    case 'presente': return six(verb.presente, verb.notesPresente);
+    case 'indefinido': return six(verb.indefinido, verb.notesIndefinido);
+    case 'futuro': return six(verb.futuro);
+    case 'imperfecto': return six(derivedForms(verb).imperfecto);
+    case 'perfecto': return six(derivedForms(verb).perfecto);
+    case 'condicional': return hasDerived ? six(derivedForms(verb).condicional) : null;
+    case 'subjuntivo': return six(derivedForms(verb).subjuntivo, undefined, SUBJ_PRONOUNS);
+    case 'imperativo': {
+      const f = derivedForms(verb).imperativo;
+      return f ? { tense: t, tenseName_de: TENSE_NAMES[t], pronouns: [...IMPV_PRONOUNS], answers: [...f] } : null;
+    }
+  }
 }
 
 export function verbToExercise(verb: CatalogVerb, tenses: EsTenseId[]): ConjugationExercise {

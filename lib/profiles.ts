@@ -25,11 +25,17 @@ export const MAX_NAME_LENGTH = 30;
 // Level chosen overrides per profile id (set from the language picker).
 export type LevelOverrides = Record<string, Partial<Record<Lang, Level>>>;
 
-// Built-ins first, then custom profiles (skipping any id clash with a built-in),
-// with the stored level choices applied. Legacy `level` becomes `levels.it`.
-export function mergeProfiles(custom: Profile[], overrides: LevelOverrides = {}): Profile[] {
+// Built-ins first (minus deleted ones), then custom profiles (skipping any id clash
+// with a built-in), with the stored level choices applied. Legacy `level` becomes
+// `levels.it`.
+export function mergeProfiles(
+  custom: Profile[],
+  overrides: LevelOverrides = {},
+  deleted: string[] = [],
+): Profile[] {
   const ids = new Set(PROFILES.map(p => p.id));
-  return [...PROFILES, ...custom.filter(p => !ids.has(p.id))].map(p => {
+  const builtIns = PROFILES.filter(p => !deleted.includes(p.id));
+  return [...builtIns, ...custom.filter(p => !ids.has(p.id))].map(p => {
     const n = normalizeProfile(p);
     return { ...n, levels: { ...n.levels, ...overrides[p.id] } };
   });
@@ -39,6 +45,10 @@ export function mergeProfiles(custom: Profile[], overrides: LevelOverrides = {})
 function normalizeProfile(p: Profile): Profile {
   const { level, ...rest } = p;
   return { ...rest, levels: { ...(level ? { it: level } : {}), ...p.levels } };
+}
+
+export function isBuiltInProfile(id: string): boolean {
+  return PROFILES.some(p => p.id === id);
 }
 
 export function levelFor(p: Profile | null, lang: Lang): Level | undefined {

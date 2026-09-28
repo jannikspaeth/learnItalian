@@ -87,8 +87,9 @@ export default function HelpPage() {
             Your accuracy is tracked per verb and per tense. Verbs with recent mistakes are shown in the <strong>Errors</strong> tab.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Choose which tenses to practise at the top of the page – all tenses up to B1: presente, passato prossimo,
-            imperfetto, futuro, imperativo, condizionale and congiuntivo (each chip shows its level). Beginner profiles
+            Choose which tenses to practise at the top of the page – all tenses up to B1 (each chip shows its level).
+            Italian: presente, passato prossimo, imperfetto, futuro, imperativo, condizionale, congiuntivo. Spanish:
+            presente, perfecto, indefinido, imperfecto, futuro, imperativo, condicional, subjuntivo. Beginner profiles
             start with the present tense only. Accents don&apos;t matter when checking, and for verbs with <em>essere</em>
             both endings count (e.g. <em>sono andato/a</em>).
           </p>
@@ -136,8 +137,8 @@ export default function HelpPage() {
             or your level.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Spanish currently has vocabulary, sentences, verbs (presente, indefinido, futuro) and grammar
-            lessons; the grammar exercises and word topics are Italian-only for now.
+            Both languages have the full set: vocabulary with topics, sentences, verbs in every tense up to B1
+            and grammar exercises plus lessons.
           </p>
         </section>
       </div>

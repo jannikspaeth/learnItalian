@@ -125,7 +125,7 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
             <div className="space-y-1">
               {topic.examples.map((ex, i) => (
                 <p key={i} className="text-sm">
-                  <span className="font-semibold text-gray-900">{ex.it}</span>
+                  <span className="font-semibold text-gray-900">{ex.target}</span>
                   <span className="text-gray-400"> → </span>
                   <span className="text-gray-600">{ex.de}</span>
                 </p>

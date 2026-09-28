@@ -29,7 +29,7 @@ export interface GrammarTopic {
   lessonId?: string;
   instruction: string;
   explanation: string;
-  examples: { it: string; de: string }[];
+  examples: { target: string; de: string }[];
   items: GrammarItem[];
 }
 
@@ -58,9 +58,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Männlich: il (normal), lo (vor s + Konsonant, z, gn, ps), l\' (vor Vokal). Weiblich: la, l\' (vor Vokal). ' +
       'Mehrzahl: il → i, lo und l\' (männlich) → gli, la und l\' (weiblich) → le.',
     examples: [
-      { it: "il libro · lo zaino · l'amico", de: "männlich: das Buch, der Rucksack, der Freund" },
-      { it: "la casa · l'isola", de: "weiblich: das Haus, die Insel" },
-      { it: "i libri · gli zaini · le case", de: "Mehrzahl" },
+      { target: "il libro · lo zaino · l'amico", de: "männlich: das Buch, der Rucksack, der Freund" },
+      { target: "la casa · l'isola", de: "weiblich: das Haus, die Insel" },
+      { target: "i libri · gli zaini · le case", de: "Mehrzahl" },
     ],
     items: [
       q('', 'il', ' libro', DEF, 'männlich, normaler Anfang → il'),
@@ -93,8 +93,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Männlich: un (normal und vor Vokal!), uno (vor s + Konsonant, z, gn, ps). Weiblich: una, un\' (vor Vokal). ' +
       'Achtung: Nur weiblich bekommt einen Apostroph – un amico, aber un\'amica.',
     examples: [
-      { it: "un libro · uno zaino · un amico", de: "ein Buch, ein Rucksack, ein Freund" },
-      { it: "una casa · un'amica", de: "ein Haus, eine Freundin" },
+      { target: "un libro · uno zaino · un amico", de: "ein Buch, ein Rucksack, ein Freund" },
+      { target: "una casa · un'amica", de: "ein Haus, eine Freundin" },
     ],
     items: [
       q('', 'un', ' libro', INDEF, 'männlich → un'),
@@ -127,10 +127,10 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'bleiben gleich. Einige Wörter sind unregelmäßig: la mano → le mani, l\'uomo → gli uomini, ' +
       'l\'uovo → le uova, il braccio → le braccia.',
     examples: [
-      { it: "il libro → i libri", de: "-o → -i" },
-      { it: "la casa → le case", de: "-a → -e" },
-      { it: "il fiore → i fiori", de: "-e → -i" },
-      { it: "la città → le città", de: "betonte Endung bleibt" },
+      { target: "il libro → i libri", de: "-o → -i" },
+      { target: "la casa → le case", de: "-a → -e" },
+      { target: "il fiore → i fiori", de: "-e → -i" },
+      { target: "la città → le città", de: "betonte Endung bleibt" },
     ],
     items: [
       q('il libro → i ', 'libri', '', ['libri', 'libre', 'libro', 'libres'], '-o → -i'),
@@ -141,7 +141,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       q("l'amica → le ", 'amiche', '', ['amiche', 'amice', 'amici', 'amica'], '-ca → -che (h erhält den k-Laut)'),
       q('il ragazzo → i ', 'ragazzi', '', ['ragazzi', 'ragazze', 'ragazzo', 'ragazzos'], '-o → -i'),
       q('la città → le ', 'città', '', ['città', 'cittè', 'cittì', 'cittàs'], 'betonte Endung bleibt gleich'),
-      q('il caffè → i ', 'caffè', '', ['caffè', 'caffi', 'caffès', 'caffe'], 'betonte Endung bleibt gleich'),
+      q('il caffè → i ', 'caffè', '', ['caffè', 'caffi', 'caffès', 'caffei'], 'betonte Endung bleibt gleich'),
       q('lo studente → gli ', 'studenti', '', ['studenti', 'studente', 'studenta', 'studentes'], '-e → -i'),
       q('la mano → le ', 'mani', '', ['mani', 'mane', 'mano', 'manos'], 'unregelmäßig: la mano → le mani'),
       q("l'uomo → gli ", 'uomini', '', ['uomini', 'uomi', 'uome', 'uomo'], 'unregelmäßig: l\'uomo → gli uomini'),
@@ -164,9 +164,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Anders als im Deutschen sagt man „haben“ bei Alter (ho vent\'anni), Hunger, Durst, Angst, Kälte, Recht: ' +
       'ho fame, ho sete, ho paura, ho freddo, hai ragione.',
     examples: [
-      { it: "Sono stanco.", de: "Ich bin müde." },
-      { it: "Ho fame.", de: "Ich habe Hunger." },
-      { it: "Ho vent'anni.", de: "Ich bin zwanzig." },
+      { target: "Sono stanco.", de: "Ich bin müde." },
+      { target: "Ho fame.", de: "Ich habe Hunger." },
+      { target: "Ho vent'anni.", de: "Ich bin zwanzig." },
     ],
     items: [
       q('Io ', 'sono', ' stanco.', ['sono', 'ho', 'è', 'hai'], 'Zustand → essere, io → sono'),
@@ -199,8 +199,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Viele -ire-Verben schieben -isc- ein (capisco, finisci, preferisce, capiscono – nicht bei noi/voi). ' +
       'Bei -care/-gare kommt vor i ein h: cerchi, paghi.',
     examples: [
-      { it: "parlo · prendo · dormo · capisco", de: "ich spreche, nehme, schlafe, verstehe" },
-      { it: "parliamo · prendete · capiscono", de: "wir sprechen, ihr nehmt, sie verstehen" },
+      { target: "parlo · prendo · dormo · capisco", de: "ich spreche, nehme, schlafe, verstehe" },
+      { target: "parliamo · prendete · capiscono", de: "wir sprechen, ihr nehmt, sie verstehen" },
     ],
     items: [
       q('Io ', 'parlo', ' italiano. (parlare)', ['parlo', 'parla', 'parli', 'parlare'], '-are, io → -o'),
@@ -232,8 +232,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'in + il = nel (in → ne-), su + lo = sullo, a + gli = agli, di + i = dei, a + le = alle. ' +
       'Die Artikel-Regeln (il/lo/la/l\'/i/gli/le) gelten wie immer.',
     examples: [
-      { it: "al mare · nella borsa · dal medico", de: "ans Meer, in der Tasche, zum Arzt" },
-      { it: "sul tavolo · il libro del professore", de: "auf dem Tisch, das Buch des Lehrers" },
+      { target: "al mare · nella borsa · dal medico", de: "ans Meer, in der Tasche, zum Arzt" },
+      { target: "sul tavolo · il libro del professore", de: "auf dem Tisch, das Buch des Lehrers" },
     ],
     items: [
       q('Il libro è ', 'sul', ' tavolo. (su + il)', ['sul', 'sullo', 'sulla', 'nel'], 'su + il = sul'),
@@ -266,8 +266,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'le mie case. Normalerweise steht der Artikel davor. Ausnahme: Familienmitglieder im Singular ohne Artikel ' +
       '(mia madre, tuo fratello) – aber in der Mehrzahl mit Artikel (i miei genitori). „loro“ hat immer einen Artikel.',
     examples: [
-      { it: "il mio libro · la mia casa", de: "mein Buch, mein Haus" },
-      { it: "mia madre · i miei genitori", de: "meine Mutter, meine Eltern" },
+      { target: "il mio libro · la mia casa", de: "mein Buch, mein Haus" },
+      { target: "mia madre · i miei genitori", de: "meine Mutter, meine Eltern" },
     ],
     items: [
       q('Questa è ', 'la mia', ' macchina. (mein)', ['la mia', 'il mio', 'mia', 'le mie'], 'la macchina ist weiblich → la mia'),
@@ -299,8 +299,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'quanto / quanta / quanti / quante = wie viel(e) (richtet sich nach dem Nomen) · quale = welcher. ' +
       'Vor è wird quale zu qual – ohne Apostroph: Qual è …?',
     examples: [
-      { it: "Come stai? Dove abiti?", de: "Wie geht es dir? Wo wohnst du?" },
-      { it: "Qual è il tuo nome?", de: "Wie ist dein Name?" },
+      { target: "Come stai? Dove abiti?", de: "Wie geht es dir? Wo wohnst du?" },
+      { target: "Qual è il tuo nome?", de: "Wie ist dein Name?" },
     ],
     items: [
       q('', 'Come', ' ti chiami?', ['Come', 'Dove', 'Chi', 'Quando'], 'wie heißt du → come'),
@@ -332,9 +332,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'non bleibt trotzdem davor („doppelte Verneinung“): non … mai (nie), non … niente/nulla (nichts), ' +
       'non … nessuno (niemand), non … più (nicht mehr), non … ancora (noch nicht). „nein“ als Antwort heißt no.',
     examples: [
-      { it: "Non parlo tedesco.", de: "Ich spreche kein Deutsch." },
-      { it: "Non vado mai al cinema.", de: "Ich gehe nie ins Kino." },
-      { it: "Non c'è nessuno.", de: "Es ist niemand da." },
+      { target: "Non parlo tedesco.", de: "Ich spreche kein Deutsch." },
+      { target: "Non vado mai al cinema.", de: "Ich gehe nie ins Kino." },
+      { target: "Non c'è nessuno.", de: "Es ist niemand da." },
     ],
     items: [
       q('Io ', 'non', ' parlo tedesco.', ['non', 'no', 'niente', 'mai'], 'nicht vor dem Verb → non'),
@@ -368,9 +368,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'ein h (stanchi, bianche). Farben wie blu, rosa, viola bleiben gleich. bello vor dem Nomen verändert sich wie ' +
       'der Artikel: un bel libro, un bell\'albero, i bei fiori.',
     examples: [
-      { it: 'una macchina rossa · i libri nuovi', de: 'ein rotes Auto, die neuen Bücher' },
-      { it: 'una casa grande · due case grandi', de: 'ein großes Haus, zwei große Häuser' },
-      { it: 'un bel libro · una bella giornata', de: 'ein schönes Buch, ein schöner Tag' },
+      { target: 'una macchina rossa · i libri nuovi', de: 'ein rotes Auto, die neuen Bücher' },
+      { target: 'una casa grande · due case grandi', de: 'ein großes Haus, zwei große Häuser' },
+      { target: 'un bel libro · una bella giornata', de: 'ein schönes Buch, ein schöner Tag' },
     ],
     items: [
       q('una macchina ', 'rossa', ' (rosso)', ['rossa', 'rosso', 'rosse', 'rossi'], 'weiblich Einzahl → -a'),
@@ -401,9 +401,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       "c'è (es gibt / es ist da) steht mit Einzahl, ci sono mit Mehrzahl. Verneinung: non c'è / non ci sono. " +
       "Frage einfach mit Satzmelodie: C'è un bar qui vicino?",
     examples: [
-      { it: "C'è un bar qui vicino?", de: 'Gibt es hier in der Nähe eine Bar?' },
-      { it: 'Ci sono molti turisti.', de: 'Es gibt viele Touristen.' },
-      { it: "Non c'è pane.", de: 'Es gibt kein Brot.' },
+      { target: "C'è un bar qui vicino?", de: 'Gibt es hier in der Nähe eine Bar?' },
+      { target: 'Ci sono molti turisti.', de: 'Es gibt viele Touristen.' },
+      { target: "Non c'è pane.", de: 'Es gibt kein Brot.' },
     ],
     items: [
       q('', "C'è", ' un bar qui vicino?', ["C'è", 'Ci sono', 'È', 'Sono'], 'un bar: Einzahl → c\'è'),
@@ -433,9 +433,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Mehrzahl → piacciono. Wem es gefällt, sagt das Pronomen: mi (mir), ti (dir), gli (ihm), le (ihr), Le (Ihnen), ' +
       'ci (uns), vi (euch), gli (ihnen). Betont: a me, a te, a Marco. Im passato prossimo mit essere: mi è piaciuto/a.',
     examples: [
-      { it: 'Mi piace la pizza.', de: 'Ich mag Pizza.' },
-      { it: 'Ti piacciono gli spaghetti?', de: 'Magst du Spaghetti?' },
-      { it: 'A Marco piace ballare. → Gli piace ballare.', de: 'Marco tanzt gern. → Er tanzt gern.' },
+      { target: 'Mi piace la pizza.', de: 'Ich mag Pizza.' },
+      { target: 'Ti piacciono gli spaghetti?', de: 'Magst du Spaghetti?' },
+      { target: 'A Marco piace ballare. → Gli piace ballare.', de: 'Marco tanzt gern. → Er tanzt gern.' },
     ],
     items: [
       q('Mi ', 'piace', ' la pizza.', ['piace', 'piacciono', 'piaccio', 'piaci'], 'la pizza: Einzahl → piace'),
@@ -466,9 +466,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'ci alziamo, vi alzate, si alzano. Im passato prossimo stehen sie immer mit essere, und das Partizip passt sich ' +
       'an: mi sono alzato/alzata, ci siamo divertiti.',
     examples: [
-      { it: 'Mi alzo alle sette.', de: 'Ich stehe um sieben auf.' },
-      { it: 'Come ti chiami?', de: 'Wie heißt du?' },
-      { it: 'Ci siamo divertiti.', de: 'Wir haben uns amüsiert.' },
+      { target: 'Mi alzo alle sette.', de: 'Ich stehe um sieben auf.' },
+      { target: 'Come ti chiami?', de: 'Wie heißt du?' },
+      { target: 'Ci siamo divertiti.', de: 'Wir haben uns amüsiert.' },
     ],
     items: [
       q('Io ', 'mi', ' alzo alle sette.', ['mi', 'ti', 'si', 'ci'], 'io → mi'),
@@ -501,9 +501,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'devi, deve, dobbiamo …), sapere (so, sai, sa …), uscire (esco, esci, esce, usciamo, uscite, escono), dire (dico, ' +
       'dici, dice, diciamo, dite, dicono), stare (sto, stai, sta …), bere (bevo, bevi …).',
     examples: [
-      { it: 'Vado al mare.', de: 'Ich fahre ans Meer.' },
-      { it: 'Vuoi un caffè?', de: 'Willst du einen Kaffee?' },
-      { it: 'Non so.', de: 'Ich weiß nicht.' },
+      { target: 'Vado al mare.', de: 'Ich fahre ans Meer.' },
+      { target: 'Vuoi un caffè?', de: 'Willst du einen Kaffee?' },
+      { target: 'Non so.', de: 'Ich weiß nicht.' },
     ],
     items: [
       q('Io ', 'vado', ' al cinema stasera. (andare)', ['vado', 'ando', 'vai', 'va'], 'andare, io → vado'),
@@ -535,9 +535,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'sich wie der bestimmte Artikel: quel libro (il), quello studente (lo), quell\'amico (l\'), quella casa (la), ' +
       'quei libri (i), quegli studenti (gli), quelle case (le).',
     examples: [
-      { it: 'Questo libro è mio.', de: 'Dieses Buch gehört mir.' },
-      { it: 'quel ragazzo · quello zaino · quell\'albero', de: 'jener Junge, jener Rucksack, jener Baum' },
-      { it: 'quei fiori · quegli amici · quelle case', de: 'jene Blumen, Freunde, Häuser' },
+      { target: 'Questo libro è mio.', de: 'Dieses Buch gehört mir.' },
+      { target: 'quel ragazzo · quello zaino · quell\'albero', de: 'jener Junge, jener Rucksack, jener Baum' },
+      { target: 'quei fiori · quegli amici · quelle case', de: 'jene Blumen, Freunde, Häuser' },
     ],
     items: [
       q('', 'Questo', ' libro è mio. (dieses)', ['Questo', 'Questa', 'Questi', 'Queste'], 'il libro → questo'),
@@ -570,9 +570,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'reflexiven Verben nehmen essere – dann richtet sich das Partizip nach dem Subjekt: sono andato/andata, ' +
       'siamo andati/andate. Unregelmäßige Partizipien: fatto, scritto, preso, letto, visto, detto, messo.',
     examples: [
-      { it: "Ho mangiato una pizza.", de: "Ich habe eine Pizza gegessen." },
-      { it: "Giulia è andata al mare.", de: "Giulia ist ans Meer gefahren." },
-      { it: "Ci siamo divertiti.", de: "Wir haben uns amüsiert." },
+      { target: "Ho mangiato una pizza.", de: "Ich habe eine Pizza gegessen." },
+      { target: "Giulia è andata al mare.", de: "Giulia ist ans Meer gefahren." },
+      { target: "Ci siamo divertiti.", de: "Wir haben uns amüsiert." },
     ],
     items: [
       q('Ieri Giulia ', 'è', ' andata al cinema.', ['è', 'ha', 'sono', 'hai'], 'andare → essere'),
@@ -605,9 +605,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       '(vengo da Roma). di = Herkunft/Besitz (sono di Berlino, il libro di Eco). per = für / Dauer (per tre ore). ' +
       'tra/fra = in (Zukunft: tra un\'ora) oder zwischen.',
     examples: [
-      { it: 'Abito a Milano, in Italia.', de: 'Ich wohne in Mailand, in Italien.' },
-      { it: 'Vado da Marco in bici.', de: 'Ich fahre mit dem Rad zu Marco.' },
-      { it: 'Studio italiano da due anni.', de: 'Ich lerne seit zwei Jahren Italienisch.' },
+      { target: 'Abito a Milano, in Italia.', de: 'Ich wohne in Mailand, in Italien.' },
+      { target: 'Vado da Marco in bici.', de: 'Ich fahre mit dem Rad zu Marco.' },
+      { target: 'Studio italiano da due anni.', de: 'Ich lerne seit zwei Jahren Italienisch.' },
     ],
     items: [
       q('Abito ', 'a', ' Milano.', ['a', 'in', 'da', 'di'], 'Stadt → a'),
@@ -639,8 +639,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Fast alle Verben sind regelmäßig. Ausnahmen: essere (ero, eri, era, eravamo, eravate, erano), fare (facevo), ' +
       'dire (dicevo), bere (bevevo). Gebrauch: Gewohnheiten, Beschreibungen und Zustände in der Vergangenheit.',
     examples: [
-      { it: 'Da bambino giocavo a calcio.', de: 'Als Kind habe ich Fußball gespielt.' },
-      { it: 'Era tardi e pioveva.', de: 'Es war spät und es regnete.' },
+      { target: 'Da bambino giocavo a calcio.', de: 'Als Kind habe ich Fußball gespielt.' },
+      { target: 'Era tardi e pioveva.', de: 'Es war spät und es regnete.' },
     ],
     items: [
       q('Da bambino ', 'giocavo', ' a calcio. (giocare, io)', ['giocavo', 'giocava', 'giocai', 'giocevo'], '-are, io → -avo'),
@@ -673,8 +673,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Da bambino andavo al mare. Era tardi. Mentre leggevo, è suonato il telefono. Signalwörter: ieri, una volta, ' +
       'improvvisamente → passato prossimo; sempre, ogni giorno, mentre, da bambino → imperfetto.',
     examples: [
-      { it: 'Mentre cucinavo, è arrivata Anna.', de: 'Während ich kochte, kam Anna.' },
-      { it: 'Ogni estate andavamo al mare, ma nel 2020 siamo rimasti a casa.', de: 'Jeden Sommer fuhren wir ans Meer, aber 2020 blieben wir zu Hause.' },
+      { target: 'Mentre cucinavo, è arrivata Anna.', de: 'Während ich kochte, kam Anna.' },
+      { target: 'Ogni estate andavamo al mare, ma nel 2020 siamo rimasti a casa.', de: 'Jeden Sommer fuhren wir ans Meer, aber 2020 blieben wir zu Hause.' },
     ],
     items: [
       q('Da bambino ', 'andavo', ' ogni estate in Sicilia. (andare, io)', ['andavo', 'sono andato'], 'Gewohnheit → imperfetto'),
@@ -707,8 +707,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Unregelmäßig: sarò, avrò, andrò, farò, verrò, vorrò, potrò, dovrò, saprò, vedrò, vivrò, berrò, rimarrò. ' +
       'Das Futur drückt auch Vermutungen aus: Saranno le otto (Es wird wohl acht sein).',
     examples: [
-      { it: 'Domani andrò al mare.', de: 'Morgen werde ich ans Meer fahren.' },
-      { it: 'Che ore sono? – Saranno le dieci.', de: 'Wie spät ist es? – Es wird wohl zehn sein.' },
+      { target: 'Domani andrò al mare.', de: 'Morgen werde ich ans Meer fahren.' },
+      { target: 'Che ore sono? – Saranno le dieci.', de: 'Wie spät ist es? – Es wird wohl zehn sein.' },
     ],
     items: [
       q('Domani ', 'andrò', ' al mare. (andare, io)', ['andrò', 'anderò', 'andarò', 'andrei'], 'andare → andr-'),
@@ -741,9 +741,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'angehängt (Voglio comprarlo). lo/la vor h oder Vokal → l\' (L\'ho visto). Im passato prossimo passt sich das ' +
       'Partizip an lo/la/li/le an: La torta? L\'ho fatta. Le foto? Le ho viste.',
     examples: [
-      { it: 'Il giornale? Lo compro ogni giorno.', de: 'Die Zeitung? Ich kaufe sie jeden Tag.' },
-      { it: 'Le chiavi? Non le trovo.', de: 'Die Schlüssel? Ich finde sie nicht.' },
-      { it: 'La pizza? L\'ho mangiata.', de: 'Die Pizza? Ich habe sie gegessen.' },
+      { target: 'Il giornale? Lo compro ogni giorno.', de: 'Die Zeitung? Ich kaufe sie jeden Tag.' },
+      { target: 'Le chiavi? Non le trovo.', de: 'Die Schlüssel? Ich finde sie nicht.' },
+      { target: 'La pizza? L\'ho mangiata.', de: 'Die Pizza? Ich habe sie gegessen.' },
     ],
     items: [
       q('Compri il giornale? Sì, ', 'lo', ' compro.', ['lo', 'la', 'li', 'le'], 'il giornale (männlich) → lo'),
@@ -775,9 +775,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'mit a + Person: dare, dire, scrivere, telefonare, regalare, rispondere, chiedere, piacere, servire. ' +
       'Telefono a Marco → Gli telefono. Beim Infinitiv angehängt: Devo telefonargli.',
     examples: [
-      { it: 'Telefono a Marco. → Gli telefono.', de: 'Ich rufe Marco an. → Ich rufe ihn an.' },
-      { it: 'Scrivo a Giulia. → Le scrivo.', de: 'Ich schreibe Giulia. → Ich schreibe ihr.' },
-      { it: 'Mi dai una mano?', de: 'Hilfst du mir?' },
+      { target: 'Telefono a Marco. → Gli telefono.', de: 'Ich rufe Marco an. → Ich rufe ihn an.' },
+      { target: 'Scrivo a Giulia. → Le scrivo.', de: 'Ich schreibe Giulia. → Ich schreibe ihr.' },
+      { target: 'Mi dai una mano?', de: 'Hilfst du mir?' },
     ],
     items: [
       q('Telefono a Marco. → ', 'Gli', ' telefono.', ['Gli', 'Le', 'Lo', 'La'], 'ihm → gli'),
@@ -810,9 +810,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Superlativ: il più alto (della classe), absolut mit -issimo (bellissimo). Unregelmäßig: buono → migliore, ' +
       'cattivo → peggiore, bene → meglio, male → peggio.',
     examples: [
-      { it: 'Roma è più grande di Firenze.', de: 'Rom ist größer als Florenz.' },
-      { it: 'Questo vino è migliore.', de: 'Dieser Wein ist besser.' },
-      { it: 'È la città più bella d\'Italia.', de: 'Es ist die schönste Stadt Italiens.' },
+      { target: 'Roma è più grande di Firenze.', de: 'Rom ist größer als Florenz.' },
+      { target: 'Questo vino è migliore.', de: 'Dieser Wein ist besser.' },
+      { target: 'È la città più bella d\'Italia.', de: 'Es ist die schönste Stadt Italiens.' },
     ],
     items: [
       q('Marco è più alto ', 'di', ' Luca.', ['di', 'che', 'come', 'del'], 'vor Namen → di'),
@@ -845,9 +845,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Kurzformen: va\', fa\', da\', sta\', di\'; essere → sii, avere → abbi. Pronomen hängen an tu/noi/voi an ' +
       '(Dimmi! Alzati!), bei Lei stehen sie davor (Si sieda!).',
     examples: [
-      { it: 'Parla piano! · Non parlare!', de: 'Sprich leise! · Sprich nicht!' },
-      { it: 'Signora, entri pure!', de: 'Kommen Sie ruhig herein!' },
-      { it: 'Alzati! · Si sieda!', de: 'Steh auf! · Setzen Sie sich!' },
+      { target: 'Parla piano! · Non parlare!', de: 'Sprich leise! · Sprich nicht!' },
+      { target: 'Signora, entri pure!', de: 'Kommen Sie ruhig herein!' },
+      { target: 'Alzati! · Si sieda!', de: 'Steh auf! · Setzen Sie sich!' },
     ],
     items: [
       q('', 'Parla', ' piano, per favore! (parlare, tu)', ['Parla', 'Parli', 'Parlate', 'Parlare'], '-are, tu → -a'),
@@ -879,8 +879,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       '-ere/-ire → -endo (leggendo, dormendo). Unregelmäßig: fare → facendo, dire → dicendo, bere → bevendo. ' +
       'In der Vergangenheit mit dem imperfetto von stare: Stavo dormendo, quando hai chiamato.',
     examples: [
-      { it: 'Sto preparando la cena.', de: 'Ich bereite gerade das Abendessen zu.' },
-      { it: 'Cosa stai facendo?', de: 'Was machst du gerade?' },
+      { target: 'Sto preparando la cena.', de: 'Ich bereite gerade das Abendessen zu.' },
+      { target: 'Cosa stai facendo?', de: 'Was machst du gerade?' },
     ],
     items: [
       q('Sto ', 'preparando', ' la cena. (preparare)', ['preparando', 'preparendo', 'preparato', 'preparare'], '-are → -ando'),
@@ -913,9 +913,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'sarei, avrei, andrei, farei, verrei, vorrei, potrei, dovrei, saprei. Gebrauch: höfliche Bitte (Vorrei un caffè), ' +
       'Wunsch (Mi piacerebbe …), Ratschlag (Dovresti dormire di più), Vermutung (Secondo lui sarebbe tardi).',
     examples: [
-      { it: 'Vorrei un caffè, per favore.', de: 'Ich hätte gern einen Kaffee, bitte.' },
-      { it: 'Al tuo posto, parlerei con lui.', de: 'An deiner Stelle würde ich mit ihm reden.' },
-      { it: 'Mi piacerebbe vivere al mare.', de: 'Ich würde gern am Meer leben.' },
+      { target: 'Vorrei un caffè, per favore.', de: 'Ich hätte gern einen Kaffee, bitte.' },
+      { target: 'Al tuo posto, parlerei con lui.', de: 'An deiner Stelle würde ich mit ihm reden.' },
+      { target: 'Mi piacerebbe vivere al mare.', de: 'Ich würde gern am Meer leben.' },
     ],
     items: [
       q('', 'Vorrei', ' un caffè, per favore. (volere, io)', ['Vorrei', 'Voglio', 'Vorrò', 'Volerei'], 'volere → vorr- + ei'),
@@ -948,9 +948,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'prima che, affinché. Formen: -are → -i (parli, parliamo, parliate, parlino), -ere/-ire → -a (prenda, dorma, ' +
       'finisca). Unregelmäßig: sia, abbia, vada, faccia, venga, possa, voglia, debba, sappia, dia, stia, dica, esca.',
     examples: [
-      { it: 'Penso che sia vero.', de: 'Ich glaube, dass es wahr ist.' },
-      { it: 'Voglio che tu venga.', de: 'Ich will, dass du kommst.' },
-      { it: 'Benché piova, esco.', de: 'Obwohl es regnet, gehe ich raus.' },
+      { target: 'Penso che sia vero.', de: 'Ich glaube, dass es wahr ist.' },
+      { target: 'Voglio che tu venga.', de: 'Ich will, dass du kommst.' },
+      { target: 'Benché piova, esco.', de: 'Obwohl es regnet, gehe ich raus.' },
     ],
     items: [
       q('Penso che Marco ', 'sia', ' a casa. (essere)', ['sia', 'è', 'fosse', 'sarà'], 'penso che → congiuntivo; essere → sia'),
@@ -982,8 +982,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'se. Congiuntivo bei Meinung, Wunsch, Hoffnung, Gefühl oder Unsicherheit: penso/credo che, spero che, ' +
       'voglio che, non sono sicuro che, è possibile che, mi dispiace che, benché, prima che.',
     examples: [
-      { it: 'So che vive a Roma. · Penso che viva a Roma.', de: 'Ich weiß, dass … · Ich glaube, dass er in Rom lebt.' },
-      { it: 'Esco perché fa bel tempo. · Esco benché piova.', de: 'Ich gehe raus, weil … · obwohl es regnet.' },
+      { target: 'So che vive a Roma. · Penso che viva a Roma.', de: 'Ich weiß, dass … · Ich glaube, dass er in Rom lebt.' },
+      { target: 'Esco perché fa bel tempo. · Esco benché piova.', de: 'Ich gehe raus, weil … · obwohl es regnet.' },
     ],
     items: [
       q('So che Luca ', 'vive', ' in Germania. (vivere)', ['vive', 'viva'], 'so che (Gewissheit) → Indikativ'),
@@ -1015,8 +1015,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'ce li, ve ne. gli, le und Le werden zu glie- und verschmelzen: glielo, gliela, glieli, gliele, gliene. ' +
       'Beim Infinitiv angehängt: Voglio dartelo, Puoi portarmele?',
     examples: [
-      { it: 'Mi dai il libro? – Sì, te lo do.', de: 'Gibst du mir das Buch? – Ja, ich gebe es dir.' },
-      { it: 'Dai il regalo a Marco? – Sì, glielo do.', de: 'Gibst du Marco das Geschenk? – Ja, ich gebe es ihm.' },
+      { target: 'Mi dai il libro? – Sì, te lo do.', de: 'Gibst du mir das Buch? – Ja, ich gebe es dir.' },
+      { target: 'Dai il regalo a Marco? – Sì, glielo do.', de: 'Gibst du Marco das Geschenk? – Ja, ich gebe es ihm.' },
     ],
     items: [
       q('Mi dai il libro? Sì, ', 'te lo', ' do.', ['te lo', 'ti lo', 'me lo', 'glielo'], 'ti + lo → te lo'),
@@ -1049,9 +1049,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'problema → Ne parliamo). Im passato prossimo passt sich das Partizip nach ne an die Menge an: Ne ho mangiate due ' +
       '(mele). Feste Wendungen: Non ne posso più, Ci vuole pazienza, Che ne pensi?',
     examples: [
-      { it: 'Vai a Milano? – Sì, ci vado domani.', de: 'Fährst du nach Mailand? – Ja, ich fahre morgen hin.' },
-      { it: 'Quanti figli hai? – Ne ho due.', de: 'Wie viele Kinder hast du? – Ich habe zwei.' },
-      { it: 'Che ne pensi?', de: 'Was hältst du davon?' },
+      { target: 'Vai a Milano? – Sì, ci vado domani.', de: 'Fährst du nach Mailand? – Ja, ich fahre morgen hin.' },
+      { target: 'Quanti figli hai? – Ne ho due.', de: 'Wie viele Kinder hast du? – Ich habe zwei.' },
+      { target: 'Che ne pensi?', de: 'Was hältst du davon?' },
     ],
     items: [
       q('Vai a Milano domani? Sì, ', 'ci', ' vado.', ['ci', 'ne', 'lo', 'vi'], 'Ort → ci'),
@@ -1083,9 +1083,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'la città in cui vivo, l\'amico a cui scrivo, il motivo per cui. il/la cui = dessen/deren: l\'uomo la cui figlia …. ' +
       'chi = wer / derjenige, der: Chi cerca trova. quello che / ciò che = das, was.',
     examples: [
-      { it: 'Il libro che leggo è bello.', de: 'Das Buch, das ich lese, ist schön.' },
-      { it: 'La città in cui vivo è piccola.', de: 'Die Stadt, in der ich lebe, ist klein.' },
-      { it: 'Chi dorme non piglia pesci.', de: 'Wer schläft, fängt keine Fische.' },
+      { target: 'Il libro che leggo è bello.', de: 'Das Buch, das ich lese, ist schön.' },
+      { target: 'La città in cui vivo è piccola.', de: 'Die Stadt, in der ich lebe, ist klein.' },
+      { target: 'Chi dorme non piglia pesci.', de: 'Wer schläft, fängt keine Fische.' },
     ],
     items: [
       q('Il ragazzo ', 'che', ' parla è mio fratello.', ['che', 'cui', 'chi', 'quale'], 'Subjekt ohne Präposition → che'),
@@ -1117,8 +1117,8 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'eine Handlung, die vor einer anderen vergangenen Handlung abgeschlossen war: Quando sono arrivato, il film era ' +
       'già cominciato. Die Wahl des Hilfsverbs und die Angleichung sind wie im passato prossimo.',
     examples: [
-      { it: 'Quando sono arrivato, il treno era già partito.', de: 'Als ich ankam, war der Zug schon abgefahren.' },
-      { it: 'Non avevo fame perché avevo già mangiato.', de: 'Ich hatte keinen Hunger, weil ich schon gegessen hatte.' },
+      { target: 'Quando sono arrivato, il treno era già partito.', de: 'Als ich ankam, war der Zug schon abgefahren.' },
+      { target: 'Non avevo fame perché avevo già mangiato.', de: 'Ich hatte keinen Hunger, weil ich schon gegessen hatte.' },
     ],
     items: [
       q('Quando sono arrivato, il treno ', 'era', ' già partito.', ['era', 'è', 'aveva', 'ha'], 'partire → essere, imperfetto'),
@@ -1151,9 +1151,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       '-assi, -asse, -assimo, -aste, -assero; -ere → -essi …; -ire → -issi …; essere → fossi, fossi, fosse, fossimo, ' +
       'foste, fossero; fare → facessi; dare → dessi; stare → stessi. Nie condizionale direkt nach se!',
     examples: [
-      { it: 'Se piove, resto a casa.', de: 'Wenn es regnet, bleibe ich zu Hause.' },
-      { it: 'Se avessi tempo, verrei con te.', de: 'Wenn ich Zeit hätte, würde ich mitkommen.' },
-      { it: 'Se fossi ricco, comprerei una casa al mare.', de: 'Wenn ich reich wäre, würde ich ein Haus am Meer kaufen.' },
+      { target: 'Se piove, resto a casa.', de: 'Wenn es regnet, bleibe ich zu Hause.' },
+      { target: 'Se avessi tempo, verrei con te.', de: 'Wenn ich Zeit hätte, würde ich mitkommen.' },
+      { target: 'Se fossi ricco, comprerei una casa al mare.', de: 'Wenn ich reich wäre, würde ich ein Haus am Meer kaufen.' },
     ],
     items: [
       q('Se piove, ', 'resto', ' a casa. (restare, io)', ['resto', 'resterei', 'restassi', 'restavo'], 'realer Fall → Präsens', ['resterò']),
@@ -1186,9 +1186,9 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
       'costruita nel 1900. In einfachen Zeiten geht auch venire: Il libro viene letto da molti. Der Handelnde steht ' +
       'mit da.',
     examples: [
-      { it: 'Come si dice «Hund» in italiano?', de: 'Wie sagt man „Hund“ auf Italienisch?' },
-      { it: 'Qui si vendono biglietti.', de: 'Hier werden Fahrkarten verkauft.' },
-      { it: 'La casa è stata costruita nel 1900.', de: 'Das Haus wurde 1900 gebaut.' },
+      { target: 'Come si dice «Hund» in italiano?', de: 'Wie sagt man „Hund“ auf Italienisch?' },
+      { target: 'Qui si vendono biglietti.', de: 'Hier werden Fahrkarten verkauft.' },
+      { target: 'La casa è stata costruita nel 1900.', de: 'Das Haus wurde 1900 gebaut.' },
     ],
     items: [
       q('In Italia ', 'si', ' mangia bene.', ['si', 'ci', 'se', 'lo'], 'man → si'),

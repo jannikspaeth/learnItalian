@@ -24,7 +24,10 @@ lives in `lib/es/` + `public/vocab-examples-es.json`.)
 ## Profiles & multi-user model (important)
 
 There is **no auth**. Profiles = built-ins in `lib/profiles.ts` + profiles created by name on
-`/profile` (stored in the `race` table, row `id='profiles'`: `{ profiles, levels }`). The chosen
+`/profile` (stored in the `race` table, row `id='profiles'`: `{ profiles, levels, deleted }`).
+"Manage profiles" on `/profile` deletes a profile (`DELETE /api/profiles`, `deleteProfile` in
+`lib/db.ts`): all its rows in every table and language plus its race highscores/stars; deleted
+built-ins are hidden via `deleted`, and ids are never reused. The chosen
 profile id is in `localStorage['italienisch_profile']`, the chosen language (`'it' | 'es'`,
 `lib/lang.ts`) in `localStorage['italienisch_lang']`. Flow: `/profile` → `/sprache` (language +
 level) → practice pages.
@@ -38,7 +41,12 @@ level) → practice pages.
   redirects to `/profile` / `/sprache` when something is missing.
 - **Content per language** is loaded on demand: `usePack('vocab' | 'verbs', lang)` (`lib/content.ts`,
   packs in `lib/packs/`). Tenses per language in `lib/tenses.ts`; `normWord(s, lang)` strips that
-  language's articles. Spanish has no word topics and no grammar exercises yet (lessons only).
+  language's articles.
+- **Spanish content** (`lib/es/`): 10k-word catalog + starter, every word with a `topic` (hand-written
+  sections by theme, the frequency block classified word by word); `verb-catalog.ts` spells out
+  presente/indefinido/futuro and a rule engine (`derivedForms`) derives perfecto, imperfecto,
+  condicional, subjuntivo and imperativo from them; `grammar-exercises.ts` has 34 cloze sets A1–B1
+  (same `GrammarTopic` type as Italian; example field is `target`).
 - Which side of a card is asked is a per-device setting (`useQuizDirection`, localStorage):
   🇩🇪→🇮🇹 / 🇮🇹→🇩🇪 / Mixed (default). The SRS level stays one per word either way.
 - `useProfile()` (`lib/use-profile.ts`) reads/sets the active profile and syncs across tabs.

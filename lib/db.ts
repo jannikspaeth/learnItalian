@@ -2,7 +2,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress, GrammarRecord } from './types';
 import { normWord } from './norm';
 import { Profile, LevelOverrides, Level, mergeProfiles } from './profiles';
-import { Lang, dataUserId, parseDataUserId } from './lang';
+import { Lang, LANGUAGES, dataUserId, parseDataUserId } from './lang';
 
 // ─── client ──────────────────────────────────────────────────────────────────
 
@@ -264,6 +264,7 @@ export async function setGrammar(userId: string, records: GrammarRecord[]): Prom
 
 // ─── race (one global jsonb row per language: id='global' for Italian, 'global-es'…) ─
 
+const LANGS = LANGUAGES.map(l => l.id);
 const raceRowId = (lang: Lang) => (lang === 'it' ? 'global' : `global-${lang}`);
 // Note: `settledMonths` is intentionally left undefined here — the race route treats
 // "undefined" as "first run on the monthly model" and seeds it (no retroactive stars).
@@ -301,6 +302,7 @@ const PROFILES_ROW_ID = 'profiles';
 export interface ProfilesRow {
   profiles: Profile[];    // custom profiles created in the app
   levels: LevelOverrides; // level per language chosen in the app, by profile id
+  deleted: string[];      // built-in profile ids deleted in the app (hidden)
 }
 
 export async function getProfilesRow(): Promise<ProfilesRow> {
@@ -311,7 +313,7 @@ export async function getProfilesRow(): Promise<ProfilesRow> {
     .maybeSingle();
   if (error) throw new Error(error.message);
   const d = data?.data as Partial<ProfilesRow> | undefined;
-  return { profiles: d?.profiles ?? [], levels: d?.levels ?? {} };
+  return { profiles: d?.profiles ?? [], levels: d?.levels ?? {}, deleted: d?.deleted ?? [] };
 }
 
 export async function setProfilesRow(row: ProfilesRow): Promise<void> {
@@ -333,8 +335,32 @@ export async function getAllProfiles(): Promise<Profile[]> {
   if (!dbConfigured()) return mergeProfiles([]);
   try {
     const row = await getProfilesRow();
-    return mergeProfiles(row.profiles, row.levels);
+    return mergeProfiles(row.profiles, row.levels, row.deleted);
   } catch {
     return mergeProfiles([]);
   }
+}
+
+// Permanently delete a profile and everything stored for it, in every language:
+// its rows in all per-user tables and its entries in each language's race
+// (highscores, stars, daily snapshots). Built-in profiles are hidden instead of
+// removed from the code.
+export async function deleteProfile(profileId: string, isBuiltIn: boolean): Promise<void> {
+  const userIds = LANGS.map(l => dataUserId(profileId, l));
+  for (const table of ['vocab', 'stats', 'conjugation', 'sentences', 'grammar']) {
+    const { error } = await db().from(table).delete().in('user_id', userIds);
+    if (error) throw new Error(error.message);
+  }
+  for (const lang of LANGS) {
+    const state = await getRaceState(lang);
+    state.highscores = state.highscores.filter(h => h.userId !== profileId);
+    delete state.stars[profileId];
+    for (const day of Object.values(state.dailyCounts)) delete day[profileId];
+    await setRaceState(state, lang);
+  }
+  const row = await getProfilesRow();
+  row.profiles = row.profiles.filter(p => p.id !== profileId);
+  delete row.levels[profileId];
+  if (isBuiltIn && !row.deleted.includes(profileId)) row.deleted.push(profileId);
+  await setProfilesRow(row);
 }

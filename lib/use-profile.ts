@@ -8,6 +8,10 @@ import { getProfiles } from './storage';
 
 const PROFILE_EVENT = 'italienisch-profile-changed';
 
+// Once per page load, refresh the cached profile list in the background so a
+// profile deleted (or a level changed) on another device is noticed here too.
+let synced = false;
+
 function storedLang(): Lang | null {
   const v = localStorage.getItem(LANG_STORAGE_KEY);
   return isLang(v) ? v : null;
@@ -35,6 +39,10 @@ export function useProfile() {
       });
     } else {
       setReady(true);
+      if (!synced) {
+        synced = true;
+        getProfiles().then(() => window.dispatchEvent(new Event(PROFILE_EVENT)));
+      }
     }
 
     function sync() {
