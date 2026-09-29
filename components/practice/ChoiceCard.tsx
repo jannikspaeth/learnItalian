@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Lang } from '@/lib/lang';
 import SpeakButton from '@/components/SpeakButton';
 
@@ -36,6 +36,19 @@ export default function ChoiceCard({
   const shuffled = useMemo(() => shuffle(options), [options]);
   const [picked, setPicked] = useState<string | null>(null);
   const correct = picked === answer;
+
+  // After picking, a new Enter press moves on (see TypeCard for why not autoFocus).
+  useEffect(() => {
+    if (picked === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.repeat) {
+        e.preventDefault();
+        onResult(picked === answer, picked);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [picked, answer, onResult]);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
@@ -81,7 +94,6 @@ export default function ChoiceCard({
             <SpeakButton text={`${before}${answer}${after}`} lang={lang} />
           </div>
           <button
-            autoFocus
             onClick={() => onResult(correct, picked)}
             className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold transition-colors"
           >

@@ -33,10 +33,23 @@ export default function TypeCard({
   const [value, setValue] = useState('');
   const [result, setResult] = useState<{ correct: boolean; accentHint?: string } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const nextRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
-  useEffect(() => { if (result) nextRef.current?.focus(); }, [result]);
+
+  // Once the answer is shown, a *new* Enter press moves on. Registered after the
+  // Enter that checked the answer, so that same key press can't skip the result
+  // (focusing the Next button did: the browser then "clicked" it on keypress).
+  useEffect(() => {
+    if (!result) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.repeat) {
+        e.preventDefault();
+        onResult(result.correct, value);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [result, value, onResult]);
 
   function doCheck() {
     if (result) return;
@@ -108,7 +121,6 @@ export default function TypeCard({
               </button>
             )}
             <button
-              ref={nextRef}
               onClick={() => onResult(result.correct, value)}
               className="flex-1 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold transition-colors"
             >
