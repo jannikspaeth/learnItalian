@@ -182,3 +182,59 @@ export function visibleBadges(badges: Badge[]): Badge[] {
   }
   return out;
 }
+
+// ─── German texts (interface language „Deutsch“) ─────────────────────────────────
+
+export const CATEGORY_DE: Record<string, string> = {
+  Vocabulary: 'Vokabeln', Sentences: 'Sätze', Verbs: 'Verben', Streak: 'Serie', Consistency: 'Beständigkeit',
+  'The Race': 'Das Rennen', Dedication: 'Fleiß', Precision: 'Genauigkeit',
+};
+
+const LABEL_DE: Record<string, string> = {
+  'First word': 'Erstes Wort', 'Getting started': 'Der Anfang', Budding: 'Knospe', Wordsmith: 'Wortschmied',
+  Century: 'Hunderter', Bookworm: 'Bücherwurm', Lexicon: 'Lexikon', Polyglot: 'Polyglott', Erudite: 'Gelehrt',
+  'Walking dictionary': 'Wandelndes Wörterbuch', Loremaster: 'Wissensmeister', 'Native-like': 'Wie ein Muttersprachler',
+  Explorer: 'Entdecker', Wanderer: 'Wanderer', Trailblazer: 'Wegbereiter', Pathfinder: 'Pfadfinder',
+  Cartographer: 'Kartograf', Globetrotter: 'Weltenbummler',
+  Spark: 'Funke', 'On a roll': 'Im Flow', Fortnight: 'Zwei Wochen', 'Habit formed': 'Gewohnheit', Unstoppable: 'Unaufhaltsam',
+  Relentless: 'Unermüdlich', 'Iron will': 'Eiserner Wille', Centurion: 'Zenturio', Devoted: 'Hingebungsvoll',
+  Marathoner: 'Marathonläufer', 'Year-round': 'Das ganze Jahr',
+  'First lines': 'Erste Zeilen', Translator: 'Übersetzer', Phrasemaker: 'Satzbauer', Interpreter: 'Dolmetscher',
+  Storyteller: 'Erzähler', Author: 'Autor', Novelist: 'Romanautor',
+  Conjugator: 'Konjugierer', 'Tense up': 'Zeitreisender', 'Verb master': 'Verbmeister', 'Tense titan': 'Zeitformen-Titan',
+  'Grammar guru': 'Grammatik-Guru', 'Conjugation king': 'Konjugationskönig', 'Verb virtuoso': 'Verbvirtuose',
+  'Record breaker': 'Rekordbrecher', 'Warm-up': 'Aufwärmen', Pacer: 'Tempomacher', Sprint: 'Sprint',
+  'Half marathon': 'Halbmarathon', Marathon: 'Marathon', Ultra: 'Ultra', 'Beast mode': 'Bestienmodus', Superhuman: 'Übermensch',
+  Champion: 'Champion', 'Back-to-back': 'Titelverteidiger', 'Triple crown': 'Dreifachkrone', 'High roller': 'Seriensieger',
+  Dynasty: 'Dynastie', Legend: 'Legende', 'Hall of fame': 'Ruhmeshalle',
+  'First steps': 'Erste Schritte', 'Warmed up': 'Warmgelaufen', Committed: 'Engagiert', Dedicated: 'Hingegeben',
+  Diligent: 'Fleißig', Scholar: 'Gelehrter', Master: 'Meister', Grandmaster: 'Großmeister', Sage: 'Weiser',
+  'Living legend': 'Lebende Legende', 'All-rounder': 'Allrounder',
+  'Day one': 'Tag eins', 'Showing up': 'Dranbleiben', Routine: 'Routine', Habitual: 'Gewohnheitstier', Regular: 'Stammgast',
+  Dependable: 'Verlässlich', Centennial: 'Hundert Tage', Steadfast: 'Standhaft', 'Ever-present': 'Immer da',
+  'Almost daily': 'Fast täglich', 'Full year': 'Ein ganzes Jahr',
+  'On target': 'Im Ziel', Sharpshooter: 'Scharfschütze', Marksman: 'Treffsicher', 'Crack shot': 'Meisterschütze',
+  Deadeye: 'Adlerauge', Sniper: 'Präzise', Bullseye: 'Volltreffer', Flawless: 'Makellos',
+};
+
+const n = (x: number) => x.toLocaleString('de-DE');
+const DESC_DE: Record<string, (need: number) => string> = {
+  known: k => (k === 1 ? 'Lerne dein erstes Wort' : `Kenne ${n(k)} Wörter`),
+  explorer: k => `Begegne ${n(k)} Wörtern`,
+  streak: k => `Erreiche ${n(k)} Tage in Folge`,
+  sent: k => `Übersetze ${n(k)} Sätze`,
+  verbs: k => `Übe ${n(k)} Verben`,
+  bigday: k => `Schaffe ${n(k)} Punkte an einem Tag`,
+  champion: k => (k === 1 ? 'Gewinne einen Monat' : `Gewinne ${n(k)} Monate`),
+  life: k => `Übe ${n(k)} Aufgaben`,
+  days: k => (k === 1 ? 'Übe an einem Tag' : `Übe an ${n(k)} Tagen`),
+  correct: k => `Beantworte ${n(k)} richtig`,
+  record: () => 'Komm in die Top 5 der besten Tage aller Zeiten',
+  allrounder: () => 'Übe Vokabeln, Sätze und Verben',
+};
+
+export function badgeText(b: Badge, de: boolean): { label: string; desc: string } {
+  if (!de) return { label: b.label, desc: b.desc };
+  const desc = DESC_DE[b.series];
+  return { label: LABEL_DE[b.label] ?? b.label, desc: desc ? desc(b.progress?.need ?? 0) : b.desc };
+}

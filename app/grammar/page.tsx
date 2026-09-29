@@ -9,11 +9,13 @@ import { useLearner } from '@/lib/use-profile';
 import { langInfo } from '@/lib/lang';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
 import SpeakButton from '@/components/SpeakButton';
+import { useT } from '@/lib/ui-lang';
 
 type Tab = 'exercises' | 'lessons';
 
 export default function GrammarPage() {
   const { profile, lang, ready } = useLearner();
+  const t = useT();
   const GRAMMAR_LESSONS = LESSONS_BY_LANG[lang];
   const GRAMMAR_TOPICS = TOPICS_BY_LANG[lang];
   const hasExercises = GRAMMAR_TOPICS.length > 0;
@@ -31,7 +33,7 @@ export default function GrammarPage() {
   if (!ready || !profile) {
     return (
       <main className="md:ml-56 min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading…</p>
+        <p className="text-gray-400 text-sm">{t('Loading…', 'Lädt …')}</p>
       </main>
     );
   }
@@ -59,32 +61,32 @@ export default function GrammarPage() {
     await refresh();
   }
 
-  function topicCard(t: GrammarTopic) {
-    const rec = recordOf.get(t.id);
+  function topicCard(tp: GrammarTopic) {
+    const rec = recordOf.get(tp.id);
     const pct = rec && rec.lastTotal > 0 ? Math.round((rec.lastCorrect / rec.lastTotal) * 100) : null;
-    const lesson = t.lessonId ? GRAMMAR_LESSONS.find(l => l.id === t.lessonId) : undefined;
+    const lesson = tp.lessonId ? GRAMMAR_LESSONS.find(l => l.id === tp.lessonId) : undefined;
     return (
       <div
-        key={t.id}
+        key={tp.id}
         className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="font-semibold text-gray-900 flex items-center gap-2">
-              <span>{t.icon}</span>
-              <span>{t.title}</span>
+              <span>{tp.icon}</span>
+              <span>{tp.title}</span>
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
-              {t.items.length} sentences
-              {rec && ` · ${rec.totalAttempts}× practised`}
-              {rec?.mastered && ' · ✓ mastered'}
+              {tp.items.length} {t('sentences', 'Sätze')}
+              {rec && ` · ${rec.totalAttempts}× ${t('practised', 'geübt')}`}
+              {rec?.mastered && ` · ✓ ${t('mastered', 'gemeistert')}`}
             </p>
           </div>
           <button
-            onClick={() => setPracticing(t.id)}
+            onClick={() => setPracticing(tp.id)}
             className="shrink-0 text-sm font-medium px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors"
           >
-            {rec ? 'Practise' : 'Start'}
+            {rec ? t('Practise', 'Üben') : t('Start', 'Starten')}
           </button>
         </div>
 
@@ -97,7 +99,7 @@ export default function GrammarPage() {
               />
             </div>
             <span className="text-xs text-gray-400 tabular-nums">
-              last {rec!.lastCorrect}/{rec!.lastTotal}
+              {t('last', 'zuletzt')} {rec!.lastCorrect}/{rec!.lastTotal}
             </span>
           </div>
         )}
@@ -105,21 +107,26 @@ export default function GrammarPage() {
         <div className="flex items-center gap-3 text-xs">
           {lesson && (
             <button onClick={() => openLesson(lesson.id)} className="text-blue-600 hover:underline">
-              📘 Lesson: {lesson.title}
+              📘 {t('Lesson', 'Lektion')}: {lesson.title}
             </button>
           )}
           {rec && rec.recentMistakes.length > 0 && (
             <button
-              onClick={() => toggle(showMistakes, setShowMistakes, t.id)}
+              onClick={() => toggle(showMistakes, setShowMistakes, tp.id)}
               className="text-red-600 hover:underline"
             >
-              {showMistakes.has(t.id) ? 'Hide' : 'Show'} {rec.recentMistakes.length} mistake
-              {rec.recentMistakes.length === 1 ? '' : 's'}
+              {(() => {
+                const n = rec.recentMistakes.length;
+                const en = `${n} mistake${n === 1 ? '' : 's'}`;
+                return showMistakes.has(tp.id)
+                  ? t(`Hide ${en}`, `${n} Fehler ausblenden`)
+                  : t(`Show ${en}`, `${n} Fehler anzeigen`);
+              })()}
             </button>
           )}
         </div>
 
-        {rec && showMistakes.has(t.id) && (
+        {rec && showMistakes.has(tp.id) && (
           <div className="space-y-1 pt-1">
             {rec.recentMistakes.map((m, i) => (
               <p key={i} className="text-xs text-gray-600">
@@ -192,21 +199,21 @@ export default function GrammarPage() {
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Grammar</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t('Grammar', 'Grammatik')}</h1>
           <p className="text-gray-400 text-sm mt-0.5">
             {tab === 'exercises'
-              ? `${mastered} of ${GRAMMAR_TOPICS.length} topics mastered · A1 to B1`
+              ? t(`${mastered} of ${GRAMMAR_TOPICS.length} topics mastered · A1 to B1`, `${mastered} von ${GRAMMAR_TOPICS.length} Themen gemeistert · A1 bis B1`)
               : lessonsByLevel
-                ? `${GRAMMAR_LESSONS.length} Lektionen von A1 bis B1 – kurz erklärt, mit Beispielen zum Anhören.`
-                : `Die ersten Schritte auf ${langInfo(lang).nameDe} – kurz erklärt.`}
+                ? t(`${GRAMMAR_LESSONS.length} lessons from A1 to B1 – short explanations with examples to listen to.`, `${GRAMMAR_LESSONS.length} Lektionen von A1 bis B1 – kurz erklärt, mit Beispielen zum Anhören.`)
+                : t(`First steps in ${langInfo(lang).name} – explained in German.`, `Die ersten Schritte auf ${langInfo(lang).nameDe} – kurz erklärt.`)}
           </p>
         </div>
 
         {hasExercises && (
         <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
           {([
-            ['exercises', 'Exercises'],
-            ['lessons', 'Lessons'],
+            ['exercises', t('Exercises', 'Übungen')],
+            ['lessons', t('Lessons', 'Lektionen')],
           ] as [Tab, string][]).map(([id, label]) => (
             <button
               key={id}
@@ -233,7 +240,7 @@ export default function GrammarPage() {
                   onClick={() => setPracticing(null)}
                   className="shrink-0 text-sm text-gray-500 hover:text-gray-800"
                 >
-                  ← All topics
+                  ← {t('All topics', 'Alle Themen')}
                 </button>
               </div>
               <GrammarExercise key={active.id} topic={active} lang={lang} onComplete={handleComplete} />
@@ -247,7 +254,7 @@ export default function GrammarPage() {
                   <section key={level.id} className="space-y-3">
                     <h2 className="flex items-baseline justify-between px-1">
                       <span className="text-sm font-bold text-gray-800">{level.label}</span>
-                      <span className="text-xs text-gray-400">{done}/{topics.length} mastered</span>
+                      <span className="text-xs text-gray-400">{done}/{topics.length} {t('mastered', 'gemeistert')}</span>
                     </h2>
                     {topics.map(topicCard)}
                   </section>

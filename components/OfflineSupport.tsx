@@ -15,6 +15,7 @@ import {
   getProfiles,
 } from '@/lib/storage';
 import type { Lang } from '@/lib/lang';
+import { useT } from '@/lib/ui-lang';
 
 // Registers the service worker (public/sw.js), preloads everything the current
 // language needs so the app works offline, and shows a small status pill while
@@ -42,6 +43,7 @@ export default function OfflineSupport() {
   const [online, setOnline] = useState(true);
   const [pending, setPending] = useState(0);
   const [ready, setReady] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production' || !('serviceWorker' in navigator)) return;
@@ -89,10 +91,10 @@ export default function OfflineSupport() {
         }`}
       >
         {online
-          ? `⏳ Syncing ${pending} answer${pending === 1 ? '' : 's'}…`
+          ? t(`⏳ Syncing ${pending} answer${pending === 1 ? '' : 's'}…`, `⏳ Übertrage ${pending} Antwort${pending === 1 ? '' : 'en'} …`)
           : pending > 0
-            ? `📴 Offline · ${pending} answer${pending === 1 ? '' : 's'} to sync`
-            : '📴 Offline · progress syncs later'}
+            ? t(`📴 Offline · ${pending} answer${pending === 1 ? '' : 's'} to sync`, `📴 Offline · ${pending} Antwort${pending === 1 ? '' : 'en'} ausstehend`)
+            : t('📴 Offline · progress syncs later', '📴 Offline · Fortschritt wird später übertragen')}
       </div>
     </div>
   );

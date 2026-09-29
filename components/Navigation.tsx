@@ -7,22 +7,24 @@ import { useProfile } from '@/lib/use-profile';
 import { useStars } from '@/lib/use-stars';
 import { formatStars } from '@/lib/race';
 import { langInfo } from '@/lib/lang';
+import { useT } from '@/lib/ui-lang';
+import UiLangToggle from '@/components/UiLangToggle';
 
 // The first five are the mobile bottom bar (with `short` labels); the rest live under "More".
 const nav = [
   // Daily round + mistake training — the home page.
-  { href: '/heute', label: 'Today', short: 'Today', icon: '☀️' },
-  { href: '/vokabeln', label: 'Vocabulary', short: 'Words', icon: '📖' },
-  { href: '/konjugation', label: 'Verbs', short: 'Verbs', icon: '🔤' },
+  { href: '/heute', label: ['Today', 'Heute'], short: ['Today', 'Heute'], icon: '☀️' },
+  { href: '/vokabeln', label: ['Vocabulary', 'Vokabeln'], short: ['Words', 'Wörter'], icon: '📖' },
+  { href: '/konjugation', label: ['Verbs', 'Verben'], short: ['Verbs', 'Verben'], icon: '🔤' },
   // Grammar exercises + the Grundlagen lessons.
-  { href: '/grammar', label: 'Grammar', short: 'Grammar', icon: '📘' },
+  { href: '/grammar', label: ['Grammar', 'Grammatik'], short: ['Grammar', 'Grammatik'], icon: '📘' },
   // Global competitive leaderboard — everyone sees the same standings.
-  { href: '/race', label: 'The Race', short: 'Race', icon: '🏁' },
-  { href: '/lesen', label: 'Reading', short: 'Reading', icon: '📰' },
-  { href: '/saetze', label: 'Sentences & Dictation', short: 'Sentences', icon: '✍️' },
-  { href: '/erfolge', label: 'Achievements', short: 'Achievements', icon: '🏆' },
-  { href: '/help', label: 'Help', short: 'Help', icon: '❓' },
-];
+  { href: '/race', label: ['The Race', 'Das Rennen'], short: ['Race', 'Rennen'], icon: '🏁' },
+  { href: '/lesen', label: ['Reading', 'Lesen'], short: ['Reading', 'Lesen'], icon: '📰' },
+  { href: '/saetze', label: ['Sentences & Dictation', 'Sätze & Diktat'], short: ['Sentences', 'Sätze'], icon: '✍️' },
+  { href: '/erfolge', label: ['Achievements', 'Erfolge'], short: ['Achievements', 'Erfolge'], icon: '🏆' },
+  { href: '/help', label: ['Help', 'Hilfe'], short: ['Help', 'Hilfe'], icon: '❓' },
+] as const;
 
 export default function Navigation() {
   const path = usePathname();
@@ -31,6 +33,8 @@ export default function Navigation() {
   const stars = useStars();
   const myStars = profile ? formatStars(stars[profile.id] ?? 0) : '';
   const [moreOpen, setMoreOpen] = useState(false);
+  const t = useT();
+  const langName = info ? t(info.name, info.nameDe) : '…';
 
   const items = nav;
 
@@ -61,14 +65,14 @@ export default function Navigation() {
             <span className="text-2xl">{info?.flag ?? '🌍'}</span>
             <div>
               <p className="font-bold text-gray-900 text-sm leading-none">
-                {profile ? profile.name + myStars : 'Language Learning'}
+                {profile ? profile.name + myStars : t('Language Learning', 'Sprachen lernen')}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">German → {info?.name ?? '…'}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{t('German', 'Deutsch')} → {langName}</p>
             </div>
           </Link>
         </div>
         <nav className="flex-1 p-3 space-y-0.5">
-          {items.map(({ href, label, icon }) => {
+          {items.map(({ href, label: [labelEn, labelDe], icon }) => {
             const active = path.startsWith(href);
             return (
               <Link
@@ -81,23 +85,24 @@ export default function Navigation() {
                 }`}
               >
                 <span className="text-base">{icon}</span>
-                {label}
+                {t(labelEn, labelDe)}
               </Link>
             );
           })}
         </nav>
         <div className="p-4 border-t border-gray-100 space-y-2">
+          <UiLangToggle />
           <Link
             href="/sprache"
             className="block text-xs text-gray-400 hover:text-gray-600 text-center transition-colors"
           >
-            Switch Language
+            {t('Switch Language', 'Sprache wechseln')}
           </Link>
           <Link
             href="/profile"
             className="block text-xs text-gray-400 hover:text-gray-600 text-center transition-colors"
           >
-            Switch Profile
+            {t('Switch Profile', 'Profil wechseln')}
           </Link>
         </div>
       </aside>
@@ -112,7 +117,7 @@ export default function Navigation() {
           <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl border-t border-gray-100 shadow-2xl safe-area-inset-bottom">
             <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-gray-200" />
             <div className="p-2 pb-3">
-              {overflow.map(({ href, label, icon }) => {
+              {overflow.map(({ href, label: [labelEn, labelDe], icon }) => {
                 const active = path.startsWith(href);
                 return (
                   <Link
@@ -124,7 +129,7 @@ export default function Navigation() {
                     }`}
                   >
                     <span className="text-lg">{icon}</span>
-                    {label}
+                    {t(labelEn, labelDe)}
                   </Link>
                 );
               })}
@@ -136,7 +141,7 @@ export default function Navigation() {
                 }`}
               >
                 <span className="text-lg">{info?.flag ?? '🌍'}</span>
-                {info ? `Learning ${info.name} · switch` : 'Choose language'}
+                {info ? t(`Learning ${info.name} · switch`, `${info.nameDe} · wechseln`) : t('Choose language', 'Sprache wählen')}
               </Link>
               <Link
                 href="/profile"
@@ -146,8 +151,11 @@ export default function Navigation() {
                 }`}
               >
                 <span className="text-lg">👤</span>
-                {profile ? profile.name + myStars : 'Profile'}
+                {profile ? profile.name + myStars : t('Profile', 'Profil')}
               </Link>
+              <div className="px-4 pt-2">
+                <UiLangToggle />
+              </div>
             </div>
           </div>
         </>
@@ -155,7 +163,7 @@ export default function Navigation() {
 
       {/* ── Mobile bottom bar ── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 flex safe-area-inset-bottom">
-        {primary.map(({ href, short, icon }) => {
+        {primary.map(({ href, short: [shortEn, shortDe], icon }) => {
           const active = path.startsWith(href);
           return (
             <Link
@@ -167,7 +175,7 @@ export default function Navigation() {
               }`}
             >
               <span className="text-xl">{icon}</span>
-              {short}
+              {t(shortEn, shortDe)}
             </Link>
           );
         })}
@@ -179,7 +187,7 @@ export default function Navigation() {
           }`}
         >
           <span className="text-xl">☰</span>
-          More
+          {t('More', 'Mehr')}
         </button>
       </nav>
     </>

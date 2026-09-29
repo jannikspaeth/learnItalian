@@ -6,6 +6,7 @@ import { upsertGrammarAttempt, recordMistakes } from '@/lib/storage';
 import { grammarMistake } from '@/lib/mistakes';
 import type { Lang } from '@/lib/lang';
 import SpeakButton from '@/components/SpeakButton';
+import { useT } from '@/lib/ui-lang';
 import { checkClozeAnswer } from '@/lib/answer-check';
 
 interface Props {
@@ -35,6 +36,7 @@ function newRound(topic: GrammarTopic) {
 }
 
 export default function GrammarExercise({ topic, lang, onComplete }: Props) {
+  const t = useT();
   const [round, setRound] = useState(() => newRound(topic));
   const [mode, setMode] = useState<Mode>('mc');
   const [answers, setAnswers] = useState<string[]>(() => round.map(() => ''));
@@ -92,8 +94,8 @@ export default function GrammarExercise({ topic, lang, onComplete }: Props) {
       {/* Mode toggle */}
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
         {([
-          ['mc', 'Choose'],
-          ['type', 'Type'],
+          ['mc', t('Choose', 'Auswählen')],
+          ['type', t('Type', 'Tippen')],
         ] as [Mode, string][]).map(([id, label]) => (
           <button
             key={id}
@@ -113,7 +115,7 @@ export default function GrammarExercise({ topic, lang, onComplete }: Props) {
           onClick={() => setShowRule(v => !v)}
           className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-semibold text-blue-900"
         >
-          <span>📘 Regel</span>
+          <span>📘 {t('Rule', 'Regel')}</span>
           <span className="text-blue-400">{showRule ? '▲' : '▼'}</span>
         </button>
         {showRule && (
@@ -223,7 +225,7 @@ export default function GrammarExercise({ topic, lang, onComplete }: Props) {
               {/* Rewrite-to-learn (type mode only) */}
               {mode === 'type' && wrong && (
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="text-xs text-amber-600 shrink-0">Rewrite to learn:</span>
+                  <span className="text-xs text-amber-600 shrink-0">{t('Rewrite to learn:', 'Zum Einprägen abschreiben:')}</span>
                   <input
                     type="text"
                     value={retypes[i]}
@@ -251,7 +253,8 @@ export default function GrammarExercise({ topic, lang, onComplete }: Props) {
           onClick={check}
           className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-medium transition-colors"
         >
-          Check {answeredCount < round.length && `(${answeredCount}/${round.length} answered)`}
+          {t('Check', 'Prüfen')}{' '}
+          {answeredCount < round.length && t(`(${answeredCount}/${round.length} answered)`, `(${answeredCount}/${round.length} beantwortet)`)}
         </button>
       ) : (
         <div className="space-y-3">
@@ -264,14 +267,14 @@ export default function GrammarExercise({ topic, lang, onComplete }: Props) {
                 : 'bg-red-50 text-red-800'
             }`}
           >
-            {correct} of {round.length} correct
+            {t(`${correct} of ${round.length} correct`, `${correct} von ${round.length} richtig`)}
             {correct === round.length && ' – Perfetto! 🎉'}
           </div>
           <button
             onClick={() => restart()}
             className="w-full py-2 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"
           >
-            Try again
+            {t('Try again', 'Nochmal')}
           </button>
         </div>
       )}

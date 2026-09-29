@@ -13,6 +13,7 @@ import { computeBadges } from '@/lib/achievements';
 import { useLearner } from '@/lib/use-profile';
 import { dataUserId } from '@/lib/lang';
 import Achievements from '@/components/Achievements';
+import { useT } from '@/lib/ui-lang';
 import Celebration from '@/components/Celebration';
 
 import { effectiveVocabLevel, VOCAB_KNOWN_LEVEL } from '@/lib/srs';
@@ -24,6 +25,7 @@ function levelOf(v: VocabEntry): number {
 
 export default function ErfolgePage() {
   const { profile, lang, ready } = useLearner();
+  const t = useT();
 
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
   const [stats, setStats] = useState<ProgressStats | null>(null);
@@ -82,14 +84,18 @@ export default function ErfolgePage() {
     if (fresh.length > 0) {
       localStorage.setItem(k, JSON.stringify(ids));
       setNewIds(new Set(fresh));
-      setCelebration(fresh.length === 1 ? 'Achievement unlocked! 🏆' : `${fresh.length} achievements unlocked! 🏆`);
+      setCelebration(
+        fresh.length === 1
+          ? t('Achievement unlocked! 🏆', 'Erfolg freigeschaltet! 🏆')
+          : t(`${fresh.length} achievements unlocked! 🏆`, `${fresh.length} Erfolge freigeschaltet! 🏆`),
+      );
     }
-  }, [loaded, profile, lang, vocab, stats, race, sentencesDone, verbsDone]);
+  }, [loaded, profile, lang, vocab, stats, race, sentencesDone, verbsDone, t]);
 
   if (!ready || !profile) {
     return (
       <main className="md:ml-56 min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading…</p>
+        <p className="text-gray-400 text-sm">{t('Loading…', 'Lädt …')}</p>
       </main>
     );
   }
@@ -116,15 +122,18 @@ export default function ErfolgePage() {
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <span>🏆</span> Achievements
+            <span>🏆</span> {t('Achievements', 'Erfolge')}
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
-            {unlocked.length} of {badges.length} unlocked. Keep learning to earn more!
+            {t(
+              `${unlocked.length} of ${badges.length} unlocked. Keep learning to earn more!`,
+              `${unlocked.length} von ${badges.length} freigeschaltet. Lern weiter, um mehr zu holen!`,
+            )}
           </p>
         </div>
 
         {!loaded ? (
-          <p className="text-gray-400 text-sm text-center py-6">Loading…</p>
+          <p className="text-gray-400 text-sm text-center py-6">{t('Loading…', 'Lädt …')}</p>
         ) : (
           <Achievements badges={badges} newIds={newIds} />
         )}

@@ -1,3 +1,7 @@
+'use client';
+
+import { useT } from '@/lib/ui-lang';
+
 interface Props {
   streak: number;
   todayCount: number;
@@ -7,6 +11,7 @@ interface Props {
 export default function StreakBanner({ streak, todayCount, goal }: Props) {
   const pct = goal > 0 ? Math.min(100, Math.round((todayCount / goal) * 100)) : 0;
   const reached = todayCount >= goal;
+  const t = useT();
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4">
@@ -14,13 +19,13 @@ export default function StreakBanner({ streak, todayCount, goal }: Props) {
         <span className="text-2xl">{streak > 0 ? '🔥' : '🌱'}</span>
         <div className="leading-tight">
           <p className="text-lg font-bold text-gray-900 tabular-nums">{streak}</p>
-          <p className="text-xs text-gray-400 -mt-0.5">day{streak === 1 ? '' : 's'}</p>
+          <p className="text-xs text-gray-400 -mt-0.5">{streak === 1 ? t('day', 'Tag') : t('days', 'Tage')}</p>
         </div>
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs font-medium text-gray-500">Today&apos;s goal</span>
+          <span className="text-xs font-medium text-gray-500">{t('Today’s goal', 'Tagesziel')}</span>
           <span className="text-xs font-semibold tabular-nums text-gray-700">
             {todayCount} / {goal} {reached && '🎉'}
           </span>

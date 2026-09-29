@@ -3,7 +3,9 @@
 # Italienisch — language-learning web app
 
 A small, personal Italian, **Spanish and French** learning app used by a handful of friends — all German
-speakers. Plain, mobile-first UI in English with German/Italian/Spanish/French content.
+speakers. Plain, mobile-first UI in **English or German** (per-device switch 🇬🇧/🇩🇪, `lib/ui-lang.ts`:
+`const t = useT(); t('English', 'Deutsch')` — every new UI string needs both; the help page uses `<Tx en de />`)
+with German/Italian/Spanish/French content.
 (Converted from an earlier Spanish app, github.com/mattiss01/spanisch; its Spanish content now
 lives in `lib/es/` + `public/vocab-examples-es.json`.)
 

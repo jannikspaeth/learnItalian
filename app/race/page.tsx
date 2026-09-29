@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getRace } from '@/lib/storage';
 import { useProfile } from '@/lib/use-profile';
+import { useT, useUiLang } from '@/lib/ui-lang';
 import { langInfo } from '@/lib/lang';
 import { formatStars } from '@/lib/race';
 import { RaceResponse, RaceHistory } from '@/lib/types';
@@ -27,10 +28,10 @@ function fmtPoints(n: number): string {
 }
 
 // 'YYYY-MM' -> e.g. "June 2026". Parsed as local midnight so the month doesn't shift.
-function fmtMonth(month: string): string {
+function fmtMonth(month: string, loc: string): string {
   const d = new Date(`${month}-01T00:00:00`);
   if (isNaN(d.getTime())) return month;
-  return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  return d.toLocaleDateString(loc, { month: 'long', year: 'numeric' });
 }
 
 // Days remaining in the current month's race, today included (so the last day
@@ -45,10 +46,10 @@ function daysLeftInMonth(month: string, today: string): number {
 }
 
 // 'YYYY-MM-DD' -> e.g. "17 Jun". Parsed as local midnight so the date doesn't shift.
-function fmtDate(iso: string): string {
+function fmtDate(iso: string, loc: string): string {
   const d = new Date(`${iso}T00:00:00`);
   if (isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  return d.toLocaleDateString(loc, { day: 'numeric', month: 'short' });
 }
 
 // Hand-rolled cumulative line chart (no chart lib — matches the app's UI style).
@@ -59,6 +60,9 @@ function ProgressOverTime({
   history: RaceHistory;
   colorOf: (id: string) => string;
 }) {
+  const t = useT();
+  const [uiLang] = useUiLang();
+  const loc = uiLang === 'de' ? 'de-DE' : 'en-GB';
   const { dates, series } = history;
   const empty = series.length === 0 || dates.length === 0;
 
@@ -80,12 +84,12 @@ function ProgressOverTime({
   return (
     <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
       <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
-        <span>📈</span> Progress over time
+        <span>📈</span> {t('Progress over time', 'Verlauf')}
       </h2>
 
       {empty ? (
         <p className="text-sm text-gray-400 py-3 text-center">
-          No activity yet — start learning to grow your line! 🚀
+          {t('No activity yet — start learning to grow your line! 🚀', 'Noch keine Aktivität – fang an zu lernen, damit deine Linie wächst! 🚀')}
         </p>
       ) : (
         <>
@@ -133,7 +137,7 @@ function ProgressOverTime({
                 fontSize={8}
                 fill="#94a3b8"
               >
-                {fmtDate(dates[i])}
+                {fmtDate(dates[i], loc)}
               </text>
             ))}
           </svg>
@@ -160,7 +164,7 @@ function ProgressOverTime({
               ))}
           </div>
           <p className="text-[11px] text-gray-400 pt-1">
-            Total flashcards &amp; conjugations practiced, added up day by day.
+            {t('Total flashcards & conjugations practiced, added up day by day.', 'Alle geübten Karten und Verbformen, Tag für Tag aufaddiert.')}
           </p>
         </>
       )}
@@ -169,6 +173,9 @@ function ProgressOverTime({
 }
 
 export default function RacePage() {
+  const t = useT();
+  const [uiLang] = useUiLang();
+  const loc = uiLang === 'de' ? 'de-DE' : 'en-GB';
   // Each language has its own race; the board shows the one being learned.
   const { lang } = useProfile();
   const [race, setRace] = useState<RaceResponse | null>(null);
@@ -194,7 +201,7 @@ export default function RacePage() {
   if (!loaded || !race) {
     return (
       <main className="md:ml-56 min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading…</p>
+        <p className="text-gray-400 text-sm">{t('Loading…', 'Lädt …')}</p>
       </main>
     );
   }
@@ -221,24 +228,26 @@ export default function RacePage() {
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <span>🏁</span> THE RACE
-            {lang && <span title={`${langInfo(lang).name} race`}>{langInfo(lang).flag}</span>}
+            <span>🏁</span> {t('THE RACE', 'DAS RENNEN')}
+            {lang && <span title={t(`${langInfo(lang).name} race`, `Rennen auf ${langInfo(lang).nameDe}`)}>{langInfo(lang).flag}</span>}
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
-            Most points this calendar month wins a ⭐ — then it resets on the 1st. Most learning
-            each day scores 5 · 4 · 3 · 2 · 1; flashcards, verbs, grammar and sentences count.
+            {t(
+              'Most points this calendar month wins a ⭐ — then it resets on the 1st. Most learning each day scores 5 · 4 · 3 · 2 · 1; flashcards, verbs, grammar and sentences count.',
+              'Wer in diesem Kalendermonat die meisten Punkte hat, gewinnt einen ⭐ – am 1. geht es von vorn los. Wer am Tag am meisten lernt, bekommt 5 · 4 · 3 · 2 · 1 Punkte; Karten, Verben, Grammatik und Sätze zählen.',
+            )}
           </p>
         </div>
 
         {/* ===== Cars racing the month's leader ===== */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-gray-900 text-base">Standings</h2>
+            <h2 className="font-bold text-gray-900 text-base">{t('Standings', 'Stand')}</h2>
             <div className="text-right leading-tight">
-              <p className="text-xs font-medium text-gray-500">{fmtMonth(month)}</p>
+              <p className="text-xs font-medium text-gray-500">{fmtMonth(month, loc)}</p>
               {daysLeft > 0 && (
                 <p className="text-[11px] text-gray-400">
-                  ⏳ {daysLeft} {daysLeft === 1 ? 'day' : 'days'} left
+                  ⏳ {t(`${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`, `noch ${daysLeft} ${daysLeft === 1 ? 'Tag' : 'Tage'}`)}
                 </p>
               )}
             </div>
@@ -253,13 +262,13 @@ export default function RacePage() {
                 <div key={r.id}>
                   <div className="flex items-center justify-between gap-3 mb-1">
                     <span className="text-sm font-semibold text-gray-800 flex items-center gap-1.5 min-w-0">
-                      {leader && <span title="Leader">👑</span>}
+                      {leader && <span title={t('Leader', 'Spitze')}>👑</span>}
                       <span className="truncate">{r.name + formatStars(r.stars)}</span>
                       {r.streak > 0 && (
                         <span
                           className="inline-flex items-center gap-0.5 rounded-full bg-orange-50 px-1.5 py-0.5 text-[11px] font-bold leading-none text-orange-700 tabular-nums shrink-0"
-                          title={`${r.streak}-day streak`}
-                          aria-label={`${r.streak}-day streak`}
+                          title={t(`${r.streak}-day streak`, `${r.streak} Tage in Folge`)}
+                          aria-label={t(`${r.streak}-day streak`, `${r.streak} Tage in Folge`)}
                         >
                           <span aria-hidden>🔥</span>
                           {r.streak}
@@ -301,7 +310,7 @@ export default function RacePage() {
         {/* ===== Today so far (live) ===== */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-gray-900 text-base">Today so far</h2>
+            <h2 className="font-bold text-gray-900 text-base">{t('Today so far', 'Heute bisher')}</h2>
             <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> live
             </span>
@@ -309,7 +318,7 @@ export default function RacePage() {
 
           {todayActive.length === 0 ? (
             <p className="text-sm text-gray-400 py-3 text-center">
-              No activity yet today. Be the first! 🚀
+              {t('No activity yet today. Be the first! 🚀', 'Heute noch keine Aktivität. Sei der/die Erste! 🚀')}
             </p>
           ) : (
             <div className="space-y-2.5">
@@ -330,7 +339,7 @@ export default function RacePage() {
                   </span>
                   <span
                     className="text-xs font-semibold text-green-700 tabular-nums w-10 text-right"
-                    title="Points if the day ended now"
+                    title={t('Points if the day ended now', 'Punkte, wenn der Tag jetzt enden würde')}
                   >
                     +{fmtPoints(r.todayPoints)}
                   </span>
@@ -339,17 +348,17 @@ export default function RacePage() {
             </div>
           )}
           <p className="text-[11px] text-gray-400 pt-1">
-            Points are locked in at the end of each day (Europe/Berlin time).
+            {t('Points are locked in at the end of each day (Europe/Berlin time).', 'Die Punkte werden am Ende jedes Tages vergeben (deutsche Zeit).')}
           </p>
         </section>
 
         {/* ===== All-time daily records ===== */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
           <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
-            <span>🏅</span> Daily records
+            <span>🏅</span> {t('Daily records', 'Tagesrekorde')}
           </h2>
           {highscores.length === 0 ? (
-            <p className="text-sm text-gray-400 py-2 text-center">No records yet — go set one!</p>
+            <p className="text-sm text-gray-400 py-2 text-center">{t('No records yet — go set one!', 'Noch keine Rekorde – stell einen auf!')}</p>
           ) : (
             <div className="space-y-2">
               {highscores.map((h, i) => {
@@ -363,7 +372,7 @@ export default function RacePage() {
                       {h.name}
                     </span>
                     <span className="text-xs text-gray-400 tabular-nums shrink-0">
-                      {fmtDate(h.date)}
+                      {fmtDate(h.date, loc)}
                     </span>
                     <span className="text-sm font-bold text-gray-900 tabular-nums w-10 text-right shrink-0">
                       {h.count}
@@ -377,13 +386,13 @@ export default function RacePage() {
           {otherBests.length > 0 && (
             <div className="pt-1 space-y-2">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
-                Personal bests
+                {t('Personal bests', 'Persönliche Rekorde')}
               </p>
               {otherBests.map(h => (
                 <div key={`pb-${h.name}`} className="flex items-center gap-3">
                   <span className="w-6 text-center text-sm shrink-0 text-gray-300">★</span>
                   <span className="text-sm font-medium text-gray-600 flex-1 truncate">{h.name}</span>
-                  <span className="text-xs text-gray-400 tabular-nums shrink-0">{fmtDate(h.date)}</span>
+                  <span className="text-xs text-gray-400 tabular-nums shrink-0">{fmtDate(h.date, loc)}</span>
                   <span className="text-sm font-bold text-gray-700 tabular-nums w-10 text-right shrink-0">
                     {h.count}
                   </span>
@@ -392,7 +401,7 @@ export default function RacePage() {
             </div>
           )}
 
-          <p className="text-[11px] text-gray-400 pt-1">Highest single-day scores ever.</p>
+          <p className="text-[11px] text-gray-400 pt-1">{t('Highest single-day scores ever.', 'Die höchsten Tageswerte aller Zeiten.')}</p>
         </section>
 
         {/* ===== Progress over time (cumulative) ===== */}

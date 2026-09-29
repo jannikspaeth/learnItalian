@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Lang } from '@/lib/lang';
 import { speak } from '@/lib/speech';
 import SpeakButton from '@/components/SpeakButton';
+import { useT } from '@/lib/ui-lang';
 
 // One typed question (word, verb form, cloze): type → Check → see the answer →
 // Next. A wrong answer can be waved through as a typo.
@@ -33,6 +34,7 @@ export default function TypeCard({
   const [value, setValue] = useState('');
   const [result, setResult] = useState<{ correct: boolean; accentHint?: string } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const t = useT();
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
@@ -92,18 +94,18 @@ export default function TypeCard({
             onClick={doCheck}
             className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-semibold transition-colors"
           >
-            Check
+            {t('Check', 'Prüfen')}
           </button>
         </>
       ) : (
         <>
           <div className={`rounded-xl p-4 text-center ${result.correct ? 'bg-green-50' : 'bg-red-50'}`}>
             <p className={`text-lg font-bold ${result.correct ? 'text-green-700' : 'text-red-600'}`}>
-              {result.correct ? '✓ Correct' : '✗ Not quite'}
+              {result.correct ? t('✓ Correct', '✓ Richtig') : t('✗ Not quite', '✗ Nicht ganz')}
             </p>
             {!result.correct && (
               <p className="text-sm text-gray-600 mt-1">
-                Your answer: <span className="line-through">{value || '—'}</span>
+                {t('Your answer:', 'Deine Antwort:')} <span className="line-through">{value || '—'}</span>
               </p>
             )}
             <p className="text-base font-semibold text-gray-900 mt-1 inline-flex items-center gap-2">
@@ -112,7 +114,7 @@ export default function TypeCard({
             </p>
             {result.correct && result.accentHint && (
               <p className="text-xs text-blue-600 mt-1">
-                Tip: with accent → <span className="font-semibold">{result.accentHint}</span>
+                {t('Tip: with accent →', 'Tipp: mit Akzent →')} <span className="font-semibold">{result.accentHint}</span>
               </p>
             )}
           </div>
@@ -122,14 +124,14 @@ export default function TypeCard({
                 onClick={() => onResult(true, value)}
                 className="px-4 py-3 rounded-xl text-sm font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
               >
-                It was a typo
+                {t('It was a typo', 'War ein Tippfehler')}
               </button>
             )}
             <button
               onClick={() => onResult(result.correct, value)}
               className="flex-1 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold transition-colors"
             >
-              Next →
+              {t('Next →', 'Weiter →')}
             </button>
           </div>
         </>

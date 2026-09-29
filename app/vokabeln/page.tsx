@@ -39,6 +39,7 @@ import Celebration from '@/components/Celebration';
 import SpeakButton from '@/components/SpeakButton';
 import { speak } from '@/lib/speech';
 import { useAutoplay } from '@/lib/use-autoplay';
+import { useT, useUiLang, T } from '@/lib/ui-lang';
 
 const DAILY_GOAL = 20;
 // One Learn session introduces this many new words; finish early or keep going.
@@ -91,6 +92,7 @@ const LEVEL_LABELS = [
   'Phase 7',
   'Known',
 ];
+const levelLabel = (level: number, t: T) => (level === VOCAB_KNOWN_LEVEL ? t('Known', 'Gekonnt') : LEVEL_LABELS[level]);
 const LEVEL_COLORS = [
   '',
   'bg-red-100 text-red-700',
@@ -129,6 +131,8 @@ function presentForms(verbs: VerbPack | null, word: string, ex?: VocabExample): 
 export default function VokabelnPage() {
   const { profile, lang, beginner, ready } = useLearner();
   const info = langInfo(lang);
+  const t = useT();
+  const [uiLang] = useUiLang();
   const norm = (s: string) => normWord(s, lang);
   const pack = usePack('vocab', lang);
   const verbs = usePack('verbs', lang);
@@ -201,17 +205,17 @@ export default function VokabelnPage() {
     const s = await getStats();
     if (s && streakSeen.current !== null) {
       const hit = STREAK_MILESTONES.find(m => streakSeen.current! < m && s.streak >= m);
-      if (hit) celebrate(`${hit}-day streak! 🔥`);
+      if (hit) celebrate(t(`${hit}-day streak! 🔥`, `${hit} Tage in Folge! 🔥`));
     }
     if (s) streakSeen.current = s.streak;
     setStats(s);
-  }, [celebrate]);
+  }, [celebrate, t]);
   useEffect(() => { refresh(); }, [refresh]);
 
   if (!ready || !profile || !pack) {
     return (
       <main className="md:ml-56 min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading…</p>
+        <p className="text-gray-400 text-sm">{t('Loading…', 'Lädt …')}</p>
       </main>
     );
   }
@@ -446,17 +450,17 @@ export default function VokabelnPage() {
       const newCombo = combo + 1;
       setCombo(newCombo);
       const cm = COMBO_MILESTONES.find(m => combo < m && newCombo >= m);
-      if (cm) celebrate(`${cm} in a row! 🔥`);
+      if (cm) celebrate(t(`${cm} in a row! 🔥`, `${cm} richtig in Folge! 🔥`));
     } else {
       setCombo(0);
     }
     const newToday = todayCount + 1;
-    if (todayCount < DAILY_GOAL && newToday >= DAILY_GOAL) celebrate('Daily goal reached! 🎉');
+    if (todayCount < DAILY_GOAL && newToday >= DAILY_GOAL) celebrate(t('Daily goal reached! 🎉', 'Tagesziel erreicht! 🎉'));
     const prevBest = bestPriorDay(stats?.daily, berlinToday());
-    if (prevBest > 0 && newToday === prevBest + 1) celebrate('New personal best! 🎉');
+    if (prevBest > 0 && newToday === prevBest + 1) celebrate(t('New personal best! 🎉', 'Neuer persönlicher Rekord! 🎉'));
     if (newLevel === VOCAB_KNOWN_LEVEL && item.currentLevel < VOCAB_KNOWN_LEVEL) {
       const newKnown = bekanntWords.length + 1;
-      if (KNOWN_MILESTONES.includes(newKnown)) celebrate(`${newKnown} words known! 📚`);
+      if (KNOWN_MILESTONES.includes(newKnown)) celebrate(t(`${newKnown} words known! 📚`, `${newKnown} Wörter gekonnt! 📚`));
     }
 
     if (isLast) setPhase('done');
@@ -471,15 +475,15 @@ export default function VokabelnPage() {
 
   function handleAddWord() {
     setAddError('');
-    if (!vocabLoaded) { setAddError('Still loading your words — try again in a moment.'); return; }
+    if (!vocabLoaded) { setAddError(t('Still loading your words — try again in a moment.', 'Deine Wörter laden noch – versuch es gleich noch einmal.')); return; }
     const targetWord = addTarget.trim();
     const german = addGerman.trim();
     if (!targetWord || !german) {
-      setAddError('Please fill in both words.');
+      setAddError(t('Please fill in both words.', 'Bitte beide Wörter ausfüllen.'));
       return;
     }
     if (seenWords.has(norm(targetWord))) {
-      setAddError('That word is already in your list.');
+      setAddError(t('That word is already in your list.', 'Das Wort ist schon in deiner Liste.'));
       return;
     }
     const now = new Date().toISOString();
@@ -531,7 +535,7 @@ export default function VokabelnPage() {
     wordSections = [1, 2, 3, 4, 5, 6, 7, 8]
       .map(level => ({
         key: `phase:${level}`,
-        label: LEVEL_LABELS[level],
+        label: levelLabel(level, t),
         badgeClass: LEVEL_COLORS[level],
         entries: wordsFiltered.filter(w => getLevel(w) === level),
       }))
@@ -541,15 +545,15 @@ export default function VokabelnPage() {
     for (const w of wordsFiltered) {
       let key: string, sortKey: string, label: string;
       if (getLevel(w) >= VOCAB_KNOWN_LEVEL || !w.nextReview) {
-        key = 'due:none'; sortKey = '￿'; label = 'No review';
+        key = 'due:none'; sortKey = '￿'; label = t('No review', 'Keine Wiederholung');
       } else {
         let day = berlinToday(new Date(w.nextReview));
         if (day < today) day = today; // overdue folds into "Due now"
         key = `due:${day}`;
         sortKey = day;
-        label = day === today ? 'Due today'
-          : day === tomorrow ? 'Tomorrow'
-          : new Date(day).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+        label = day === today ? t('Due today', 'Heute fällig')
+          : day === tomorrow ? t('Tomorrow', 'Morgen')
+          : new Date(day).toLocaleDateString(uiLang === 'de' ? 'de-DE' : 'en-GB', { weekday: 'short', month: 'short', day: 'numeric' });
       }
       const b = buckets.get(key) ?? { sortKey, label, entries: [] };
       b.entries.push(w);
@@ -570,7 +574,7 @@ export default function VokabelnPage() {
         const info = topicInfo(id);
         return {
           key: `topic:${id}`,
-          label: info ? `${info.icon} ${info.label}` : '✏️ Own words',
+          label: info ? `${info.icon} ${info.label}` : `✏️ ${t('Own words', 'Eigene Wörter')}`,
           badgeClass: 'bg-gray-100 text-gray-600',
           entries: byTopic.get(id)!,
         };
@@ -588,7 +592,7 @@ export default function VokabelnPage() {
   function renderCard(entry: VocabEntry) {
     const level = getLevel(entry);
     const reviewDate = entry.nextReview
-      ? new Date(entry.nextReview).toLocaleDateString()
+      ? new Date(entry.nextReview).toLocaleDateString(uiLang === 'de' ? 'de-DE' : 'en-GB')
       : null;
     return (
       <div
@@ -602,7 +606,7 @@ export default function VokabelnPage() {
             </p>
             <SpeakButton text={entry.word} lang={lang} />
             <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${LEVEL_COLORS[level]}`}>
-              {LEVEL_LABELS[level]}
+              {levelLabel(level, t)}
             </span>
           </div>
           <p className="text-gray-500 text-sm">
@@ -610,7 +614,7 @@ export default function VokabelnPage() {
           </p>
           {level < VOCAB_KNOWN_LEVEL && reviewDate && (
             <p className="text-gray-400 text-xs mt-0.5">
-              Next review: {reviewDate}
+              {t('Next review', 'Nächste Wiederholung')}: {reviewDate}
             </p>
           )}
           {entry.example && (
@@ -621,7 +625,7 @@ export default function VokabelnPage() {
           <button
             onClick={() => setWordLevel(entry, level + 1)}
             disabled={level >= VOCAB_KNOWN_LEVEL}
-            title="Move up a phase"
+            title={t('Move up a phase', 'Eine Phase hoch')}
             className="w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100 text-gray-500 hover:bg-green-100 hover:text-green-700 disabled:opacity-30 disabled:hover:bg-gray-100 disabled:hover:text-gray-500 transition-colors"
           >
             ▲
@@ -629,7 +633,7 @@ export default function VokabelnPage() {
           <button
             onClick={() => setWordLevel(entry, level - 1)}
             disabled={level <= 1}
-            title="Move down a phase"
+            title={t('Move down a phase', 'Eine Phase runter')}
             className="w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100 text-gray-500 hover:bg-amber-100 hover:text-amber-700 disabled:opacity-30 disabled:hover:bg-gray-100 disabled:hover:text-gray-500 transition-colors"
           >
             ▼
@@ -645,7 +649,7 @@ export default function VokabelnPage() {
         onClick={() => { setShowAddForm(true); setAddError(''); }}
         className="w-full py-2.5 border border-dashed border-gray-300 text-gray-500 hover:border-red-400 hover:text-red-600 rounded-xl text-sm font-medium transition-colors"
       >
-        ＋ Add a word
+        ＋ {t('Add a word', 'Wort hinzufügen')}
       </button>
     ) : (
       <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
@@ -653,21 +657,21 @@ export default function VokabelnPage() {
           type="text"
           value={addGerman}
           onChange={e => setAddGerman(e.target.value)}
-          placeholder="German word"
+          placeholder={t('German word', 'Deutsches Wort')}
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-red-400 outline-none"
         />
         <input
           type="text"
           value={addTarget}
           onChange={e => setAddTarget(e.target.value)}
-          placeholder={`${info.name} translation`}
+          placeholder={t(`${info.name} translation`, `Auf ${info.nameDe}`)}
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-red-400 outline-none"
         />
         <input
           type="text"
           value={addExample}
           onChange={e => setAddExample(e.target.value)}
-          placeholder="Example sentence (optional)"
+          placeholder={t('Example sentence (optional)', 'Beispielsatz (optional)')}
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-red-400 outline-none"
         />
         {addError && <p className="text-xs text-red-600">{addError}</p>}
@@ -676,13 +680,13 @@ export default function VokabelnPage() {
             onClick={handleAddWord}
             className="flex-1 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-sm font-semibold transition-colors"
           >
-            Add word
+            {t('Add word', 'Hinzufügen')}
           </button>
           <button
             onClick={() => { setShowAddForm(false); setAddError(''); }}
             className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"
           >
-            Cancel
+            {t('Cancel', 'Abbrechen')}
           </button>
         </div>
       </div>
@@ -707,23 +711,23 @@ export default function VokabelnPage() {
     ) : phase === 'done' ? (
       <div className="bg-white rounded-xl border border-gray-200 p-6 text-center space-y-3">
         <p className="text-4xl">🎉</p>
-        <p className="font-semibold text-gray-900">Session complete</p>
+        <p className="font-semibold text-gray-900">{t('Session complete', 'Runde geschafft')}</p>
         <p className="text-sm text-gray-500">
-          {sessionCorrect} / {doneCount} correct
+          {sessionCorrect} / {doneCount} {t('correct', 'richtig')}
         </p>
         <div className="flex gap-2 justify-center pt-1">
           <button
             onClick={reset}
             className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"
           >
-            Done
+            {t('Done', 'Fertig')}
           </button>
           {tab === 'lernen' && unseenCount > 0 && (
             <button
               onClick={startLernen}
               className="px-4 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-sm font-semibold transition-colors"
             >
-              Keep learning →
+              {t('Keep learning →', 'Weiterlernen →')}
             </button>
           )}
           {tab === 'wiederholen' && dueToday.length > 0 && (
@@ -731,7 +735,7 @@ export default function VokabelnPage() {
               onClick={startWiederholen}
               className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition-colors"
             >
-              Keep reviewing →
+              {t('Keep reviewing →', 'Weiter wiederholen →')}
             </button>
           )}
         </div>
@@ -742,33 +746,33 @@ export default function VokabelnPage() {
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Vocabulary</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t('Vocabulary', 'Vokabeln')}</h1>
           <p className="text-gray-400 text-sm mt-0.5">
-            {bekanntWords.length} known · {dueToday.length} due today
-            {upcoming.length > 0 && ` · ${upcoming.length} coming up`}
+            {bekanntWords.length} {t('known', 'gekonnt')} · {dueToday.length} {t('due today', 'heute fällig')}
+            {upcoming.length > 0 && ` · ${upcoming.length} ${t('coming up', 'demnächst')}`}
           </p>
         </div>
 
         {loadError && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 flex items-center justify-between gap-3">
-            <span>⚠ Couldn&apos;t load your words. Learning is paused so nothing gets overwritten.</span>
+            <span>⚠ {t('Couldn’t load your words. Learning is paused so nothing gets overwritten.', 'Deine Wörter konnten nicht geladen werden. Lernen ist pausiert, damit nichts überschrieben wird.')}</span>
             <button
               onClick={() => { refresh(); }}
               className="shrink-0 text-xs font-semibold underline"
             >
-              Retry
+              {t('Retry', 'Nochmal versuchen')}
             </button>
           </div>
         )}
 
         {saveError && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 flex items-center justify-between gap-3">
-            <span>⚠ Some changes couldn&apos;t be saved. Check your connection.</span>
+            <span>⚠ {t('Some changes couldn’t be saved. Check your connection.', 'Einige Änderungen konnten nicht gespeichert werden. Prüf deine Verbindung.')}</span>
             <button
               onClick={() => { setSaveError(false); refresh(); }}
               className="shrink-0 text-xs font-semibold underline"
             >
-              Retry
+              {t('Retry', 'Nochmal versuchen')}
             </button>
           </div>
         )}
@@ -794,15 +798,15 @@ export default function VokabelnPage() {
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm text-center">
             <p className="text-xl font-bold text-green-600">{bekanntWords.length}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Known</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t('Known', 'Gekonnt')}</p>
           </div>
           <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm text-center">
             <p className="text-xl font-bold text-amber-500">{dueToday.length}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Due today</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t('Due today', 'Heute fällig')}</p>
           </div>
           <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm text-center">
             <p className="text-xl font-bold text-blue-500">{upcoming.length}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Coming up</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t('Coming up', 'Demnächst')}</p>
           </div>
         </div>
 
@@ -810,9 +814,9 @@ export default function VokabelnPage() {
         <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
           {(
             [
-              ['lernen', 'Learn'],
-              ['wiederholen', dueToday.length > 0 ? `Review (${dueToday.length})` : 'Review'],
-              ['words', vocab.length > 0 ? `Words (${vocab.length})` : 'Words'],
+              ['lernen', t('Learn', 'Lernen')],
+              ['wiederholen', `${t('Review', 'Wiederholen')}${dueToday.length > 0 ? ` (${dueToday.length})` : ''}`],
+              ['words', `${t('Words', 'Wörter')}${vocab.length > 0 ? ` (${vocab.length})` : ''}`],
             ] as [Tab, string][]
           ).map(([id, label]) => (
             <button
@@ -834,7 +838,7 @@ export default function VokabelnPage() {
               <>
                 <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
                   <div>
-                    <p className="text-sm text-gray-600">Learn new words one at a time.</p>
+                    <p className="text-sm text-gray-600">{t('Learn new words one at a time.', 'Lerne neue Wörter, eins nach dem anderen.')}</p>
                     {pack.hasTopics && (
                       <div className="mt-3">
                         <TopicPicker value={topic} onChange={setTopic} progress={topicProgress} />
@@ -842,8 +846,8 @@ export default function VokabelnPage() {
                     )}
                     <p className="text-xs text-gray-400 mt-3">
                       {unseenCount > 0
-                        ? `${unseenCount} of ${topicCatalog.length} words not seen yet`
-                        : `All ${topicCatalog.length} words in this topic already seen 🎉`}
+                        ? t(`${unseenCount} of ${topicCatalog.length} words not seen yet`, `${unseenCount} von ${topicCatalog.length} Wörtern noch nicht gesehen`)
+                        : t(`All ${topicCatalog.length} words in this topic already seen 🎉`, `Alle ${topicCatalog.length} Wörter dieses Themas schon gesehen 🎉`)}
                     </p>
                     {topicCatalog.length > 0 && (
                       <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -859,7 +863,7 @@ export default function VokabelnPage() {
                     disabled={unseenCount === 0 || !vocabLoaded}
                     className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl font-semibold transition-colors"
                   >
-                    {!vocabLoaded ? 'Loading…' : unseenCount > 0 ? 'Start learning →' : 'All words learned'}
+                    {!vocabLoaded ? t('Loading…', 'Lädt …') : unseenCount > 0 ? t('Start learning →', 'Lernen starten →') : t('All words learned', 'Alle Wörter gelernt')}
                   </button>
                   <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                   <AutoplayToggle value={autoplay} onChange={setAutoplay} />
@@ -879,23 +883,24 @@ export default function VokabelnPage() {
               dueToday.length === 0 ? (
                 <div className="text-center py-14">
                   <p className="text-4xl mb-3">🎉</p>
-                  <p className="text-sm font-medium text-gray-500">No words due today!</p>
+                  <p className="text-sm font-medium text-gray-500">{t('No words due today!', 'Heute ist nichts fällig!')}</p>
                   {upcoming.length > 0 && (
                     <p className="text-xs text-gray-400 mt-1">
-                      {upcoming.length} words coming up soon.
+                      {t(`${upcoming.length} words coming up soon.`, `${upcoming.length} Wörter sind bald fällig.`)}
                     </p>
                   )}
                 </div>
               ) : (
                 <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
                   <p className="text-sm text-gray-600">
-                    <strong>{dueToday.length}</strong> words due today. Review them one at a time.
+                    <strong>{dueToday.length}</strong>{' '}
+                    {t('words due today. Review them one at a time.', 'Wörter heute fällig. Wiederhole sie eins nach dem anderen.')}
                   </p>
                   <button
                     onClick={startWiederholen}
                     className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-colors"
                   >
-                    Start review →
+                    {t('Start review →', 'Wiederholung starten →')}
                   </button>
                   <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                   <AutoplayToggle value={autoplay} onChange={setAutoplay} />
@@ -916,7 +921,7 @@ export default function VokabelnPage() {
               <div className="text-center py-14">
                 <p className="text-4xl mb-3">📚</p>
                 <p className="text-sm text-gray-400">
-                  No words seen yet. Start a learning round!
+                  {t('No words seen yet. Start a learning round!', 'Noch keine Wörter gesehen. Starte eine Lernrunde!')}
                 </p>
               </div>
             ) : (
@@ -925,15 +930,15 @@ export default function VokabelnPage() {
                   type="text"
                   value={wordSearch}
                   onChange={e => setWordSearch(e.target.value)}
-                  placeholder="Search…"
+                  placeholder={t('Search…', 'Suchen …')}
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-red-400 outline-none"
                 />
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs text-gray-400 shrink-0">{wordsFiltered.length} words</p>
+                  <p className="text-xs text-gray-400 shrink-0">{wordsFiltered.length} {t('words', 'Wörter')}</p>
                   <div className="flex gap-1">
                     {([
                       ['alpha', 'A–Z'],
-                      ['review', 'Next review'],
+                      ['review', t('Next review', 'Nächste Wiederholung')],
                     ] as [WordSort, string][]).map(([id, label]) => {
                       const active = wordSort === id;
                       return (
@@ -956,13 +961,13 @@ export default function VokabelnPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 shrink-0">Group</span>
+                  <span className="text-xs text-gray-400 shrink-0">{t('Group', 'Gruppieren')}</span>
                   <div className="flex gap-1">
                     {([
-                      ['none', 'None'],
+                      ['none', t('None', 'Keine')],
                       ['phase', 'Phase'],
-                      ['due', 'Due day'],
-                      ...(pack.hasTopics ? [['topic', 'Topic']] : []),
+                      ['due', t('Due day', 'Fälligkeit')],
+                      ...(pack.hasTopics ? [['topic', t('Topic', 'Thema')]] : []),
                     ] as [WordGroup, string][]).map(([id, label]) => (
                       <button
                         key={id}
@@ -1045,6 +1050,7 @@ function Flashcard({
   const [saving, setSaving] = useState(false);
   const [retype, setRetype] = useState('');
   const [showConj, setShowConj] = useState(false); // conjugations hidden until requested
+  const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
   const retypeRef = useRef<HTMLInputElement>(null);
 
@@ -1083,17 +1089,17 @@ function Flashcard({
         <div className="flex items-center gap-2">
           <span className="tabular-nums">{position} / {total}</span>
           <span className={`px-1.5 py-0.5 rounded-md font-medium ${LEVEL_COLORS[item.currentLevel]}`}>
-            {LEVEL_LABELS[item.currentLevel]}
+            {levelLabel(item.currentLevel, t)}
           </span>
         </div>
         <div className="flex items-center gap-2">
           {combo >= 2 && (
             <span className="px-1.5 py-0.5 rounded-md font-semibold bg-orange-100 text-orange-700">
-              🔥 {combo} in a row
+              🔥 {combo} {t('in a row', 'in Folge')}
             </span>
           )}
           <button onClick={onFinish} className="hover:text-gray-600 transition-colors">
-            Finish
+            {t('Finish', 'Beenden')}
           </button>
         </div>
       </div>
@@ -1107,7 +1113,7 @@ function Flashcard({
       {/* Question */}
       <div className="text-center py-3">
         <p className="text-xs text-gray-400 uppercase tracking-wide">
-          Translate {item.askTarget ? `${flag} → 🇩🇪` : `🇩🇪 → ${flag}`}
+          {t('Translate', 'Übersetze')} {item.askTarget ? `${flag} → 🇩🇪` : `🇩🇪 → ${flag}`}
         </p>
         <p className="text-3xl font-bold text-gray-900 mt-1 inline-flex items-center gap-2">
           {item.question}
@@ -1123,14 +1129,14 @@ function Flashcard({
             value={answer}
             onChange={e => setAnswer(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') setChecked(true); }}
-            placeholder={item.askTarget ? 'German…' : `${langInfo(lang).name}…`}
+            placeholder={item.askTarget ? t('German…', 'Deutsch …') : `${t(langInfo(lang).name, langInfo(lang).nameDe)} …`}
             className="w-full border-b-2 border-gray-300 focus:border-red-600 bg-transparent text-lg text-center py-1.5 outline-none transition-colors"
           />
           <button
             onClick={() => setChecked(true)}
             className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-semibold transition-colors"
           >
-            Check
+            {t('Check', 'Prüfen')}
           </button>
         </>
       ) : (
@@ -1142,11 +1148,11 @@ function Flashcard({
             }`}
           >
             <p className={`text-lg font-bold ${correct ? 'text-green-700' : 'text-red-600'}`}>
-              {correct ? '✓ Correct' : '✗ Not quite'}
+              {correct ? t('✓ Correct', '✓ Richtig') : t('✗ Not quite', '✗ Nicht ganz')}
             </p>
             {!correct && (
               <p className="text-sm text-gray-600 mt-1">
-                Your answer: <span className="line-through">{answer || '—'}</span>
+                {t('Your answer:', 'Deine Antwort:')} <span className="line-through">{answer || '—'}</span>
               </p>
             )}
             <p className="text-base font-semibold text-gray-900 mt-1 inline-flex items-center gap-2">
@@ -1155,7 +1161,7 @@ function Flashcard({
             </p>
             {evaluation?.accentHint && correct && (
               <p className="text-xs text-blue-600 mt-1">
-                Tip: with accent → <span className="font-semibold">{evaluation.accentHint}</span>
+                {t('Tip: with accent →', 'Tipp: mit Akzent →')} <span className="font-semibold">{evaluation.accentHint}</span>
               </p>
             )}
           </div>
@@ -1206,32 +1212,32 @@ function Flashcard({
                 disabled={saving}
                 className="py-2.5 rounded-xl text-sm font-semibold bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-50 transition-colors"
               >
-                Again
-                <span className="block text-[10px] font-normal opacity-70">restart · today</span>
+                {t('Again', 'Nochmal')}
+                <span className="block text-[10px] font-normal opacity-70">{t('restart · today', 'neu · heute')}</span>
               </button>
               <button
                 onClick={() => rate(true, 'unsicher')}
                 disabled={saving}
                 className="py-2.5 rounded-xl text-sm font-semibold bg-amber-100 text-amber-700 hover:bg-amber-200 disabled:opacity-50 transition-colors"
               >
-                Stay
-                <span className="block text-[10px] font-normal opacity-70">keep phase</span>
+                {t('Stay', 'Bleiben')}
+                <span className="block text-[10px] font-normal opacity-70">{t('keep phase', 'Phase halten')}</span>
               </button>
               <button
                 onClick={() => rate(true, 'sicher')}
                 disabled={saving}
                 className="py-2.5 rounded-xl text-sm font-semibold bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50 transition-colors"
               >
-                Good
-                <span className="block text-[10px] font-normal opacity-70">level up</span>
+                {t('Good', 'Gut')}
+                <span className="block text-[10px] font-normal opacity-70">{t('level up', 'Phase hoch')}</span>
               </button>
               <button
                 onClick={() => rate(true, 'bekannt')}
                 disabled={saving}
                 className="py-2.5 rounded-xl text-sm font-semibold bg-green-700 text-white hover:bg-green-800 disabled:opacity-50 transition-colors"
               >
-                Known
-                <span className="block text-[10px] font-normal opacity-80">mark known</span>
+                {t('Known', 'Gekonnt')}
+                <span className="block text-[10px] font-normal opacity-80">{t('mark known', 'als gekonnt')}</span>
               </button>
             </div>
           ) : (
@@ -1239,7 +1245,7 @@ function Flashcard({
               {/* Write-it-again reinforcement */}
               <div>
                 <label className="block text-xs text-gray-500 mb-1.5">
-                  Write it again to remember:
+                  {t('Write it again to remember:', 'Schreib es zum Einprägen noch einmal:')}
                 </label>
                 <input
                   ref={retypeRef}
@@ -1252,7 +1258,7 @@ function Flashcard({
                   }`}
                 />
                 <p className="text-[11px] text-gray-400 text-center mt-1">
-                  {retypeOk ? '✓ Now choose below' : 'Type the correct word to continue'}
+                  {retypeOk ? t('✓ Now choose below', '✓ Jetzt unten wählen') : t('Type the correct word to continue', 'Tippe das richtige Wort, um weiterzumachen')}
                 </p>
               </div>
 
@@ -1262,28 +1268,28 @@ function Flashcard({
                   disabled={saving || !retypeOk}
                   className="py-2.5 rounded-xl text-sm font-semibold bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-40 transition-colors"
                 >
-                  Again
-                  <span className="block text-[10px] font-normal opacity-70">review today</span>
+                  {t('Again', 'Nochmal')}
+                  <span className="block text-[10px] font-normal opacity-70">{t('review today', 'heute wiederholen')}</span>
                 </button>
                 <button
                   onClick={() => rate(true, 'unsicher')}
                   disabled={saving || !retypeOk}
                   className="py-2.5 rounded-xl text-sm font-semibold bg-amber-100 text-amber-700 hover:bg-amber-200 disabled:opacity-40 transition-colors"
                 >
-                  Keep phase
-                  <span className="block text-[10px] font-normal opacity-70">typo / misclick</span>
+                  {t('Keep phase', 'Phase halten')}
+                  <span className="block text-[10px] font-normal opacity-70">{t('typo / misclick', 'Tipp-/Klickfehler')}</span>
                 </button>
                 <button
                   onClick={() => rate(true, 'bekannt')}
                   disabled={saving || !retypeOk}
                   className="py-2.5 rounded-xl text-sm font-semibold bg-green-700 text-white hover:bg-green-800 disabled:opacity-40 transition-colors"
                 >
-                  Known
-                  <span className="block text-[10px] font-normal opacity-80">mark known</span>
+                  {t('Known', 'Gekonnt')}
+                  <span className="block text-[10px] font-normal opacity-80">{t('mark known', 'als gekonnt')}</span>
                 </button>
               </div>
               <p className="text-[11px] text-gray-400 text-center">
-                Was it a typo? Keep the phase or mark it known instead of going back.
+                {t('Was it a typo? Keep the phase or mark it known instead of going back.', 'War es ein Tippfehler? Behalte die Phase oder markiere es als gekonnt, statt zurückzufallen.')}
               </p>
             </>
           )}
@@ -1296,14 +1302,15 @@ function Flashcard({
 // ─── Auto-play toggle ──────────────────────────────────────────────────────────
 
 function AutoplayToggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+  const t = useT();
   return (
     <button
       type="button"
       onClick={() => onChange(!value)}
       className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 text-xs text-gray-500 hover:bg-gray-100 transition-colors"
     >
-      <span>🔊 Read words aloud automatically</span>
-      <span className={`font-semibold ${value ? 'text-green-700' : 'text-gray-400'}`}>{value ? 'On' : 'Off'}</span>
+      <span>🔊 {t('Read words aloud automatically', 'Wörter automatisch vorlesen')}</span>
+      <span className={`font-semibold ${value ? 'text-green-700' : 'text-gray-400'}`}>{value ? t('On', 'An') : t('Off', 'Aus')}</span>
     </button>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Lang } from '@/lib/lang';
 import SpeakButton from '@/components/SpeakButton';
+import { useT } from '@/lib/ui-lang';
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -35,6 +36,7 @@ export default function ChoiceCard({
 }) {
   const shuffled = useMemo(() => shuffle(options), [options]);
   const [picked, setPicked] = useState<string | null>(null);
+  const t = useT();
   const correct = picked === answer;
 
   // After picking, a new Enter press moves on (see TypeCard for why not autoFocus).
@@ -94,7 +96,7 @@ export default function ChoiceCard({
         <>
           <div className={`rounded-xl p-3 text-sm flex items-center justify-between gap-2 ${correct ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-700'}`}>
             <span>
-              {correct ? '✓ Correct' : <>✓ <strong>{answer}</strong></>}
+              {correct ? t('✓ Correct', '✓ Richtig') : <>✓ <strong>{answer}</strong></>}
               {hint && <span className="text-gray-500 ml-2">({hint})</span>}
             </span>
             <SpeakButton text={`${before}${answer}${after}`} lang={lang} />
@@ -103,7 +105,7 @@ export default function ChoiceCard({
             onClick={() => onResult(correct, picked)}
             className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold transition-colors"
           >
-            Next →
+            {t('Next →', 'Weiter →')}
           </button>
         </>
       )}

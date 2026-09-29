@@ -1,6 +1,7 @@
 'use client';
 
 import { QuizDirection, quizDirections } from '@/lib/use-quiz-direction';
+import { useT } from '@/lib/ui-lang';
 
 export default function QuizDirectionToggle({
   value,
@@ -11,11 +12,12 @@ export default function QuizDirectionToggle({
   onChange: (d: QuizDirection) => void;
   flag: string; // target language flag
 }) {
+  const t = useT();
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-400 shrink-0">Ask</span>
+      <span className="text-xs text-gray-400 shrink-0">{t('Ask', 'Abfrage')}</span>
       <div className="flex gap-1">
-        {quizDirections(flag).map(([id, label]) => (
+        {quizDirections(flag, t('Mixed', 'Gemischt')).map(([id, label]) => (
           <button
             key={id}
             onClick={() => onChange(id)}

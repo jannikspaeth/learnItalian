@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { TOPICS, topicInfo } from '@/lib/vocab-topics';
+import { useT } from '@/lib/ui-lang';
 
 export interface TopicProgress {
   seen: number;
@@ -20,6 +21,7 @@ export default function TopicPicker({
   progress: Record<string, TopicProgress>; // keyed by topic id, plus 'all'
 }) {
   const [open, setOpen] = useState(false);
+  const t = useT();
   const current = value === 'all' ? null : topicInfo(value);
 
   function pick(v: string) {
@@ -62,16 +64,16 @@ export default function TopicPicker({
         className="w-full flex items-center justify-between gap-2 rounded-xl border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50 transition-colors"
       >
         <span className="flex items-center gap-2 min-w-0">
-          <span className="text-gray-400 shrink-0">Topic</span>
+          <span className="text-gray-400 shrink-0">{t('Topic', 'Thema')}</span>
           <span className="font-medium text-gray-800 truncate">
-            {current ? `${current.icon} ${current.label}` : '📚 All topics'}
+            {current ? `${current.icon} ${current.label}` : `📚 ${t('All topics', 'Alle Themen')}`}
           </span>
         </span>
         <span className="text-gray-400 shrink-0">{open ? '▲' : '▼'}</span>
       </button>
       {open && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          {row('all', '📚', 'All topics')}
+          {row('all', '📚', t('All topics', 'Alle Themen'))}
           {TOPICS.map(t => row(t.id, t.icon, t.label))}
         </div>
       )}

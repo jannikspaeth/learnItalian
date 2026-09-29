@@ -1,6 +1,11 @@
-import { Badge, BADGE_CATEGORIES, visibleBadges } from '@/lib/achievements';
+'use client';
+
+import { Badge, BADGE_CATEGORIES, CATEGORY_DE, badgeText, visibleBadges } from '@/lib/achievements';
+import { useUiLang } from '@/lib/ui-lang';
 
 function BadgeTile({ b, isNew }: { b: Badge; isNew: boolean }) {
+  const [uiLang] = useUiLang();
+  const text = badgeText(b, uiLang === 'de');
   const pct =
     b.progress && b.progress.need > 0
       ? Math.round((b.progress.have / b.progress.need) * 100)
@@ -15,16 +20,16 @@ function BadgeTile({ b, isNew }: { b: Badge; isNew: boolean }) {
     >
       {isNew && (
         <span className="absolute -top-1.5 -right-1.5 text-[9px] font-bold bg-red-600 text-white px-1.5 py-0.5 rounded-full">
-          NEW
+          {uiLang === 'de' ? 'NEU' : 'NEW'}
         </span>
       )}
       <div className="flex items-center gap-2">
         <span className={`text-xl ${b.unlocked ? '' : 'grayscale opacity-40'}`}>{b.icon}</span>
         <div className="min-w-0">
           <p className={`text-xs font-semibold truncate ${b.unlocked ? 'text-gray-900' : 'text-gray-500'}`}>
-            {b.label}
+            {text.label}
           </p>
-          <p className="text-[10px] text-gray-400 truncate">{b.desc}</p>
+          <p className="text-[10px] text-gray-400 truncate">{text.desc}</p>
         </div>
       </div>
       {!b.unlocked && b.progress && b.progress.need > 1 && (
@@ -49,6 +54,8 @@ export default function Achievements({
   newIds: Set<string>;
 }) {
   const cats = BADGE_CATEGORIES.filter(c => badges.some(b => b.category === c));
+  const [uiLang] = useUiLang();
+  const de = uiLang === 'de';
   return (
     <div className="space-y-5">
       {cats.map(cat => {
@@ -58,8 +65,8 @@ export default function Achievements({
         return (
           <section key={cat} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-gray-900 text-base">{cat}</h2>
-              <span className="text-xs text-gray-400 tabular-nums">{got} unlocked</span>
+              <h2 className="font-bold text-gray-900 text-base">{de ? CATEGORY_DE[cat] ?? cat : cat}</h2>
+              <span className="text-xs text-gray-400 tabular-nums">{got} {de ? 'freigeschaltet' : 'unlocked'}</span>
             </div>
             <div className="grid grid-cols-2 gap-2.5">
               {visible.map(b => (

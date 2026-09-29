@@ -8,6 +8,7 @@ import { verbMistake } from '@/lib/mistakes';
 import { spokenForm } from '@/lib/speech';
 import type { Lang } from '@/lib/lang';
 import SpeakButton from '@/components/SpeakButton';
+import { useT, useUiLang, tenseName } from '@/lib/ui-lang';
 
 interface Props {
   exercise: ConjugationExercise;
@@ -16,6 +17,8 @@ interface Props {
 }
 
 export default function Conjugation({ exercise, lang, onComplete }: Props) {
+  const t = useT();
+  const [uiLang] = useUiLang();
   const [answers, setAnswers] = useState<string[][]>(
     exercise.sections.map(s => s.pronouns.map(() => ''))
   );
@@ -125,16 +128,18 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
       {/* Verb header */}
       <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
         <div>
-          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Verb</p>
+          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">{t('Verb', 'Verb')}</p>
           <p className="text-3xl font-bold text-gray-900 mt-0.5">{exercise.verb}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Tenses</p>
-          <p className="text-sm font-semibold text-red-700 mt-0.5">{exercise.sections.length} forms</p>
+          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">{t('Tenses', 'Zeitformen')}</p>
+          <p className="text-sm font-semibold text-red-700 mt-0.5">{exercise.sections.length}</p>
         </div>
       </div>
 
-      <p className="text-gray-600 text-sm">{exercise.instruction}</p>
+      <p className="text-gray-600 text-sm">{uiLang === 'de'
+          ? exercise.instruction.replace(/^Conjugate "(.+?)" \((.+?)\): (.+)$/, 'Konjugiere „$1“ ($2): $3')
+          : exercise.instruction}</p>
 
       {/* Tense sections */}
       <div className="space-y-4">
@@ -166,7 +171,7 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
                 }`}
               >
                 <div>
-                  <span className="font-semibold text-gray-800 text-sm">{section.tenseName_de}</span>
+                  <span className="font-semibold text-gray-800 text-sm">{tenseName(section.tenseName_de, uiLang)}</span>
                   <span className="text-gray-400 text-xs ml-2 italic">{section.tense}</span>
                 </div>
                 {checked && (
@@ -231,7 +236,7 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
                           }`}
                         />
                         {isTypo && (
-                          <span className="text-xs text-amber-700 font-medium shrink-0">typo</span>
+                          <span className="text-xs text-amber-700 font-medium shrink-0">{t('typo', 'Tippfehler')}</span>
                         )}
                         {isWrong && (
                           <span className="text-sm text-green-700 font-semibold shrink-0">
@@ -242,7 +247,7 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
 
                       {isWrong && (
                         <div className="flex items-center gap-2 mt-1.5 sm:pl-[9.75rem]">
-                          <span className="text-xs text-amber-600 shrink-0">Rewrite to learn:</span>
+                          <span className="text-xs text-amber-600 shrink-0">{t('Rewrite to learn:', 'Zum Einprägen abschreiben:')}</span>
                           <input
                             type="text"
                             value={retypes[si][pi]}
@@ -261,7 +266,7 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
                             disabled={!retyped}
                             className="shrink-0 text-xs font-semibold px-2 py-1 rounded-lg bg-amber-100 text-amber-800 hover:bg-amber-200 disabled:opacity-40 transition-colors"
                           >
-                            Typo
+                            {t('Typo', 'Tippfehler')}
                           </button>
                         </div>
                       )}
@@ -287,7 +292,7 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
           onClick={check}
           className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-medium transition-colors"
         >
-          Check
+          {t('Check', 'Prüfen')}
         </button>
       ) : (
         <div className="space-y-3">
@@ -300,13 +305,16 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
                 : 'bg-red-50 text-red-800'
             }`}
           >
-            {perfectSections}/{exercise.sections.length} tenses perfect ·{' '}
-            {totalCorrect}/{totalQuestions} forms correct
+            {perfectSections}/{exercise.sections.length} {t('tenses perfect', 'Zeitformen fehlerfrei')} ·{' '}
+            {totalCorrect}/{totalQuestions} {t('forms correct', 'Formen richtig')}
             {totalCorrect === totalQuestions && ' 🎉'}
           </div>
           {!allWrongHandled && results.some(row => row.some(ok => !ok)) && (
             <p className="text-xs text-gray-500 text-center">
-              Rewrite each wrong form, then tap <strong>Typo</strong> if it was a mistake — or retype correctly.
+              {t(
+                'Rewrite each wrong form correctly – and tap “Typo” if it was just a slip.',
+                'Schreib jede falsche Form richtig ab – und tippe auf „Tippfehler“, wenn es nur ein Vertipper war.',
+              )}
             </p>
           )}
           <button
@@ -314,13 +322,13 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
             disabled={!allWrongHandled}
             className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl font-medium transition-colors"
           >
-            Continue
+            {t('Continue', 'Weiter')}
           </button>
           <button
             onClick={reset}
             className="w-full py-2 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"
           >
-            Try again
+            {t('Try again', 'Nochmal')}
           </button>
         </div>
       )}

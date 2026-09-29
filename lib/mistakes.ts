@@ -10,12 +10,12 @@ export const TRAINING_SIZE = 15;
 
 export type NewMistake = Omit<MistakeItem, 'wrong' | 'right' | 'added'>;
 
-export const MISTAKE_KINDS: { id: MistakeKind; icon: string; label: string }[] = [
-  { id: 'vocab', icon: '📖', label: 'Words' },
-  { id: 'verb', icon: '🔤', label: 'Verb forms' },
-  { id: 'grammar', icon: '📘', label: 'Grammar' },
-  { id: 'sentence', icon: '✍️', label: 'Sentences' },
-  { id: 'dictation', icon: '🎧', label: 'Dictation' },
+export const MISTAKE_KINDS: { id: MistakeKind; icon: string; label: string; labelDe: string }[] = [
+  { id: 'vocab', icon: '📖', label: 'Words', labelDe: 'Wörter' },
+  { id: 'verb', icon: '🔤', label: 'Verb forms', labelDe: 'Verbformen' },
+  { id: 'grammar', icon: '📘', label: 'Grammar', labelDe: 'Grammatik' },
+  { id: 'sentence', icon: '✍️', label: 'Sentences', labelDe: 'Sätze' },
+  { id: 'dictation', icon: '🎧', label: 'Dictation', labelDe: 'Diktat' },
 ];
 
 export function kindInfo(kind: MistakeKind) {

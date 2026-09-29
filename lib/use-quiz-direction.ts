@@ -9,11 +9,11 @@ import { useState, useEffect } from 'react';
 export type QuizDirection = 'de_it' | 'it_de' | 'mixed';
 
 // Toggle options, labelled with the target language's flag.
-export function quizDirections(flag: string): [QuizDirection, string][] {
+export function quizDirections(flag: string, mixed = 'Mixed'): [QuizDirection, string][] {
   return [
     ['de_it', `🇩🇪 → ${flag}`],
     ['it_de', `${flag} → 🇩🇪`],
-    ['mixed', 'Mixed'],
+    ['mixed', mixed],
   ];
 }
 
