@@ -9,6 +9,22 @@ export default function HelpPage() {
           <p className="text-gray-400 text-sm mt-0.5">A quick guide to the app</p>
         </div>
 
+        {/* Install */}
+        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+          <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
+            <span>📲</span> Install as an app
+          </h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            Put the app on your home screen – it then opens full screen with its own icon, like a normal app.
+            Updates arrive automatically.
+          </p>
+          <div className="space-y-1.5 text-sm text-gray-600">
+            <p><strong>iPhone (Safari):</strong> tap the Share button <span className="whitespace-nowrap">(□↑)</span> → <em>Add to Home Screen</em> → <em>Add</em>.</p>
+            <p><strong>Android (Chrome):</strong> tap the menu <strong>⋮</strong> → <em>Install app</em> (or <em>Add to Home screen</em>).</p>
+            <p><strong>Computer (Chrome/Edge):</strong> click the install icon at the right of the address bar.</p>
+          </div>
+        </section>
+
         {/* Today */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
           <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">

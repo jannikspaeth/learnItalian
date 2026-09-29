@@ -10,6 +10,15 @@ body {
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* Installed app (full screen): keep content clear of the notch and side edges. */
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Bottom bars: stay above the iPhone home indicator. */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 * {
@@ -19,4 +28,11 @@ body {
 input[type="text"]:focus,
 textarea:focus {
   outline: none;
+}
+
+/* Mobile pages leave room for the bottom bar — plus the home indicator. */
+@media (max-width: 767px) {
+  .pb-24 {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
 }

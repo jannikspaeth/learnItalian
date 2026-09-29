@@ -385,7 +385,7 @@ function Reader({
 
       {/* Word panel */}
       {selected && (
-        <div className="fixed left-0 right-0 bottom-16 md:bottom-4 md:left-56 z-40 px-3">
+        <div className="fixed left-0 right-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-4 md:left-56 z-40 px-3">
           <div className="max-w-xl mx-auto bg-white rounded-2xl border border-gray-200 shadow-xl p-4 space-y-2">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
