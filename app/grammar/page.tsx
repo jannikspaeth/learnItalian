@@ -39,6 +39,8 @@ export default function GrammarPage() {
   const recordOf = new Map(records.map(r => [r.id, r]));
   const mastered = GRAMMAR_TOPICS.filter(t => recordOf.get(t.id)?.mastered).length;
   const active = practicing ? GRAMMAR_TOPICS.find(t => t.id === practicing) : undefined;
+  // Languages whose lessons carry a level get them grouped A1 / A2 / B1.
+  const lessonsByLevel = GRAMMAR_LESSONS.every(l => l.level);
 
   function toggle(set: Set<string>, update: (s: Set<string>) => void, id: string) {
     const next = new Set(set);
@@ -132,6 +134,60 @@ export default function GrammarPage() {
     );
   }
 
+  function renderLesson(lesson: (typeof GRAMMAR_LESSONS)[number]) {
+    const isOpen = open.has(lesson.id);
+    return (
+      <section
+        key={lesson.id}
+        className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+      >
+        <button
+          onClick={() => toggle(open, setOpen, lesson.id)}
+          className="w-full flex items-center justify-between gap-3 p-5 text-left hover:bg-gray-50 transition-colors"
+        >
+          <span className="flex items-center gap-2.5 min-w-0">
+            <span className="text-xl shrink-0">{lesson.icon}</span>
+            <span className="min-w-0">
+              <span className="block font-bold text-gray-900 text-base">{lesson.title}</span>
+              <span className="block text-xs text-gray-400 mt-0.5">{lesson.intro}</span>
+            </span>
+          </span>
+          <span className={`text-gray-300 transition-transform shrink-0 ${isOpen ? 'rotate-90' : ''}`}>
+            ▶
+          </span>
+        </button>
+
+        {isOpen && (
+          <div className="px-5 pb-5 space-y-4 border-t border-gray-50 pt-4">
+            {lesson.sections.map((s, i) => (
+              <div key={i} className="space-y-2">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  {s.heading}
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{s.body}</p>
+                {s.examples && s.examples.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    {s.examples.map((ex, j) => (
+                      <div
+                        key={j}
+                        className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 bg-gray-50 rounded-lg px-3 py-2"
+                      >
+                        <SpeakButton text={ex.target} lang={lang} className="self-center" />
+                        <span className="font-semibold text-gray-900 text-sm">{ex.target}</span>
+                        <span className="text-gray-300 text-sm">→</span>
+                        <span className="text-gray-500 text-sm">{ex.de}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    );
+  }
+
   return (
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
@@ -140,7 +196,9 @@ export default function GrammarPage() {
           <p className="text-gray-400 text-sm mt-0.5">
             {tab === 'exercises'
               ? `${mastered} of ${GRAMMAR_TOPICS.length} topics mastered · A1 to B1`
-              : `Die ersten Schritte auf ${langInfo(lang).nameDe} – kurz erklärt.`}
+              : lessonsByLevel
+                ? `${GRAMMAR_LESSONS.length} Lektionen von A1 bis B1 – kurz erklärt, mit Beispielen zum Anhören.`
+                : `Die ersten Schritte auf ${langInfo(lang).nameDe} – kurz erklärt.`}
           </p>
         </div>
 
@@ -201,59 +259,18 @@ export default function GrammarPage() {
 
         {/* ===== LESSONS ===== */}
         {tab === 'lessons' &&
-          GRAMMAR_LESSONS.map(lesson => {
-            const isOpen = open.has(lesson.id);
-            return (
-              <section
-                key={lesson.id}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
-              >
-                <button
-                  onClick={() => toggle(open, setOpen, lesson.id)}
-                  className="w-full flex items-center justify-between gap-3 p-5 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <span className="flex items-center gap-2.5 min-w-0">
-                    <span className="text-xl shrink-0">{lesson.icon}</span>
-                    <span className="min-w-0">
-                      <span className="block font-bold text-gray-900 text-base">{lesson.title}</span>
-                      <span className="block text-xs text-gray-400 mt-0.5">{lesson.intro}</span>
-                    </span>
-                  </span>
-                  <span className={`text-gray-300 transition-transform shrink-0 ${isOpen ? 'rotate-90' : ''}`}>
-                    ▶
-                  </span>
-                </button>
-
-                {isOpen && (
-                  <div className="px-5 pb-5 space-y-4 border-t border-gray-50 pt-4">
-                    {lesson.sections.map((s, i) => (
-                      <div key={i} className="space-y-2">
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                          {s.heading}
-                        </h3>
-                        <p className="text-sm text-gray-600 leading-relaxed">{s.body}</p>
-                        {s.examples && s.examples.length > 0 && (
-                          <div className="space-y-1.5 pt-1">
-                            {s.examples.map((ex, j) => (
-                              <div
-                                key={j}
-                                className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 bg-gray-50 rounded-lg px-3 py-2"
-                              >
-                                <SpeakButton text={ex.target} lang={lang} className="self-center" />
-                                <span className="font-semibold text-gray-900 text-sm">{ex.target}</span>
-                                <span className="text-gray-300 text-sm">→</span>
-                                <span className="text-gray-500 text-sm">{ex.de}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            );
-          })}
+          (lessonsByLevel
+            ? GRAMMAR_LEVELS.map(level => {
+                const lessons = GRAMMAR_LESSONS.filter(l => l.level === level.id);
+                if (lessons.length === 0) return null;
+                return (
+                  <section key={level.id} className="space-y-3">
+                    <h2 className="text-sm font-bold text-gray-800 px-1">{level.label}</h2>
+                    {lessons.map(renderLesson)}
+                  </section>
+                );
+              })
+            : GRAMMAR_LESSONS.map(renderLesson))}
       </div>
     </main>
   );

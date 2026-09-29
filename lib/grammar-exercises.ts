@@ -226,6 +226,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📍',
     title: 'Präpositionen mit Artikel (al, del, nella …)',
     level: 'A1',
+    lessonId: 'praepositionen',
     instruction: 'Setze Präposition + Artikel zusammen ein.',
     explanation:
       'a, di, da, in, su verschmelzen mit dem bestimmten Artikel: a + il = al, di + la = della, da + l\' = dall\', ' +
@@ -259,7 +260,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🫵',
     title: 'Possessivpronomen (mio, tuo, suo …)',
     level: 'A1',
-    lessonId: 'pronomen',
+    lessonId: 'possessiv',
     instruction: 'Setze das passende Possessivpronomen ein (mit oder ohne Artikel).',
     explanation:
       'Das Possessiv richtet sich nach dem Besitz, nicht nach dem Besitzer: il mio libro, la mia casa, i miei libri, ' +
@@ -293,6 +294,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '❓',
     title: 'Fragewörter',
     level: 'A1',
+    lessonId: 'fragen',
     instruction: 'Setze das passende Fragewort ein.',
     explanation:
       'chi = wer · che cosa / cosa / che = was · come = wie · dove = wo · quando = wann · perché = warum · ' +
@@ -326,6 +328,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🚫',
     title: 'Verneinung (non, mai, niente …)',
     level: 'A1',
+    lessonId: 'fragen',
     instruction: 'Setze das passende Wort für die Verneinung ein.',
     explanation:
       'non steht direkt vor dem Verb: Non parlo tedesco. Weitere Verneinungswörter stehen nach dem Verb, ' +
@@ -361,6 +364,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '✨',
     title: 'Adjektive: Angleichung',
     level: 'A1',
+    lessonId: 'adjektive',
     instruction: 'Setze das Adjektiv in der passenden Form ein.',
     explanation:
       'Adjektive richten sich nach Geschlecht und Zahl des Nomens und stehen meist dahinter. Auf -o: rosso, rossa, ' +
@@ -396,6 +400,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📦',
     title: "c'è / ci sono (es gibt)",
     level: 'A1',
+    lessonId: 'es-gibt',
     instruction: "Setze c'è oder ci sono ein.",
     explanation:
       "c'è (es gibt / es ist da) steht mit Einzahl, ci sono mit Mehrzahl. Verneinung: non c'è / non ci sono. " +
@@ -427,6 +432,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '❤️',
     title: 'mi piace / mi piacciono',
     level: 'A1',
+    lessonId: 'piacere',
     instruction: 'Setze die passende Form oder das passende Pronomen ein.',
     explanation:
       'piacere funktioniert umgekehrt als „mögen“: Das, was gefällt, ist das Subjekt. Einzahl oder Infinitiv → piace, ' +
@@ -460,6 +466,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🪞',
     title: 'Reflexive Verben',
     level: 'A1',
+    lessonId: 'reflexiv',
     instruction: 'Setze das Reflexivpronomen oder die Verbform ein.',
     explanation:
       'Reflexive Verben haben ein Pronomen vor dem Verb: mi, ti, si, ci, vi, si – mi alzo, ti alzi, si alza, ' +
@@ -493,6 +500,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⚡',
     title: 'Unregelmäßige Verben im Präsens',
     level: 'A1',
+    lessonId: 'unregelmaessig',
     instruction: 'Konjugiere das Verb in Klammern im Präsens.',
     explanation:
       'Die häufigsten Verben sind unregelmäßig und müssen auswendig gelernt werden: andare (vado, vai, va, andiamo, ' +
@@ -529,6 +537,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '👉',
     title: 'questo / quello',
     level: 'A1',
+    lessonId: 'es-gibt',
     instruction: 'Setze die passende Form von questo oder quello ein.',
     explanation:
       'questo (dieser hier): questo, questa, questi, queste – vor Vokal oft quest\'. quello (jener dort) verändert ' +
@@ -563,6 +572,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏪',
     title: 'Passato prossimo (essere oder avere)',
     level: 'A2',
+    lessonId: 'passato-prossimo',
     instruction: 'Setze das Hilfsverb oder das Partizip ein.',
     explanation:
       'Passato prossimo = Hilfsverb (avere oder essere) + Partizip. Die meisten Verben nehmen avere: ho mangiato. ' +
@@ -598,6 +608,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🧭',
     title: 'Präpositionen: a, in, da, di, per, tra',
     level: 'A2',
+    lessonId: 'praepositionen',
     instruction: 'Setze die passende Präposition ein.',
     explanation:
       'a + Stadt (a Roma), in + Land/Region (in Italia, in Toscana), in + Verkehrsmittel (in treno, in macchina) – aber ' +
@@ -633,6 +644,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🕰️',
     title: 'Imperfetto',
     level: 'A2',
+    lessonId: 'imperfetto',
     instruction: 'Setze das Verb im imperfetto ein.',
     explanation:
       'Endungen: -are → -avo, -avi, -ava, -avamo, -avate, -avano; -ere → -evo, -evi, -eva …; -ire → -ivo, -ivi, -iva …. ' +
@@ -666,6 +678,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⚖️',
     title: 'Imperfetto oder passato prossimo?',
     level: 'A2',
+    lessonId: 'imperfetto',
     instruction: 'Wähle die passende Vergangenheitsform.',
     explanation:
       'passato prossimo: abgeschlossene, einmalige Handlung („was ist passiert?“) – Ieri ho visto un film. ' +
@@ -700,6 +713,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔮',
     title: 'Futuro semplice',
     level: 'A2',
+    lessonId: 'futuro',
     instruction: 'Setze das Verb im Futur ein.',
     explanation:
       'Endungen -ò, -ai, -à, -emo, -ete, -anno an den Infinitivstamm; bei -are wird a zu e (parlare → parlerò). ' +
@@ -734,6 +748,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎯',
     title: 'Direkte Objektpronomen (lo, la, li, le)',
     level: 'A2',
+    lessonId: 'objektpronomen',
     instruction: 'Setze das passende direkte Objektpronomen (oder Partizip) ein.',
     explanation:
       'mi (mich), ti (dich), lo (ihn/es), la (sie/es), La (Sie), ci (uns), vi (euch), li (sie, männlich Mz.), ' +
@@ -769,6 +784,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📨',
     title: 'Indirekte Objektpronomen (gli, le …)',
     level: 'A2',
+    lessonId: 'objektpronomen',
     instruction: 'Setze das passende indirekte Objektpronomen ein.',
     explanation:
       'mi (mir), ti (dir), gli (ihm), le (ihr), Le (Ihnen), ci (uns), vi (euch), gli (ihnen). Typisch bei Verben ' +
@@ -803,6 +819,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📊',
     title: 'Vergleich & Superlativ',
     level: 'A2',
+    lessonId: 'vergleiche',
     instruction: 'Setze das passende Wort ein.',
     explanation:
       'più/meno … di vor Nomen und Pronomen (Marco è più alto di Luca), più … che beim Vergleich von Adjektiven, ' +
@@ -838,6 +855,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📣',
     title: 'Imperativ',
     level: 'A2',
+    lessonId: 'imperativ',
     instruction: 'Setze den Imperativ ein.',
     explanation:
       'tu: -are → -a (parla!), -ere/-ire → -i (prendi! dormi! finisci!). noi und voi = Präsens (andiamo! parlate!). ' +
@@ -873,6 +891,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏳',
     title: 'stare + Gerundium (gerade tun)',
     level: 'A2',
+    lessonId: 'gerundio',
     instruction: 'Setze das Gerundium oder die Form von stare ein.',
     explanation:
       'stare + Gerundium = gerade dabei sein, etwas zu tun: Sto mangiando. Gerundium: -are → -ando (parlando), ' +
@@ -907,6 +926,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🤔',
     title: 'Condizionale presente',
     level: 'B1',
+    lessonId: 'condizionale',
     instruction: 'Setze das Verb im condizionale ein.',
     explanation:
       'Futurstamm + -ei, -esti, -ebbe, -emmo, -este, -ebbero: parlerei, prenderei, dormirei; unregelmäßig wie im Futur: ' +
@@ -941,6 +961,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '💭',
     title: 'Congiuntivo presente',
     level: 'B1',
+    lessonId: 'congiuntivo',
     instruction: 'Setze das Verb im congiuntivo presente ein.',
     explanation:
       'Der congiuntivo steht nach Verben und Ausdrücken der Meinung, des Wunsches, des Gefühls oder des Zweifels ' +
@@ -976,6 +997,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔀',
     title: 'Congiuntivo oder Indikativ?',
     level: 'B1',
+    lessonId: 'congiuntivo',
     instruction: 'Wähle Indikativ oder congiuntivo.',
     explanation:
       'Indikativ bei Tatsachen und Gewissheit: so che, è vero che, sono sicuro che, vedo che, perché (weil), quando, ' +
@@ -1009,6 +1031,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔗',
     title: 'Kombinierte Pronomen (me lo, glielo …)',
     level: 'B1',
+    lessonId: 'pronomi-combinati',
     instruction: 'Setze die kombinierten Pronomen ein.',
     explanation:
       'Indirektes + direktes Pronomen: mi → me, ti → te, ci → ce, vi → ve, dann lo/la/li/le/ne: me lo, te la, ' +
@@ -1042,6 +1065,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📌',
     title: 'Die Pronomen ci und ne',
     level: 'B1',
+    lessonId: 'ci-ne',
     instruction: 'Setze ci oder ne (oder die passende Form) ein.',
     explanation:
       'ci ersetzt einen Ort (Vado a Roma → Ci vado) oder a/su + Sache (Pensi al lavoro? – Ci penso sempre). ' +
@@ -1077,6 +1101,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔁',
     title: 'Relativpronomen (che, cui, chi)',
     level: 'B1',
+    lessonId: 'relativ',
     instruction: 'Setze das passende Relativpronomen ein.',
     explanation:
       'che = der/die/das (Subjekt oder Objekt, ohne Präposition): il libro che leggo. cui nach einer Präposition: ' +
@@ -1111,6 +1136,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏮️',
     title: 'Trapassato prossimo (Plusquamperfekt)',
     level: 'B1',
+    lessonId: 'trapassato',
     instruction: 'Setze das Hilfsverb oder das Partizip ein.',
     explanation:
       'Vorvergangenheit: imperfetto von avere oder essere + Partizip (avevo mangiato, ero andato/a). Sie beschreibt ' +
@@ -1144,6 +1170,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔀',
     title: 'Bedingungssätze mit se',
     level: 'B1',
+    lessonId: 'bedingungssaetze',
     instruction: 'Setze die passende Verbform ein.',
     explanation:
       'Realer Fall: se + Präsens → Präsens/Futur (Se piove, resto a casa). Möglicher/unwirklicher Fall: ' +
@@ -1179,6 +1206,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🏛️',
     title: 'si impersonale & Passiv',
     level: 'B1',
+    lessonId: 'si',
     instruction: 'Setze die passende Form ein.',
     explanation:
       'si + 3. Person = „man“: In Italia si mangia bene. Steht ein Nomen in der Mehrzahl dabei, steht auch das Verb ' +

@@ -67,7 +67,9 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
 - `stats` — one row per user. Cumulative totals + `streak` + **`daily` jsonb** (Berlin-date → activity count).
 - `conjugation`, `sentences`, `grammar` — one JSONB row per user (arrays of records).
 - `race` — one global row **per language**: `id='global'` (Italian), `id='global-es'`, `id='global-fr'`, holding
-  `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. Also the `id='profiles'` row (see above).
+  `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. Also the `id='profiles'` row (see above) and
+  one **extras** row per user+language, `id='extras:<user_id>'` (`UserExtras`: `mistakes`, `reading`, `rounds`;
+  `/api/data/extras`, `updateExtras()` in `lib/storage.ts` queues read-modify-writes). Deleted with the profile.
 
 ### ⚠️ Manual SQL migrations (no migrations dir — tables are created by hand)
 Full setup for a fresh Supabase project (column names match `lib/db.ts`):
@@ -113,6 +115,19 @@ alter table grammar     enable row level security;
 
 ## Features / pages
 
+- `/heute` — **Today** (home page, `/` redirects here): a mixed daily round (`lib/daily-round.ts`: 10 words due-first
+  then new, 5 single verb forms, 5 grammar items, 2 sentences, 1 dictation) and **My mistakes** training. Every
+  exercise records wrong answers via `recordMistakes()` (`lib/mistakes.ts`, builders per kind with stable ids);
+  an item leaves the list after 2 correct answers in a row. Practice cards are shared in `components/practice/`.
+- **Audio**: `lib/speech.ts` (browser `speechSynthesis`, voice per language, `speakableText` strips notes/variants)
+  + `components/SpeakButton.tsx` on flashcards, word list, sentences, verb tables, grammar and lessons; per-device
+  auto-play for vocab (`lib/use-autoplay.ts`). No speech recognition.
+- `/lesen` — **Reading**: graded texts per language in `lib/reading/{it,es,fr}.ts` (18 it, 9 es, 9 fr) with
+  tap-to-translate (`lib/reading/lookup.ts`: text glossary → `common-words.ts` → vocab catalog → every verb form
+  from the `forms` pack → plural/feminine/-issimo/gerund/clitic heuristics), per-paragraph translation, audio and
+  comprehension questions (`recordExercise('reading')`, 2 race points per question; progress in extras). Every
+  word of every text must resolve — when adding a text, run a lookup over all tokens and fill its `glossary`.
+
 - `/vokabeln` — Vocabulary: SRS flashcards (one at a time), **Learn in rounds of 20**, Review
   (shuffled), Words list. Daily goal banner. Beginners (A1) learn an ordered starter set first
   (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts` (~2,900 words, A1–B1:
@@ -120,11 +135,14 @@ alter table grammar     enable row level security;
   wortschatz CSVs in gitignored `scripts/data/`; correct entries in `scripts/vocab-import-fixes.mjs`
   and re-run — never edit the generated file). Word keys come from
   `normWord` (`lib/norm.ts`: strips il/lo/la/l'/i/gli/le/un/uno/una/un' + German articles).
-- `/saetze` — translate example sentences (`public/vocab-examples.json`, keyed by `normWord`).
+- `/saetze` — translate example sentences (`public/vocab-examples.json`, keyed by `normWord`), plus a
+  **Dictation** tab (listen → type, word-level diff in `lib/dictation.ts`).
 - `/konjugation` — Verb conjugation from `lib/verb-catalog.ts`: short specs + a **rule engine**
   derives every tense up to B1 (presente, passato prossimo, imperfetto, futuro, imperativo,
   condizionale, congiuntivo); irregulars live in `IRREGULAR` (or via `base` for prefixed verbs).
-  A per-device tense picker chooses what to drill (default: present for A1, else pres/pp/imperf). Answer checking
+  A per-device tense picker chooses what to drill (default: present for A1, else pres/pp/imperf; `TENSE_STORAGE_KEY`
+  in `lib/tenses.ts`). Verbs have review intervals (`lib/verb-review.ts`: level 1–6, 1/3/7/14/30/60 days, a
+  mistake resets to level 1; stored on the `ConjugationRecord`) and a "Review due verbs" button. Answer checking
   (`lib/conjugation-match.ts`) is **accent-insensitive** and accepts either ending of
   essere-participles written `andato/a` / `andati/e`.
   Every catalog word has a `topic` (`lib/vocab-topics.ts`); Learn can be narrowed to one topic
@@ -132,7 +150,8 @@ alter table grammar     enable row level security;
   `scripts/vocab-import-topics.mjs` (verbs auto-detected by ending).
 - `/grammar` — two tabs: **Exercises** (34 hand-written cloze sets covering A1–B1 in
   `lib/grammar-exercises.ts`, grouped by level, each with rule + examples; choose/type modes, progress
-  per topic in the `grammar` table) and **Lessons** (Grundlagen, `lib/grammar-lessons.ts`, for all).
+  per topic in the `grammar` table) and **Lessons** (`lib/grammar-lessons.ts`; Italian: 29 lessons A1–B1 with a
+  `level`, grouped by level, every exercise topic links one via `lessonId`; es/fr: first-steps lessons only).
 - `/race` — **THE RACE**: global competitive leaderboard (see below).
 - `/help`, `/profile`. Nav in `components/Navigation.tsx` (filters items by `onlyDirection`/`onlyLevel`).
 
@@ -141,7 +160,8 @@ alter table grammar     enable row level security;
 Global standings everyone sees; **one separate race per language** (`/api/race?lang=es`, racers =
 profiles with a level or activity in that language).
 - **Daily activity** per user = every vocab flashcard (+1) + every conjugated form (**half credit**,
-  `round(total/2)`) + every grammar item (half credit) + every translated sentence (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
+  `round(total/2)`) + every grammar item (half credit) + every translated/dictated sentence (+2) + every reading
+  question (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
   keyed by **Europe/Berlin date**.
 - Each finished day awards **5/4/3/2/1** to the top daily scorers; **ties split the tiers evenly**;
   0 activity earns nothing. Logic is pure in `lib/race.ts` (`awardPoints`, `berlinDayStart`/`berlinToday`).

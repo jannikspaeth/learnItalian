@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Lang } from './lang';
+import type { ReadingText } from './reading/types';
 
 // Per-language learning content, loaded on demand (dynamic import) so each
 // learner only downloads the catalogs of the language they practise.
@@ -23,6 +24,15 @@ export interface VerbPack {
   pronouns: readonly string[];
 }
 
+// Every conjugated form per verb (tap-to-translate while reading).
+export interface FormsPack {
+  verbs: { infinitive: string; de: string; forms: string[] }[];
+}
+
+export interface ReadingPack {
+  texts: ReadingText[];
+}
+
 const loaders = {
   vocab: {
     it: () => import('./packs/it-vocab').then(m => m.default),
@@ -34,10 +44,26 @@ const loaders = {
     es: () => import('./packs/es-verbs').then(m => m.default),
     fr: () => import('./packs/fr-verbs').then(m => m.default),
   },
+  forms: {
+    it: () => import('./packs/it-forms').then(m => m.default),
+    es: () => import('./packs/es-forms').then(m => m.default),
+    fr: () => import('./packs/fr-forms').then(m => m.default),
+  },
+  reading: {
+    it: () => import('./packs/it-reading').then(m => m.default),
+    es: () => import('./packs/es-reading').then(m => m.default),
+    fr: () => import('./packs/fr-reading').then(m => m.default),
+  },
 };
 
 type Kind = keyof typeof loaders;
-type PackOf<K extends Kind> = K extends 'vocab' ? VocabPack : VerbPack;
+type PackOf<K extends Kind> = K extends 'vocab'
+  ? VocabPack
+  : K extends 'verbs'
+    ? VerbPack
+    : K extends 'forms'
+      ? FormsPack
+      : ReadingPack;
 
 const cache = new Map<string, unknown>();
 

@@ -9,6 +9,51 @@ export default function HelpPage() {
           <p className="text-gray-400 text-sm mt-0.5">A quick guide to the app</p>
         </div>
 
+        {/* Today */}
+        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+          <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
+            <span>☀️</span> Today &amp; My mistakes
+          </h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            <strong>Today&apos;s round</strong> mixes everything in about 10 minutes: 10 words (due reviews first, then
+            new ones), 5 verb forms, 5 grammar sentences, 2 sentences to translate and 1 dictation. It&apos;s the easiest
+            way to practise every day without having to decide what to do.
+          </p>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            <strong>My mistakes</strong> collects everything you answered wrong – in every exercise. Practise them on
+            their own (all or one kind); once you get a mistake right twice in a row, it disappears.
+          </p>
+        </section>
+
+        {/* Audio */}
+        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+          <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
+            <span>🔊</span> Listening
+          </h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            Tap 🔊 next to a word, sentence, verb table or grammar example to hear it (🐢 = slowly). The voice comes
+            from your device – if it sounds odd, install a better Italian/Spanish/French voice in your phone&apos;s or
+            computer&apos;s speech settings. On the Vocabulary page you can switch on <strong>Read words aloud
+            automatically</strong>.
+          </p>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            <strong>Dictation</strong> (Sentences → 🎧): listen to a sentence and write it down. You get feedback word
+            by word; accents and punctuation don&apos;t count as mistakes.
+          </p>
+        </section>
+
+        {/* Reading */}
+        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+          <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
+            <span>📰</span> Reading
+          </h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            Short stories and dialogues from A1 to B1. Tap any word to see its meaning (verb forms show their
+            infinitive) and add it to your words with one tap. Listen to the whole text, show the German translation
+            per paragraph, then answer a few questions – each answered question counts 2 race points.
+          </p>
+        </section>
+
         {/* Vocabulary */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
           <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
@@ -85,6 +130,8 @@ export default function HelpPage() {
           <p className="text-sm text-gray-600 leading-relaxed">
             Practice conjugations. Each session shows a verb and asks you to fill in all forms for the relevant tenses.
             Your accuracy is tracked per verb and per tense. Verbs with recent mistakes are shown in the <strong>Errors</strong> tab.
+            Verbs come back for review on their own: the day after a mistake, then after 3, 7, 14, 30 and 60 days as long
+            as you get them right – tap <strong>Review due verbs</strong>.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
             Choose which tenses to practise at the top of the page – all tenses up to B1 (each chip shows its level).
@@ -108,8 +155,9 @@ export default function HelpPage() {
             mistakes are saved per topic. Grammar answers count for the race like verbs (half a point each).
           </p>
           <p className="text-sm text-gray-600 leading-relaxed">
-            <strong>Lessons</strong>: short first-steps explanations in German (pronunciation, pronouns, articles,
-            essere vs. avere, present tense). Beginner profiles also get an ordered starter set of words first.
+            <strong>Lessons</strong>: short explanations in German with examples to listen to. Italian has 29 lessons
+            from A1 to B1 (from pronunciation and articles to congiuntivo and se-clauses); every exercise topic links
+            to its lesson. Beginner profiles also get an ordered starter set of words first.
           </p>
         </section>
 
