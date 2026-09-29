@@ -36,9 +36,8 @@ export default function TypeCard({
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
-  // Once the answer is shown, a *new* Enter press moves on. Registered after the
-  // Enter that checked the answer, so that same key press can't skip the result
-  // (focusing the Next button did: the browser then "clicked" it on keypress).
+  // Once the answer is shown, a *new* Enter press moves on. (Focusing the Next
+  // button instead let the browser "click" it with the checking Enter.)
   useEffect(() => {
     if (!result) return;
     const onKey = (e: KeyboardEvent) => {
@@ -47,8 +46,14 @@ export default function TypeCard({
         onResult(result.correct, value);
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    // Register on the next tick: React runs this effect while the Enter that
+    // checked the answer is still bubbling, so a listener added right away
+    // would receive that same key press and skip the result.
+    const t = setTimeout(() => window.addEventListener('keydown', onKey), 0);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('keydown', onKey);
+    };
   }, [result, value, onResult]);
 
   function doCheck() {

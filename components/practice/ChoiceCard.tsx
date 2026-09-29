@@ -46,8 +46,14 @@ export default function ChoiceCard({
         onResult(picked === answer, picked);
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    // Register on the next tick: React runs this effect while the Enter that
+    // checked the answer is still bubbling, so a listener added right away
+    // would receive that same key press and skip the result.
+    const t = setTimeout(() => window.addEventListener('keydown', onKey), 0);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('keydown', onKey);
+    };
   }, [picked, answer, onResult]);
 
   return (
