@@ -55,6 +55,20 @@ level) → practice pages.
   🇩🇪→🇮🇹 / 🇮🇹→🇩🇪 / Mixed (default). The SRS level stays one per word either way.
 - `useProfile()` (`lib/use-profile.ts`) reads/sets the active profile and syncs across tabs.
 
+## Installable & offline (PWA)
+
+- `app/manifest.ts`, icons in `public/icon-*.png` + `app/apple-icon.png`, `viewport-fit=cover` with
+  `env(safe-area-inset-*)` padding (`.safe-area-inset-bottom`, mobile `.pb-24` in `globals.css`).
+- `public/sw.js` (registered in production by `components/OfflineSupport.tsx`): pages network-first with cached
+  fallback (all routes pre-fetched with their `/_next/static` assets on install and on every online start),
+  static assets cache-first, GET `/api/data/*` · `/api/race*` · `/api/profiles` network-first with the last
+  answer cached **per `x-user-id`**. Offline PUT/POST to `/api/data/*` are queued in IndexedDB, answered
+  `{ ok, queued }` and mirrored into the cached reads (PUT replaces, vocab POST upserts) so read-modify-writes
+  keep working; the queue is flushed in order before any fresh read or write. `OfflineSupport` also preloads the
+  current language's packs, examples, verb builder and the learner's data, and shows an offline/sync badge.
+- Verb drills are built in the browser (`lib/conjugation-client.ts` → `lib/conjugation-exercise.ts`);
+  `/api/exercise` only remains for old clients. Bump the cache names in `sw.js` if the cache format changes.
+
 ## Data flow
 
 Client component → `lib/storage.ts` (fetch with `x-user-id`) → `app/api/data/*` route → `lib/db.ts`

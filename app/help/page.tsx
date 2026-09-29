@@ -23,6 +23,12 @@ export default function HelpPage() {
             <p><strong>Android (Chrome):</strong> tap the menu <strong>⋮</strong> → <em>Install app</em> (or <em>Add to Home screen</em>).</p>
             <p><strong>Computer (Chrome/Edge):</strong> click the install icon at the right of the address bar.</p>
           </div>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            <strong>Offline:</strong> once you&apos;ve opened the app online, it also works without internet – all pages,
+            words, verbs, grammar and reading texts of your language. Your answers are saved on the device and sent
+            automatically when you&apos;re back online (a small badge at the top shows how many are waiting). Switching
+            profiles or creating new ones needs a connection.
+          </p>
         </section>
 
         {/* Today */}

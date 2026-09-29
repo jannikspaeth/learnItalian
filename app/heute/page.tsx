@@ -15,7 +15,6 @@ import {
   recordMistakes,
 } from '@/lib/storage';
 import {
-  ConjugationExercise,
   ExerciseType,
   MistakeItem,
   MistakeKind,
@@ -29,6 +28,7 @@ import { langInfo, Lang } from '@/lib/lang';
 import { loadExamples } from '@/lib/vocab-examples';
 import { useQuizDirection, askTarget } from '@/lib/use-quiz-direction';
 import { chosenTenses } from '@/lib/tenses';
+import { getConjugationExercise } from '@/lib/conjugation-client';
 import { TOPICS_BY_LANG } from '@/lib/grammar-by-lang';
 import { berlinToday } from '@/lib/race';
 import { checkWordAnswer, checkClozeAnswer } from '@/lib/answer-check';
@@ -190,13 +190,7 @@ export default function HeutePage() {
     const tenses = chosenTenses(lang, beginner);
     const exercises = await Promise.all(
       verbs.map(verb =>
-        fetch('/api/exercise', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'conjugation', verb, beginner, tenses, lang }),
-        })
-          .then(r => (r.ok ? (r.json() as Promise<ConjugationExercise>) : null))
-          .catch(() => null),
+        getConjugationExercise({ lang, verb, beginner, tenses }).catch(() => null),
       ),
     );
     const out: RoundStep[] = [];

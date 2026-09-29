@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Navigation from '@/components/Navigation';
+import OfflineSupport from '@/components/OfflineSupport';
 
 export const metadata: Metadata = {
   title: 'Sprachen lernen',
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="de" className="h-full">
       <body className="min-h-full">
         <Navigation />
+        <OfflineSupport />
         {children}
       </body>
     </html>

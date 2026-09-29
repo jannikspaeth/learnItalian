@@ -8,6 +8,7 @@ import { TENSES_BY_LANG, defaultTenses, TENSE_STORAGE_KEY, TENSE_VALIDATORS } fr
 import { useLocalSetting } from '@/lib/use-local-setting';
 import { useLearner } from '@/lib/use-profile';
 import { usePack } from '@/lib/content';
+import { getConjugationExercise } from '@/lib/conjugation-client';
 import { dueVerbs, isVerbDue, verbDueDate } from '@/lib/verb-review';
 
 type Tab = 'lernen' | 'all' | 'mistakes';
@@ -147,16 +148,9 @@ export default function KonjugationPage() {
     setLoading(true);
     try {
       const knownVerbs = records.map(r => r.verb);
-      const res = await fetch('/api/exercise', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'conjugation', verb, knownVerbs, beginner, tenses, lang }),
-      });
-      const data = await res.json();
-      if (data.error) setError(data.error);
-      else setExercise(data as ConjugationExercise);
+      setExercise(await getConjugationExercise({ lang, verb, knownVerbs, beginner, tenses }));
     } catch {
-      setError('Connection error.');
+      setError('Could not load the verb.');
     } finally {
       setLoading(false);
     }
@@ -182,22 +176,9 @@ export default function KonjugationPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/exercise', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'conjugation',
-          verb: record.verb,
-          beginner,
-          tenses,
-          lang,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) setError(data.error);
-      else setExercise(data as ConjugationExercise);
+      setExercise(await getConjugationExercise({ lang, verb: record.verb, beginner, tenses }));
     } catch {
-      setError('Connection error. Please try again.');
+      setError('Could not load the verb.');
     } finally {
       setLoading(false);
     }
