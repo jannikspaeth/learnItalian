@@ -1,4 +1,4 @@
-export type ExerciseType = 'vocabulary' | 'conjugation' | 'sentence' | 'grammar';
+export type ExerciseType = 'vocabulary' | 'conjugation' | 'sentence' | 'grammar' | 'reading';
 
 // SRS state for translating an example sentence, keyed by the normalized Italian
 // word the sentence belongs to. Stored as one JSONB row per user (table `sentences`).
@@ -79,6 +79,10 @@ export interface ConjugationRecord {
   totalAttempts: number;
   lastAttempted: string;
   mastered: boolean;    // true when all sections had 0 mistakes in last attempt
+  // Spaced repetition per verb: a flawless attempt moves it up a level (longer
+  // interval), a mistake sends it back to level 1 and makes it due again.
+  level?: number;       // 1–6; absent on records from before verb review existed
+  nextReview?: string;  // ISO date the verb is due again
 }
 
 // ─── Grammar exercises (per-topic progress, one JSONB row per user) ─────────────
@@ -149,4 +153,39 @@ export interface RaceResponse {
   personalBests: { date: string; name: string; count: number }[];
   history: RaceHistory;
   stars: Record<string, number>; // months won per user_id (for app-wide display)
+}
+
+// ─── Per-user extras (mistakes, reading, daily round) ───────────────────────────
+// One JSONB blob per user and language, stored in the `race` table under the id
+// `extras:<user_id>` (no extra table needed). See lib/db.ts.
+
+export type MistakeKind = 'vocab' | 'verb' | 'grammar' | 'sentence' | 'dictation';
+
+export interface MistakeItem {
+  id: string;             // kind + stable key; getting the same thing wrong again bumps it
+  kind: MistakeKind;
+  prompt: string;         // what is asked: German word, "io ___", cloze "…___…", German sentence, dictation text
+  answer: string;         // expected answer
+  alternatives?: string[];// other accepted answers (grammar)
+  options?: string[];     // multiple-choice options (grammar)
+  hint?: string;          // context shown with the prompt (verb + tense, rule hint …);
+                          // for words/sentences the direction: 'toDe' | 'toTarget'
+  speak?: string;         // text in the target language to read aloud
+  userAnswer?: string;    // the last wrong answer
+  wrong: number;          // how often it was answered wrong
+  right: number;          // correct in a row in mistake training; cleared at MISTAKE_CLEAR_AFTER
+  added: string;          // ISO date of the last wrong answer
+}
+
+export interface ReadingRecord {
+  correct: number;        // comprehension questions right in the last attempt
+  total: number;
+  times: number;          // how often the text was finished
+  last: string;           // ISO date
+}
+
+export interface UserExtras {
+  mistakes: MistakeItem[];
+  reading: Record<string, ReadingRecord>; // by text id
+  rounds: Record<string, number>;         // daily round: Berlin date -> rounds finished
 }

@@ -36,7 +36,7 @@ export default function SprachePage() {
 
   function start(l: Lang) {
     setLang(l);
-    router.push('/vokabeln');
+    router.push('/heute');
   }
 
   function pick(l: Lang) {

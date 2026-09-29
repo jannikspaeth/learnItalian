@@ -6,19 +6,29 @@ import {
   getSentenceProgress,
   setSentenceProgress,
   recordExercise,
+  recordMistakes,
 } from '@/lib/storage';
+import { sentenceMistake, dictationMistake } from '@/lib/mistakes';
+import { DictationResult } from '@/lib/dictation';
+import SpeakButton from '@/components/SpeakButton';
+import DictationCard from '@/components/practice/DictationCard';
 import { VocabEntry, SentenceProgress } from '@/lib/types';
 import { loadExamples, VocabExample } from '@/lib/vocab-examples';
 import { Confidence, isDue, computeNewLevel, nextReviewDate } from '@/lib/srs';
 import { useLearner } from '@/lib/use-profile';
 import { normWord } from '@/lib/norm';
-import { langInfo } from '@/lib/lang';
+import { Lang, langInfo } from '@/lib/lang';
 import { useQuizDirection, askTarget } from '@/lib/use-quiz-direction';
 import QuizDirectionToggle from '@/components/QuizDirectionToggle';
 
-type Tab = 'learn' | 'review';
+type Tab = 'learn' | 'review' | 'dictation';
 type Phase = 'idle' | 'active' | 'done';
 const ROUND_SIZE = 15;
+const DICTATION_SIZE = 10;
+// Dictation needs sentences short enough to remember after one listen.
+const DICTATION_MAX_WORDS = 12;
+// Too few of your own words yet? Fill the dictation pool up with catalog sentences.
+const DICTATION_MIN_POOL = 30;
 
 interface Pair {
   key: string;
@@ -31,6 +41,7 @@ interface SItem {
   askTarget: boolean;  // true ⇒ target-language sentence shown, translate into German
   source: string;      // sentence shown
   target: string;      // model translation
+  text: string;        // the sentence in the language being learned (read aloud)
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -60,6 +71,9 @@ export default function SaetzePage() {
 
   const saveChain = useRef<Promise<unknown>>(Promise.resolve());
   const [quizDir, setQuizDir] = useQuizDirection();
+  // Dictation round (listen → type) and its score.
+  const [dictItems, setDictItems] = useState<Pair[]>([]);
+  const [dictPerfect, setDictPerfect] = useState(0);
 
   const refresh = useCallback(async () => {
     try {
@@ -103,14 +117,50 @@ export default function SaetzePage() {
   });
   const known = progress.filter(p => p.level >= 5).length;
 
+  // Dictation: sentences of your own words first, topped up from the catalog.
+  const shortEnough = (p: Pair) => p.text.split(/\s+/).length <= DICTATION_MAX_WORDS;
+  const dictPool = pool.filter(shortEnough);
+  if (dictPool.length < DICTATION_MIN_POOL) {
+    for (const [key, ex] of examples) {
+      if (dictPool.length >= DICTATION_MIN_POOL) break;
+      const p = { key, text: ex.text, de: ex.de };
+      if (!ex.text || !ex.de || seenKeys.has(key) || !shortEnough(p)) continue;
+      dictPool.push(p);
+    }
+  }
+
+  function startDictation() {
+    if (dictPool.length === 0) return;
+    // Own words first (shuffled), so dictation reinforces what you're learning.
+    const own = shuffle(dictPool.filter(p => seenKeys.has(p.key)));
+    const rest = shuffle(dictPool.filter(p => !seenKeys.has(p.key)));
+    setDictItems([...own, ...rest].slice(0, DICTATION_SIZE));
+    setTab('dictation');
+    setCurrent(0);
+    setDoneCount(0);
+    setDictPerfect(0);
+    setPhase('active');
+  }
+
+  function finishDictation(item: Pair, typed: string, result: DictationResult) {
+    if (!result.perfect) recordMistakes([dictationMistake({ key: item.key, text: item.text, de: item.de, userAnswer: typed })]);
+    else setDictPerfect(n => n + 1);
+    saveChain.current = saveChain.current
+      .then(() => recordExercise('sentence', result.perfect ? 1 : 0, 1))
+      .catch(() => {});
+    setDoneCount(c => c + 1);
+    if (current + 1 >= dictItems.length) setPhase('done');
+    else setCurrent(c => c + 1);
+  }
+
   function start(which: Tab) {
     const src = which === 'learn' ? unseen.slice(0, ROUND_SIZE) : shuffle(dueItems);
     if (src.length === 0) return;
     setTab(which);
     setItems(src.map(p => {
       return askTarget(quizDir)
-        ? { key: p.key, askTarget: true, source: p.text, target: p.de }
-        : { key: p.key, askTarget: false, source: p.de, target: p.text };
+        ? { key: p.key, askTarget: true, source: p.text, target: p.de, text: p.text }
+        : { key: p.key, askTarget: false, source: p.de, target: p.text, text: p.text };
     }));
     setCurrent(0);
     setDoneCount(0);
@@ -138,8 +188,15 @@ export default function SaetzePage() {
     };
     const next = [...progress.filter(p => p.key !== item.key), row];
     setProgress(next);
-    saveChain.current = saveChain.current.then(() => setSentenceProgress(next)).catch(() => {});
-    void recordExercise('sentence', correct ? 1 : 0, 1);
+    if (!correct) {
+      recordMistakes([sentenceMistake({
+        key: item.key, askTarget: item.askTarget, source: item.source, target: item.target, targetText: item.text,
+      })]);
+    }
+    saveChain.current = saveChain.current
+      .then(() => setSentenceProgress(next))
+      .then(() => recordExercise('sentence', correct ? 1 : 0, 1))
+      .catch(() => {});
 
     setDoneCount(c => c + 1);
     if (current + 1 >= items.length) setPhase('done');
@@ -154,7 +211,7 @@ export default function SaetzePage() {
             <span>✍️</span> Sentences
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
-            Translate example sentences from words you&apos;ve learned. Each one is worth 2 race points.
+            Translate example sentences from words you&apos;ve learned, or write down what you hear. Each one is worth 2 race points.
           </p>
         </div>
 
@@ -188,6 +245,7 @@ export default function SaetzePage() {
             [
               ['learn', 'Learn'],
               ['review', dueItems.length > 0 ? `Review (${dueItems.length})` : 'Review'],
+              ['dictation', '🎧 Dictation'],
             ] as [Tab, string][]
           ).map(([id, label]) => (
             <button
@@ -204,6 +262,55 @@ export default function SaetzePage() {
 
         {!loaded ? (
           <p className="text-gray-400 text-sm text-center py-6">Loading…</p>
+        ) : tab === 'dictation' ? (
+          phase === 'active' && dictItems[current] ? (
+            <DictationCard
+              key={current}
+              item={dictItems[current]}
+              lang={lang}
+              position={current + 1}
+              total={dictItems.length}
+              onDone={finishDictation}
+            />
+          ) : phase === 'done' ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center space-y-3">
+              <p className="text-4xl">🎧</p>
+              <p className="font-semibold text-gray-900">Dictation complete</p>
+              <p className="text-sm text-gray-500">
+                {dictPerfect} / {doneCount} without mistakes · +{doneCount * 2} points
+              </p>
+              <div className="flex gap-2 justify-center">
+                <button
+                  onClick={reset}
+                  className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"
+                >
+                  Done
+                </button>
+                <button
+                  onClick={startDictation}
+                  className="px-4 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-sm font-semibold transition-colors"
+                >
+                  Again →
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-3 text-center">
+              <p className="text-sm text-gray-600">
+                Listen to a sentence and write down what you hear. Replay it as often as you like – also slowly 🐢.
+              </p>
+              <p className="text-xs text-gray-400">
+                Accents and punctuation don&apos;t count as mistakes. Turn your sound on.
+              </p>
+              <button
+                onClick={startDictation}
+                disabled={dictPool.length === 0}
+                className="px-5 py-2.5 bg-red-700 hover:bg-red-800 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                Start dictation →
+              </button>
+            </div>
+          )
         ) : pool.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-6 text-center space-y-2">
             <p className="text-3xl">📖</p>
@@ -216,6 +323,7 @@ export default function SaetzePage() {
           <SentenceCard
             key={current}
             item={items[current]}
+            lang={lang}
             flag={flag}
             position={current + 1}
             total={items.length}
@@ -279,12 +387,14 @@ export default function SaetzePage() {
 
 function SentenceCard({
   item,
+  lang,
   flag,
   position,
   total,
   onRate,
 }: {
   item: SItem;
+  lang: Lang;
   flag: string;
   position: number;
   total: number;
@@ -300,7 +410,10 @@ function SentenceCard({
         <span className="tabular-nums">{position} / {total}</span>
       </div>
 
-      <p className="text-lg font-semibold text-gray-900">{item.source}</p>
+      <p className="text-lg font-semibold text-gray-900 flex items-start justify-between gap-2">
+        <span>{item.source}</span>
+        {item.askTarget && <SpeakButton text={item.text} lang={lang} size="md" />}
+      </p>
 
       {!revealed ? (
         <>
@@ -327,7 +440,10 @@ function SentenceCard({
           )}
           <div className="rounded-xl bg-green-50 p-3">
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Answer</p>
-            <p className="text-base font-semibold text-gray-900">{item.target}</p>
+            <p className="text-base font-semibold text-gray-900 flex items-start justify-between gap-2">
+              <span>{item.target}</span>
+              {!item.askTarget && <SpeakButton text={item.text} lang={lang} />}
+            </p>
           </div>
           <p className="text-xs text-gray-400 text-center">How did you do?</p>
           <div className="grid grid-cols-4 gap-1.5">

@@ -78,3 +78,30 @@ export function defaultTenses(lang: Lang, beginner: boolean): string[] {
   if (beginner) return ['presente'];
   return lang === 'it' ? ['presente', 'passato_prossimo', 'imperfetto'] : ['presente', 'indefinido', 'futuro'];
 }
+
+// Per-device tense choice for the verb drills, stored as "presente,imperfetto"
+// ('' = the default for my level). Read by /konjugation and the daily round.
+export const TENSE_STORAGE_KEY: Record<Lang, string> = {
+  it: 'italienisch_verb_tenses',
+  es: 'italienisch_verb_tenses_es',
+  fr: 'italienisch_verb_tenses_fr',
+};
+
+function makeTenseValidator(lang: Lang) {
+  const ids = new Set(TENSES_BY_LANG[lang].map(t => t.id));
+  return (v: string): v is string => v === '' || v.split(',').every(t => ids.has(t));
+}
+export const TENSE_VALIDATORS: Record<Lang, (v: string) => v is string> = {
+  it: makeTenseValidator('it'),
+  es: makeTenseValidator('es'),
+  fr: makeTenseValidator('fr'),
+};
+
+// The tenses this device drills (client only).
+export function chosenTenses(lang: Lang, beginner: boolean): string[] {
+  try {
+    const v = localStorage.getItem(TENSE_STORAGE_KEY[lang]);
+    if (v && TENSE_VALIDATORS[lang](v)) return v.split(',');
+  } catch {}
+  return defaultTenses(lang, beginner);
+}

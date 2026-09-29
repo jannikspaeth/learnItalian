@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress, GrammarRecord } from './types';
+import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress, GrammarRecord, UserExtras } from './types';
 import { normWord } from './norm';
 import { Profile, LevelOverrides, Level, mergeProfiles } from './profiles';
 import { Lang, LANGUAGES, dataUserId, parseDataUserId } from './lang';
@@ -262,6 +262,30 @@ export async function setGrammar(userId: string, records: GrammarRecord[]): Prom
   if (error) throw new Error(error.message);
 }
 
+// ─── extras (mistakes, reading progress, daily rounds; one jsonb row per user) ───
+// Stored in the `race` table (id text + data jsonb) under `extras:<user_id>`, so
+// no new table/migration is needed.
+
+const extrasRowId = (userId: string) => `extras:${userId}`;
+
+export async function getExtras(userId: string): Promise<UserExtras> {
+  const { data, error } = await db()
+    .from('race')
+    .select('data')
+    .eq('id', extrasRowId(userId))
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const d = data?.data as Partial<UserExtras> | undefined;
+  return { mistakes: d?.mistakes ?? [], reading: d?.reading ?? {}, rounds: d?.rounds ?? {} };
+}
+
+export async function setExtras(userId: string, extras: UserExtras): Promise<void> {
+  const { error } = await db()
+    .from('race')
+    .upsert({ id: extrasRowId(userId), data: extras }, { onConflict: 'id' });
+  if (error) throw new Error(error.message);
+}
+
 // ─── race (one global jsonb row per language: id='global' for Italian, 'global-es'…) ─
 
 const LANGS = LANGUAGES.map(l => l.id);
@@ -349,6 +373,10 @@ export async function deleteProfile(profileId: string, isBuiltIn: boolean): Prom
   const userIds = LANGS.map(l => dataUserId(profileId, l));
   for (const table of ['vocab', 'stats', 'conjugation', 'sentences', 'grammar']) {
     const { error } = await db().from(table).delete().in('user_id', userIds);
+    if (error) throw new Error(error.message);
+  }
+  {
+    const { error } = await db().from('race').delete().in('id', userIds.map(extrasRowId));
     if (error) throw new Error(error.message);
   }
   for (const lang of LANGS) {

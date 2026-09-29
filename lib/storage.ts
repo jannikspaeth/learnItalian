@@ -7,11 +7,14 @@ import {
   RaceResponse,
   SentenceProgress,
   GrammarRecord,
+  UserExtras,
 } from './types';
+import { addMistakes, NewMistake } from './mistakes';
 import { PROFILE_STORAGE_KEY, Profile, Level, cacheProfiles, mergeProfiles } from './profiles';
 import { Lang, LANG_STORAGE_KEY, dataUserId, isLang } from './lang';
 import { berlinToday } from './race';
 import { conjugationMatches } from './conjugation-match';
+import { nextVerbReview } from './verb-review';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -138,8 +141,9 @@ export async function recordExercise(
     daily[dayKey] = (daily[dayKey] ?? 0) + total;
   } else if (type === 'conjugation' || type === 'grammar') {
     daily[dayKey] = (daily[dayKey] ?? 0) + Math.round(total / 2); // half credit per item
-  } else if (type === 'sentence') {
-    daily[dayKey] = (daily[dayKey] ?? 0) + total * 2; // 2 points per translated sentence
+  } else if (type === 'sentence' || type === 'reading') {
+    // 2 points per translated/dictated sentence or answered reading question
+    daily[dayKey] = (daily[dayKey] ?? 0) + total * 2;
   }
 
   const newStats: ProgressStats = {
@@ -231,6 +235,7 @@ export async function upsertConjugationAttempt(
     existing.totalAttempts += 1;
     existing.lastAttempted = new Date().toISOString();
     existing.mastered = mastered;
+    Object.assign(existing, nextVerbReview(existing.level, mastered));
     for (const cs of computed) {
       const es = existing.sections.find(s => s.tense === cs.tense);
       if (es) {
@@ -251,6 +256,7 @@ export async function upsertConjugationAttempt(
       totalAttempts: 1,
       lastAttempted: new Date().toISOString(),
       mastered,
+      ...nextVerbReview(undefined, mastered),
     });
   }
 
@@ -295,6 +301,39 @@ export async function upsertGrammarAttempt(
     records.unshift({ id: topicId, totalAttempts: 1, totalCorrect: correct, totalQuestions: total, ...attempt });
   }
   await putJson('/api/data/grammar', records);
+}
+
+// ─── extras: mistakes, reading progress, daily rounds ───────────────────────────────
+
+function normalizeExtras(d: Partial<UserExtras> | null | undefined): UserExtras {
+  return { mistakes: d?.mistakes ?? [], reading: d?.reading ?? {}, rounds: d?.rounds ?? {} };
+}
+
+// Tolerant read for display.
+export async function getExtras(): Promise<UserExtras> {
+  return normalizeExtras(await getJson<Partial<UserExtras> | null>('/api/data/extras', null));
+}
+
+// Read-modify-write of the extras blob. Calls are queued, so several updates fired
+// in quick succession (e.g. one per wrong answer) never overwrite each other.
+let extrasChain: Promise<unknown> = Promise.resolve();
+export function updateExtras(change: (e: UserExtras) => UserExtras | void): Promise<UserExtras> {
+  const run = async () => {
+    const current = normalizeExtras(await getJsonStrict<Partial<UserExtras> | null>('/api/data/extras'));
+    const next = change(current) ?? current;
+    await putJson('/api/data/extras', next);
+    return next;
+  };
+  const p = extrasChain.then(run, run);
+  extrasChain = p.catch(() => {});
+  return p;
+}
+
+// Remember wrong answers for mistake training. Fire-and-forget: a failed save
+// must never interrupt the exercise itself.
+export function recordMistakes(items: NewMistake[]): void {
+  if (items.length === 0) return;
+  updateExtras(e => ({ ...e, mistakes: addMistakes(e.mistakes, items) })).catch(() => {});
 }
 
 // ─── the race (global standings) ───────────────────────────────────────────────

@@ -4,31 +4,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { getConjugationRecords, recordExercise } from '@/lib/storage';
 import { ConjugationRecord, ConjugationExercise } from '@/lib/types';
 import Conjugation from '@/components/exercises/Conjugation';
-import { TENSES_BY_LANG, defaultTenses } from '@/lib/tenses';
+import { TENSES_BY_LANG, defaultTenses, TENSE_STORAGE_KEY, TENSE_VALIDATORS } from '@/lib/tenses';
 import { useLocalSetting } from '@/lib/use-local-setting';
 import { useLearner } from '@/lib/use-profile';
 import { usePack } from '@/lib/content';
-import { Lang } from '@/lib/lang';
+import { dueVerbs, isVerbDue, verbDueDate } from '@/lib/verb-review';
 
 type Tab = 'lernen' | 'all' | 'mistakes';
 type VerbSort = 'alpha' | 'accuracy' | 'recent' | 'practiced';
-
-// Chosen tenses per language, stored as "presente,imperfetto"; '' means "the
-// default for my level".
-const TENSE_KEY: Record<Lang, string> = {
-  it: 'italienisch_verb_tenses',
-  es: 'italienisch_verb_tenses_es',
-  fr: 'italienisch_verb_tenses_fr',
-};
-const TENSE_VALIDATORS: Record<Lang, (v: string) => v is string> = {
-  it: tenseValidator('it'),
-  es: tenseValidator('es'),
-  fr: tenseValidator('fr'),
-};
-function tenseValidator(lang: Lang) {
-  const ids = new Set(TENSES_BY_LANG[lang].map(t => t.id));
-  return (v: string): v is string => v === '' || v.split(',').every(t => ids.has(t));
-}
 
 // Score of the most recent attempt only (not lifetime cumulative). Each section
 // stores the last attempt's questions (`pronouns`) and mistakes (`recentMistakes`),
@@ -61,6 +44,11 @@ function timeAgo(iso: string): string {
   return `${d} day${d === 1 ? '' : 's'} ago`;
 }
 
+function timeUntil(ms: number): string {
+  const d = Math.ceil((ms - Date.now()) / 86400000);
+  return d <= 1 ? 'tomorrow' : `in ${d} days`;
+}
+
 function TotalBar({ record }: { record: ConjugationRecord }) {
   const { pct } = lastTry(record);
   const color = pct === 100 ? 'bg-green-500' : pct >= 70 ? 'bg-amber-400' : 'bg-red-400';
@@ -86,7 +74,7 @@ export default function KonjugationPage() {
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   // Ordered list of active sort keys; each is a tie-breaker for the previous one.
-  const [tenseChoice, setTenseChoice] = useLocalSetting<string>(TENSE_KEY[lang], '', TENSE_VALIDATORS[lang]);
+  const [tenseChoice, setTenseChoice] = useLocalSetting<string>(TENSE_STORAGE_KEY[lang], '', TENSE_VALIDATORS[lang]);
   const [sorts, setSorts] = useState<{ key: VerbSort; dir: 'asc' | 'desc' }[]>([
     { key: 'recent', dir: 'desc' },
   ]);
@@ -147,10 +135,12 @@ export default function KonjugationPage() {
   });
   const mastered = records.filter(r => r.mastered).length;
 
+  const due = dueVerbs(records);
   const learnedVerbs = new Set(records.map(r => r.verb.toLowerCase()));
   const unseenCount = catalog.filter(v => !learnedVerbs.has(v.infinitive.toLowerCase())).length;
 
-  async function startNew() {
+  // Next verb in the Learn panel: a given (due) verb, or the next new one.
+  async function startNew(verb?: string) {
     setPracticing('__new__');
     setExercise(null);
     setError('');
@@ -160,7 +150,7 @@ export default function KonjugationPage() {
       const res = await fetch('/api/exercise', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'conjugation', knownVerbs, beginner, tenses, lang }),
+        body: JSON.stringify({ type: 'conjugation', verb, knownVerbs, beginner, tenses, lang }),
       });
       const data = await res.json();
       if (data.error) setError(data.error);
@@ -310,12 +300,25 @@ export default function KonjugationPage() {
             </div>
 
             {practicing !== '__new__' && (
-              <button
-                onClick={startNew}
-                className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-semibold transition-colors"
-              >
-                {unseenCount > 0 ? 'Learn next verb →' : 'Review random verb →'}
-              </button>
+              <div className="space-y-2">
+                {due.length > 0 && (
+                  <button
+                    onClick={() => startNew(due[0].verb)}
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-colors"
+                  >
+                    Review due verbs ({due.length}) →
+                  </button>
+                )}
+                <button
+                  onClick={() => startNew()}
+                  className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-semibold transition-colors"
+                >
+                  {unseenCount > 0 ? 'Learn next verb →' : 'Review random verb →'}
+                </button>
+                <p className="text-[11px] text-gray-400 text-center">
+                  Verbs come back for review: soon after a mistake, less often once you get them right.
+                </p>
+              </div>
             )}
 
             {practicing === '__new__' && (
@@ -328,12 +331,17 @@ export default function KonjugationPage() {
                 )}
                 {exercise && !loading && (
                   <div className="space-y-4">
-                    <Conjugation exercise={exercise} onComplete={handleComplete} />
+                    <Conjugation exercise={exercise} lang={lang} onComplete={handleComplete} />
                     <button
-                      onClick={() => { setPracticing(null); setExercise(null); startNew(); }}
+                      onClick={() => {
+                        setPracticing(null);
+                        setExercise(null);
+                        const nextDue = due.find(r => r.verb !== exercise.verb);
+                        startNew(nextDue?.verb);
+                      }}
                       className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition-colors"
                     >
-                      Next verb →
+                      {due.some(r => r.verb !== exercise.verb) ? 'Next due verb →' : 'Next verb →'}
                     </button>
                   </div>
                 )}
@@ -420,7 +428,12 @@ export default function KonjugationPage() {
                       </div>
                       <p className="text-xs text-gray-400 mt-0.5">
                         {record.sections.length} tenses · {record.totalAttempts}× practiced ·{' '}
-                        {timeAgo(record.lastAttempted)}
+                        {timeAgo(record.lastAttempted)} ·{' '}
+                        {isVerbDue(record) ? (
+                          <span className="text-amber-600 font-medium">due for review</span>
+                        ) : (
+                          <>review {timeUntil(verbDueDate(record))}</>
+                        )}
                       </p>
                     </div>
                     <button
@@ -500,7 +513,7 @@ export default function KonjugationPage() {
                       <div className="bg-red-50 rounded-xl p-3 text-sm text-red-700">{error}</div>
                     )}
                     {exercise && !loading && (
-                      <Conjugation exercise={exercise} onComplete={handleComplete} />
+                      <Conjugation exercise={exercise} lang={lang} onComplete={handleComplete} />
                     )}
                   </div>
                 )}

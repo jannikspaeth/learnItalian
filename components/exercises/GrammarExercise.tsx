@@ -2,32 +2,22 @@
 
 import { useState } from 'react';
 import { GrammarTopic, GrammarItem } from '@/lib/grammar-exercises';
-import { upsertGrammarAttempt } from '@/lib/storage';
+import { upsertGrammarAttempt, recordMistakes } from '@/lib/storage';
+import { grammarMistake } from '@/lib/mistakes';
+import type { Lang } from '@/lib/lang';
+import SpeakButton from '@/components/SpeakButton';
+import { checkClozeAnswer } from '@/lib/answer-check';
 
 interface Props {
   topic: GrammarTopic;
+  lang: Lang;
   onComplete?: (correct: number, total: number) => void;
 }
 
 type Mode = 'type' | 'mc';
 
-// Lenient compare: case, spacing, apostrophe style (’ ´ `) and accents don't
-// matter, so "l’" matches "l'" and "e" is accepted for "è" (the correct form is
-// always shown after checking).
-function fold(s: string): string {
-  return s
-    .trim()
-    .toLowerCase()
-    .replace(/[’´`]/g, "'")
-    .replace(/\s+/g, ' ')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '');
-}
-
 function isCorrect(value: string, item: GrammarItem): boolean {
-  const v = fold(value);
-  if (!v) return false;
-  return [item.answer, ...(item.alternatives ?? [])].some(a => fold(a) === v);
+  return checkClozeAnswer(value, item.answer, item.alternatives);
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -44,7 +34,7 @@ function newRound(topic: GrammarTopic) {
   return shuffle(topic.items).map(item => ({ item, options: shuffle(item.options) }));
 }
 
-export default function GrammarExercise({ topic, onComplete }: Props) {
+export default function GrammarExercise({ topic, lang, onComplete }: Props) {
   const [round, setRound] = useState(() => newRound(topic));
   const [mode, setMode] = useState<Mode>('mc');
   const [answers, setAnswers] = useState<string[]>(() => round.map(() => ''));
@@ -82,6 +72,13 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
       .filter((m): m is NonNullable<typeof m> => m !== null);
     const nCorrect = res.filter(Boolean).length;
     setChecked(true);
+    recordMistakes(
+      round.flatMap((r, i) =>
+        res[i]
+          ? []
+          : [grammarMistake({ topicId: topic.id, ...r.item, userAnswer: answers[i] })],
+      ),
+    );
     try {
       await upsertGrammarAttempt(topic.id, nCorrect, round.length, mistakes);
     } catch {
@@ -124,7 +121,8 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
             <p className="text-sm text-blue-900 leading-relaxed">{topic.explanation}</p>
             <div className="space-y-1">
               {topic.examples.map((ex, i) => (
-                <p key={i} className="text-sm">
+                <p key={i} className="text-sm flex items-center gap-1.5 flex-wrap">
+                  <SpeakButton text={ex.target} lang={lang} />
                   <span className="font-semibold text-gray-900">{ex.target}</span>
                   <span className="text-gray-400"> → </span>
                   <span className="text-gray-600">{ex.de}</span>
@@ -207,12 +205,20 @@ export default function GrammarExercise({ topic, onComplete }: Props) {
               )}
 
               {wrong && (
-                <p className="mt-2 text-sm text-red-700">
-                  ✓ <strong>{item.answer}</strong>
-                  <span className="text-gray-500 ml-2 font-normal">({item.hint})</span>
+                <p className="mt-2 text-sm text-red-700 flex items-center gap-2 flex-wrap">
+                  <span>
+                    ✓ <strong>{item.answer}</strong>
+                    <span className="text-gray-500 ml-2 font-normal">({item.hint})</span>
+                  </span>
+                  <SpeakButton text={`${item.before}${item.answer}${item.after}`} lang={lang} />
                 </p>
               )}
-              {ok && <p className="mt-2 text-xs text-green-700">✓ {item.answer} · {item.hint}</p>}
+              {ok && (
+                <p className="mt-2 text-xs text-green-700 flex items-center gap-2">
+                  <span>✓ {item.answer} · {item.hint}</span>
+                  <SpeakButton text={`${item.before}${item.answer}${item.after}`} lang={lang} />
+                </p>
+              )}
 
               {/* Rewrite-to-learn (type mode only) */}
               {mode === 'type' && wrong && (

@@ -2,15 +2,20 @@
 
 import { useState } from 'react';
 import { ConjugationExercise } from '@/lib/types';
-import { upsertConjugationAttempt } from '@/lib/storage';
+import { upsertConjugationAttempt, recordMistakes } from '@/lib/storage';
 import { conjugationMatches as answersMatch } from '@/lib/conjugation-match';
+import { verbMistake } from '@/lib/mistakes';
+import { spokenForm } from '@/lib/speech';
+import type { Lang } from '@/lib/lang';
+import SpeakButton from '@/components/SpeakButton';
 
 interface Props {
   exercise: ConjugationExercise;
+  lang: Lang;
   onComplete?: (correct: number, total: number) => void;
 }
 
-export default function Conjugation({ exercise, onComplete }: Props) {
+export default function Conjugation({ exercise, lang, onComplete }: Props) {
   const [answers, setAnswers] = useState<string[][]>(
     exercise.sections.map(s => s.pronouns.map(() => ''))
   );
@@ -76,6 +81,23 @@ export default function Conjugation({ exercise, onComplete }: Props) {
   }
 
   async function saveAndContinue() {
+    // Wrong forms (not forgiven as typos) go to "My mistakes".
+    recordMistakes(
+      exercise.sections.flatMap((s, si) =>
+        s.pronouns.flatMap((p, pi) =>
+          results[si][pi] || typoForgiven[si][pi]
+            ? []
+            : [verbMistake({
+                verb: exercise.verb,
+                tense: s.tense,
+                tenseLabel: s.tenseName_de,
+                pronoun: p,
+                answer: s.answers[pi],
+                userAnswer: answers[si][pi],
+              })],
+        ),
+      ),
+    );
     await upsertConjugationAttempt(
       exercise.verb,
       exercise.sections.map((s, si) => ({
@@ -148,13 +170,19 @@ export default function Conjugation({ exercise, onComplete }: Props) {
                   <span className="text-gray-400 text-xs ml-2 italic">{section.tense}</span>
                 </div>
                 {checked && (
-                  <span
-                    className={`text-xs font-semibold ${
-                      sectionPerfect ? 'text-green-700' : 'text-red-600'
-                    }`}
-                  >
-                    {sectionCorrect}/{section.pronouns.length}
-                    {sectionPerfect && ' ✓'}
+                  <span className="flex items-center gap-2">
+                    <SpeakButton
+                      lang={lang}
+                      text={section.pronouns.map((p, pi) => spokenForm(p, section.answers[pi], lang)).join(', ')}
+                    />
+                    <span
+                      className={`text-xs font-semibold ${
+                        sectionPerfect ? 'text-green-700' : 'text-red-600'
+                      }`}
+                    >
+                      {sectionCorrect}/{section.pronouns.length}
+                      {sectionPerfect && ' ✓'}
+                    </span>
                   </span>
                 )}
               </div>

@@ -8,17 +8,20 @@ import { useStars } from '@/lib/use-stars';
 import { formatStars } from '@/lib/race';
 import { langInfo } from '@/lib/lang';
 
-// The first four are the mobile bottom bar; the rest live under "More".
+// The first five are the mobile bottom bar (with `short` labels); the rest live under "More".
 const nav = [
-  { href: '/vokabeln', label: 'Vocabulary', icon: '📖' },
-  { href: '/konjugation', label: 'Verbs', icon: '🔤' },
+  // Daily round + mistake training — the home page.
+  { href: '/heute', label: 'Today', short: 'Today', icon: '☀️' },
+  { href: '/vokabeln', label: 'Vocabulary', short: 'Words', icon: '📖' },
+  { href: '/konjugation', label: 'Verbs', short: 'Verbs', icon: '🔤' },
   // Grammar exercises + the Grundlagen lessons.
-  { href: '/grammar', label: 'Grammar', icon: '📘' },
+  { href: '/grammar', label: 'Grammar', short: 'Grammar', icon: '📘' },
   // Global competitive leaderboard — everyone sees the same standings.
-  { href: '/race', label: 'The Race', icon: '🏁' },
-  { href: '/saetze', label: 'Sentences', icon: '✍️' },
-  { href: '/erfolge', label: 'Achievements', icon: '🏆' },
-  { href: '/help', label: 'Help', icon: '❓' },
+  { href: '/race', label: 'The Race', short: 'Race', icon: '🏁' },
+  { href: '/lesen', label: 'Reading', short: 'Reading', icon: '📰' },
+  { href: '/saetze', label: 'Sentences & Dictation', short: 'Sentences', icon: '✍️' },
+  { href: '/erfolge', label: 'Achievements', short: 'Achievements', icon: '🏆' },
+  { href: '/help', label: 'Help', short: 'Help', icon: '❓' },
 ];
 
 export default function Navigation() {
@@ -32,8 +35,8 @@ export default function Navigation() {
   const items = nav;
 
   // Mobile: keep the core practice/engagement tabs visible; tuck the rest behind "More".
-  const primary = items.slice(0, 4);
-  const overflow = items.slice(4);
+  const primary = items.slice(0, 5);
+  const overflow = items.slice(5);
   const moreActive =
     overflow.some(o => path.startsWith(o.href)) ||
     path.startsWith('/profile') ||
@@ -152,26 +155,26 @@ export default function Navigation() {
 
       {/* ── Mobile bottom bar ── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 flex safe-area-inset-bottom">
-        {primary.map(({ href, label, icon }) => {
+        {primary.map(({ href, short, icon }) => {
           const active = path.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
               onClick={() => setMoreOpen(false)}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-3 text-xs font-medium transition-colors ${
+              className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 py-3 text-[11px] font-medium transition-colors ${
                 active ? 'text-red-700' : 'text-gray-400'
               }`}
             >
               <span className="text-xl">{icon}</span>
-              {label}
+              {short}
             </Link>
           );
         })}
         <button
           type="button"
           onClick={() => setMoreOpen(o => !o)}
-          className={`flex-1 flex flex-col items-center gap-0.5 py-3 text-xs font-medium transition-colors ${
+          className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 py-3 text-[11px] font-medium transition-colors ${
             moreActive || moreOpen ? 'text-red-700' : 'text-gray-400'
           }`}
         >

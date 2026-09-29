@@ -7,7 +7,9 @@ import {
   getStats,
   recordExercise,
   getRace,
+  recordMistakes,
 } from '@/lib/storage';
+import { vocabMistake } from '@/lib/mistakes';
 import { VocabEntry, ProgressStats, RaceResponse } from '@/lib/types';
 import { useLearner } from '@/lib/use-profile';
 import { berlinToday } from '@/lib/race';
@@ -16,6 +18,7 @@ import { Lang, langInfo } from '@/lib/lang';
 import { TENSES_BY_LANG } from '@/lib/tenses';
 import { loadExamples, VocabExample } from '@/lib/vocab-examples';
 import { normWord } from '@/lib/norm';
+import { checkWordAnswer } from '@/lib/answer-check';
 import { useQuizDirection, askTarget } from '@/lib/use-quiz-direction';
 import QuizDirectionToggle from '@/components/QuizDirectionToggle';
 import TopicPicker, { TopicProgress } from '@/components/TopicPicker';
@@ -33,6 +36,9 @@ import {
 import StreakBanner from '@/components/StreakBanner';
 import ChallengeStrip from '@/components/ChallengeStrip';
 import Celebration from '@/components/Celebration';
+import SpeakButton from '@/components/SpeakButton';
+import { speak } from '@/lib/speech';
+import { useAutoplay } from '@/lib/use-autoplay';
 
 const DAILY_GOAL = 20;
 // One Learn session introduces this many new words; finish early or keep going.
@@ -102,20 +108,6 @@ function getLevel(v: VocabEntry): number {
   return effectiveVocabLevel(raw, v.nextReview);
 }
 
-// ─── Answer checking ─────────────────────────────────────────────────────────
-
-// Grading only: catalog phrases often include .?! … — ignore them when comparing.
-function answerNorm(s: string, lang: Lang): string {
-  return normWord(s, lang)
-    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function stripAccents(s: string): string {
-  return s.normalize('NFD').replace(/[̀-ͯ]/g, '');
-}
-
 // Fisher–Yates shuffle (returns a new array) — used to randomize review order.
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -124,54 +116,6 @@ function shuffle<T>(arr: T[]): T[] {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
-
-// German keyboard substitutes: ä→ae, ö→oe, ü→ue, ß→ss (and accept the reverse).
-function germanFold(s: string): string {
-  return s
-    .replace(/ä/g, 'ae')
-    .replace(/ö/g, 'oe')
-    .replace(/ü/g, 'ue')
-    .replace(/ß/g, 'ss');
-}
-
-// A translation may list several acceptable answers separated by "/",
-// e.g. "leben / wohnen" or "il ragazzo / la ragazza". Any one of them counts.
-// Parentheticals are dropped first so a "/" inside them — e.g.
-// "sein (Zustand/Ort)" — isn't mistaken for a variant separator.
-function splitVariants(s: string): string[] {
-  return s
-    .replace(/\s*\(.*?\)\s*/g, ' ')
-    .split('/')
-    .map(v => v.trim())
-    .filter(Boolean);
-}
-
-function checkAnswer(user: string, correct: string, lang: Lang): { correct: boolean; accentHint?: string } {
-  const u = answerNorm(user, lang);
-  if (u.length === 0) return { correct: false };
-
-  const variants = splitVariants(correct);
-
-  // Exact match against any variant (articles/parentheticals already stripped by norm)
-  for (const variant of variants) {
-    const c = answerNorm(variant, lang);
-    if (c.length === 0) continue;
-    if (u === c) return { correct: true };
-  }
-
-  // Tolerant exact match: accent-stripped (ä→a) or German-folded (ä→ae, ß→ss)
-  const su = stripAccents(u);
-  const fu = germanFold(u);
-  for (const variant of variants) {
-    const c = answerNorm(variant, lang);
-    if (c.length === 0) continue;
-    if (stripAccents(c) === su || germanFold(c) === fu) {
-      return { correct: true, accentHint: variant };
-    }
-  }
-
-  return { correct: false };
 }
 
 // Present-tense table for a verb card: the verb catalog is authoritative, the
@@ -226,6 +170,7 @@ export default function VokabelnPage() {
   const streakSeen = useRef<number | null>(null);
 
   const [quizDir, setQuizDir] = useQuizDirection();
+  const [autoplay, setAutoplay] = useAutoplay();
   const [topicSetting, setTopic] = useLocalSetting<string>('italienisch_vocab_topic', 'all', isTopicChoice);
 
   // Add-your-own-word form state
@@ -429,10 +374,22 @@ export default function VokabelnPage() {
 
   // Rate one word: update the UI instantly, advance immediately, and write the
   // full updated list (queued so saves run in order).
-  function handleRate(correct: boolean, conf: Confidence) {
+  function handleRate(correct: boolean, conf: Confidence, userAnswer?: string) {
     if (!vocabLoaded) { setSaveError(true); return; }
     const item = items[current];
     const isLearn = tab === 'lernen';
+    // Only words you've met before count as mistakes — not a brand-new word in Learn.
+    const isNewWord = isLearn && !vocab.some(v => norm(v.word) === norm(item.target));
+    if (!correct && !isNewWord) {
+      recordMistakes([vocabMistake({
+        key: norm(item.target),
+        askTarget: item.askTarget,
+        question: item.question,
+        answer: item.answer,
+        target: item.target,
+        userAnswer,
+      })]);
+    }
     const newLevel = computeNewLevel(item.currentLevel, correct, conf, VOCAB_KNOWN_LEVEL);
     const nr = nextReviewDate(newLevel, correct, conf, {
       knownLevel: VOCAB_KNOWN_LEVEL,
@@ -643,6 +600,7 @@ export default function VokabelnPage() {
             <p className="font-semibold text-gray-900 text-sm">
               {entry.word}
             </p>
+            <SpeakButton text={entry.word} lang={lang} />
             <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${LEVEL_COLORS[level]}`}>
               {LEVEL_LABELS[level]}
             </span>
@@ -738,6 +696,7 @@ export default function VokabelnPage() {
         key={current}
         item={items[current]}
         lang={lang}
+        autoplay={autoplay}
         pronouns={verbs?.pronouns ?? []}
         position={current + 1}
         total={items.length}
@@ -903,6 +862,7 @@ export default function VokabelnPage() {
                     {!vocabLoaded ? 'Loading…' : unseenCount > 0 ? 'Start learning →' : 'All words learned'}
                   </button>
                   <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
+                  <AutoplayToggle value={autoplay} onChange={setAutoplay} />
                 </div>
                 {addWordSection}
               </>
@@ -938,6 +898,7 @@ export default function VokabelnPage() {
                     Start review →
                   </button>
                   <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
+                  <AutoplayToggle value={autoplay} onChange={setAutoplay} />
                 </div>
               )
             ) : (
@@ -1061,6 +1022,7 @@ export default function VokabelnPage() {
 function Flashcard({
   item,
   lang,
+  autoplay,
   pronouns,
   position,
   total,
@@ -1070,11 +1032,12 @@ function Flashcard({
 }: {
   item: SessionItem;
   lang: Lang;
+  autoplay: boolean;
   pronouns: readonly string[];
   position: number;
   total: number;
   combo: number;
-  onRate: (correct: boolean, conf: Confidence) => void | Promise<void>;
+  onRate: (correct: boolean, conf: Confidence, userAnswer?: string) => void | Promise<void>;
   onFinish: () => void;
 }) {
   const [answer, setAnswer] = useState('');
@@ -1089,12 +1052,18 @@ function Flashcard({
     inputRef.current?.focus();
   }, []);
 
-  const evaluation = checked ? checkAnswer(answer, item.answer, lang) : null;
+  // Auto-play: read the word out as soon as the target-language side is visible —
+  // right away when it's the question, otherwise once the answer is revealed.
+  useEffect(() => {
+    if (autoplay && (item.askTarget || checked)) speak(item.target, lang);
+  }, [autoplay, item.askTarget, item.target, checked, lang]);
+
+  const evaluation = checked ? checkWordAnswer(answer, item.answer, lang) : null;
   const flag = langInfo(lang).flag;
   const correct = evaluation?.correct ?? false;
 
   // On a wrong answer, the learner must type the correct word once before rating.
-  const retypeOk = checkAnswer(retype, item.answer, lang).correct;
+  const retypeOk = checkWordAnswer(retype, item.answer, lang).correct;
 
   useEffect(() => {
     if (checked && !correct) retypeRef.current?.focus();
@@ -1103,7 +1072,7 @@ function Flashcard({
   async function rate(asCorrect: boolean, conf: Confidence) {
     if (saving) return;
     setSaving(true);
-    await onRate(asCorrect, conf);
+    await onRate(asCorrect, conf, answer);
     // component is remounted (key changes) on advance; no local reset needed
   }
 
@@ -1140,7 +1109,10 @@ function Flashcard({
         <p className="text-xs text-gray-400 uppercase tracking-wide">
           Translate {item.askTarget ? `${flag} → 🇩🇪` : `🇩🇪 → ${flag}`}
         </p>
-        <p className="text-3xl font-bold text-gray-900 mt-1">{item.question}</p>
+        <p className="text-3xl font-bold text-gray-900 mt-1 inline-flex items-center gap-2">
+          {item.question}
+          {item.askTarget && <SpeakButton text={item.target} lang={lang} size="md" />}
+        </p>
       </div>
 
       {!checked ? (
@@ -1177,7 +1149,10 @@ function Flashcard({
                 Your answer: <span className="line-through">{answer || '—'}</span>
               </p>
             )}
-            <p className="text-base font-semibold text-gray-900 mt-1">{item.answer}</p>
+            <p className="text-base font-semibold text-gray-900 mt-1 inline-flex items-center gap-2">
+              {item.answer}
+              {!item.askTarget && <SpeakButton text={item.target} lang={lang} />}
+            </p>
             {evaluation?.accentHint && correct && (
               <p className="text-xs text-blue-600 mt-1">
                 Tip: with accent → <span className="font-semibold">{evaluation.accentHint}</span>
@@ -1190,7 +1165,10 @@ function Flashcard({
             <div className="rounded-xl border border-gray-100 bg-gray-50 p-3 space-y-2">
               {item.example && (
                 <div>
-                  <p className="text-sm text-gray-800">{item.example}</p>
+                  <p className="text-sm text-gray-800 flex items-start justify-between gap-2">
+                    <span>{item.example}</span>
+                    <SpeakButton text={item.example} lang={lang} />
+                  </p>
                   {item.exampleDe && (
                     <p className="text-xs text-gray-400 italic mt-0.5">{item.exampleDe}</p>
                   )}
@@ -1312,5 +1290,20 @@ function Flashcard({
         </>
       )}
     </div>
+  );
+}
+
+// ─── Auto-play toggle ──────────────────────────────────────────────────────────
+
+function AutoplayToggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!value)}
+      className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 text-xs text-gray-500 hover:bg-gray-100 transition-colors"
+    >
+      <span>🔊 Read words aloud automatically</span>
+      <span className={`font-semibold ${value ? 'text-green-700' : 'text-gray-400'}`}>{value ? 'On' : 'Off'}</span>
+    </button>
   );
 }
