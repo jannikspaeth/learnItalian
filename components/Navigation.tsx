@@ -114,7 +114,7 @@ export default function Navigation() {
             className="md:hidden fixed inset-0 z-40 bg-black/30"
             onClick={() => setMoreOpen(false)}
           />
-          <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl border-t border-gray-100 shadow-2xl safe-area-inset-bottom">
+          <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl border-t border-gray-100 shadow-2xl max-h-[85dvh] overflow-y-auto overscroll-contain pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
             <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-gray-200" />
             <div className="p-2 pb-3">
               {overflow.map(({ href, label: [labelEn, labelDe], icon }) => {
