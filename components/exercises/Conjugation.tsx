@@ -14,9 +14,10 @@ interface Props {
   exercise: ConjugationExercise;
   lang: Lang;
   onComplete?: (correct: number, total: number) => void;
+  continueLabel?: string; // the button that saves the result and moves on
 }
 
-export default function Conjugation({ exercise, lang, onComplete }: Props) {
+export default function Conjugation({ exercise, lang, onComplete, continueLabel }: Props) {
   const t = useT();
   const [uiLang] = useUiLang();
   const [answers, setAnswers] = useState<string[][]>(
@@ -322,7 +323,7 @@ export default function Conjugation({ exercise, lang, onComplete }: Props) {
             disabled={!allWrongHandled}
             className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl font-medium transition-colors"
           >
-            {t('Continue', 'Weiter')}
+            {continueLabel ?? t('Continue', 'Weiter')}
           </button>
           <button
             onClick={reset}

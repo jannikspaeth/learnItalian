@@ -144,13 +144,13 @@ export default function KonjugationPage() {
   const unseenCount = catalog.filter(v => !learnedVerbs.has(v.infinitive.toLowerCase())).length;
 
   // Next verb in the Learn panel: a given (due) verb, or the next new one.
-  async function startNew(verb?: string) {
+  async function startNew(verb?: string, known?: string[]) {
     setPracticing('__new__');
     setExercise(null);
     setError('');
     setLoading(true);
     try {
-      const knownVerbs = records.map(r => r.verb);
+      const knownVerbs = known ?? records.map(r => r.verb);
       setExercise(await getConjugationExercise({ lang, verb, knownVerbs, beginner, tenses }));
     } catch {
       setError(t('Could not load the verb.', 'Das Verb konnte nicht geladen werden.'));
@@ -187,8 +187,21 @@ export default function KonjugationPage() {
     }
   }
 
-  async function handleComplete(correct: number, total: number) {
-    await recordExercise('conjugation', correct, total);
+  // "Next verb" in Learn: the result is saved, then the next due (or new) verb opens.
+  async function handleLearnComplete(correct: number, total: number) {
+    const done = exercise?.verb;
+    await recordExercise('conjugation', correct, total).catch(() => {});
+    const fresh = await getConjugationRecords();
+    setRecords(fresh);
+    const nextDue = dueVerbs(fresh).find(r => r.verb !== done);
+    startNew(nextDue?.verb, fresh.map(r => r.verb));
+  }
+
+  // Reviewing a verb from the list: save, then close the panel.
+  async function handleReviewComplete(correct: number, total: number) {
+    await recordExercise('conjugation', correct, total).catch(() => {});
+    setPracticing(null);
+    setExercise(null);
     await refresh();
   }
 
@@ -318,20 +331,21 @@ export default function KonjugationPage() {
                   <div className="bg-red-50 rounded-xl p-3 text-sm text-red-700">{error}</div>
                 )}
                 {exercise && !loading && (
-                  <div className="space-y-4">
-                    <Conjugation exercise={exercise} lang={lang} onComplete={handleComplete} />
-                    <button
-                      onClick={() => {
-                        setPracticing(null);
-                        setExercise(null);
-                        const nextDue = due.find(r => r.verb !== exercise.verb);
-                        startNew(nextDue?.verb);
-                      }}
-                      className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition-colors"
-                    >
-                      {due.some(r => r.verb !== exercise.verb) ? t('Next due verb →', 'Nächstes fälliges Verb →') : t('Next verb →', 'Nächstes Verb →')}
-                    </button>
-                  </div>
+                  <Conjugation
+                    key={exercise.verb}
+                    exercise={exercise}
+                    lang={lang}
+                    onComplete={handleLearnComplete}
+                    continueLabel={t('Save & next verb →', 'Speichern & nächstes Verb →')}
+                  />
+                )}
+                {exercise && !loading && (
+                  <button
+                    onClick={() => startNew(due.find(r => r.verb !== exercise.verb)?.verb)}
+                    className="w-full mt-3 text-xs text-gray-400 hover:text-gray-600"
+                  >
+                    {t('Skip this verb', 'Verb überspringen')}
+                  </button>
                 )}
               </div>
             )}
@@ -501,7 +515,12 @@ export default function KonjugationPage() {
                       <div className="bg-red-50 rounded-xl p-3 text-sm text-red-700">{error}</div>
                     )}
                     {exercise && !loading && (
-                      <Conjugation exercise={exercise} lang={lang} onComplete={handleComplete} />
+                      <Conjugation
+                        exercise={exercise}
+                        lang={lang}
+                        onComplete={handleReviewComplete}
+                        continueLabel={t('Save & close', 'Speichern & schließen')}
+                      />
                     )}
                   </div>
                 )}
