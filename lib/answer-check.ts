@@ -5,12 +5,22 @@ import { normWord } from './norm';
 
 // ─── Vocabulary (typed word, either direction) ───────────────────────────────────
 
+// Every apostrophe-like character a keyboard may produce (' ’ ‘ ´ ` ʼ ′ ‛).
+export const APOSTROPHES = /['’‘´`ʼ′‛]/g;
+
 // Grading only: catalog phrases often include .?! … — ignore them when comparing.
-function answerNorm(s: string, lang: Lang): string {
-  return normWord(s, lang)
-    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+// Apostrophes don't count at all: "l'acqua", "l’acqua", "l´ acqua", "lacqua" and
+// "acqua" are all the same answer, as are "dell'anno" and "dellanno".
+function answerKeys(s: string, lang: Lang): string[] {
+  const unified = s.replace(APOSTROPHES, "'").replace(/\s*'\s*/g, "'");
+  const clean = (x: string) =>
+    x
+      .replace(/'/g, '')
+      .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  const keys = [clean(normWord(unified, lang)), clean(unified.toLowerCase().replace(/\s*\(.*?\)\s*/g, ''))];
+  return [...new Set(keys)].filter(Boolean);
 }
 
 export function stripAccents(s: string): string {
@@ -43,26 +53,24 @@ export function checkWordAnswer(
   correct: string,
   lang: Lang,
 ): { correct: boolean; accentHint?: string } {
-  const u = answerNorm(user, lang);
-  if (u.length === 0) return { correct: false };
+  const us = answerKeys(user, lang);
+  if (us.length === 0) return { correct: false };
 
   const variants = splitVariants(correct);
 
-  // Exact match against any variant (articles/parentheticals already stripped by norm)
+  // Exact match against any variant (articles/parentheticals/apostrophes ignored)
   for (const variant of variants) {
-    const c = answerNorm(variant, lang);
-    if (c.length === 0) continue;
-    if (u === c) return { correct: true };
+    if (answerKeys(variant, lang).some(c => us.includes(c))) return { correct: true };
   }
 
   // Tolerant exact match: accent-stripped (ä→a) or German-folded (ä→ae, ß→ss)
-  const su = stripAccents(u);
-  const fu = germanFold(u);
+  const su = us.map(stripAccents);
+  const fu = us.map(germanFold);
   for (const variant of variants) {
-    const c = answerNorm(variant, lang);
-    if (c.length === 0) continue;
-    if (stripAccents(c) === su || germanFold(c) === fu) {
-      return { correct: true, accentHint: variant };
+    for (const c of answerKeys(variant, lang)) {
+      if (su.includes(stripAccents(c)) || fu.includes(germanFold(c))) {
+        return { correct: true, accentHint: variant };
+      }
     }
   }
 
@@ -71,15 +79,15 @@ export function checkWordAnswer(
 
 // ─── Grammar cloze (one blank) ────────────────────────────────────────────────────
 
-// Lenient compare: case, spacing, apostrophe style (’ ´ `) and accents don't
-// matter, so "l’" matches "l'" and "e" is accepted for "è" (the correct form is
-// always shown after checking).
+// Lenient compare: case, spacing, apostrophes (any style, or left out) and accents
+// don't matter, so "l’", "l'" and "l" match and "e" is accepted for "è" (the
+// correct form is always shown after checking).
 export function foldCloze(s: string): string {
   return stripAccents(
     s
       .trim()
       .toLowerCase()
-      .replace(/[’´`]/g, "'")
+      .replace(APOSTROPHES, '')
       .replace(/\s+/g, ' '),
   );
 }

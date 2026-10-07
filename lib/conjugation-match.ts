@@ -8,7 +8,7 @@
 // Imperatives with two accepted forms are written "va' / vai". French passé
 // composé with être marks agreement as "allé(e)" / "allé(e)s" / "assis(es)": with or without it.
 function fold(s: string): string {
-  return s.trim().toLowerCase().replace(/['’´`]/g, '').replace(/\s+/g, ' ').normalize('NFD').replace(/[̀-ͯ]/g, '');
+  return s.trim().toLowerCase().replace(/['’‘´`ʼ′‛]/g, '').replace(/\s+/g, ' ').normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
 // "va' / vai" (spaced slash) lists whole alternative forms; any one counts.

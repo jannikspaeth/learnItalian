@@ -209,52 +209,66 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-400 w-36 shrink-0">{pronoun}</span>
-                        <input
-                          type="text"
-                          value={answers[si][pi]}
-                          disabled={checked}
-                          onChange={e => setAnswer(si, pi, e.target.value)}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                              const nextPi = pi + 1;
-                              const nextSi = si + (nextPi >= section.pronouns.length ? 1 : 0);
-                              const actualPi = nextPi >= section.pronouns.length ? 0 : nextPi;
-                              if (nextSi < exercise.sections.length) {
-                                const id = `inp-${nextSi}-${actualPi}`;
-                                document.getElementById(id)?.focus();
+                        <span className="text-sm text-gray-400 w-24 sm:w-36 shrink-0 break-words">{pronoun}</span>
+                        {!checked ? (
+                          <input
+                            type="text"
+                            value={answers[si][pi]}
+                            onChange={e => setAnswer(si, pi, e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') {
+                                const nextPi = pi + 1;
+                                const nextSi = si + (nextPi >= section.pronouns.length ? 1 : 0);
+                                const actualPi = nextPi >= section.pronouns.length ? 0 : nextPi;
+                                if (nextSi < exercise.sections.length) {
+                                  const id = `inp-${nextSi}-${actualPi}`;
+                                  document.getElementById(id)?.focus();
+                                }
                               }
-                            }
-                          }}
-                          id={`inp-${si}-${pi}`}
-                          placeholder="..."
-                          className={`flex-1 border-b bg-transparent text-sm transition-colors disabled:opacity-100 ${
-                            isCorrect || isTypo
-                              ? 'border-green-400 text-green-700'
-                              : isWrong
-                              ? 'border-red-400 text-red-600'
-                              : 'border-gray-300 focus:border-red-600 text-gray-900'
-                          }`}
-                        />
-                        {isTypo && (
-                          <span className="text-xs text-amber-700 font-medium shrink-0">{t('typo', 'Tippfehler')}</span>
-                        )}
-                        {isWrong && (
-                          <span className="text-sm text-green-700 font-semibold shrink-0">
-                            {target}
-                          </span>
+                            }}
+                            id={`inp-${si}-${pi}`}
+                            placeholder="..."
+                            autoCapitalize="off"
+                            autoCorrect="off"
+                            spellCheck={false}
+                            className="flex-1 min-w-0 border-b bg-transparent text-base sm:text-sm transition-colors border-gray-300 focus:border-red-600 text-gray-900"
+                          />
+                        ) : (
+                          // Checked: plain text instead of a disabled input — phones grey
+                          // disabled inputs out and squeeze them next to the answer.
+                          <div className="flex-1 min-w-0 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-base sm:text-sm [overflow-wrap:anywhere]">
+                            {isWrong ? (
+                              <>
+                                <span className="text-red-600 line-through decoration-red-400">
+                                  {answers[si][pi].trim() || '—'}
+                                </span>
+                                <span className="font-semibold text-green-700">→ {target}</span>
+                              </>
+                            ) : (
+                              <span className="font-medium text-green-700">
+                                {answers[si][pi].trim()}
+                                {isTypo && <span className="text-gray-500 font-normal"> → {target}</span>}
+                              </span>
+                            )}
+                            {isTypo && (
+                              <span className="text-xs text-amber-700 font-medium">{t('typo', 'Tippfehler')}</span>
+                            )}
+                          </div>
                         )}
                       </div>
 
                       {isWrong && (
-                        <div className="flex items-center gap-2 mt-1.5 sm:pl-[9.75rem]">
-                          <span className="text-xs text-amber-600 shrink-0">{t('Rewrite to learn:', 'Zum Einprägen abschreiben:')}</span>
+                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-x-2 gap-y-1 mt-1.5 sm:pl-[9.75rem]">
+                          <span className="w-full sm:w-auto text-xs text-amber-600 shrink-0">{t('Rewrite to learn:', 'Zum Einprägen abschreiben:')}</span>
                           <input
                             type="text"
                             value={retypes[si][pi]}
                             onChange={e => setRetype(si, pi, e.target.value)}
                             placeholder={target}
-                            className={`flex-1 min-w-0 border-b bg-transparent text-sm py-0.5 outline-none transition-colors ${
+                            autoCapitalize="off"
+                            autoCorrect="off"
+                            spellCheck={false}
+                            className={`flex-1 min-w-0 border-b bg-transparent text-base sm:text-sm py-0.5 outline-none transition-colors ${
                               retyped
                                 ? 'border-green-500 text-green-700'
                                 : 'border-amber-400 text-amber-700 focus:border-amber-600'

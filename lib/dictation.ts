@@ -20,7 +20,7 @@ export interface DictationResult {
 // Split into words, keeping elisions together with their word: "l'acqua" → ["l'acqua"].
 function words(s: string): string[] {
   return s
-    .replace(/[’´`]/g, "'")
+    .replace(/[’‘´`ʼ′‛]/g, "'")
     .split(/[\s ]+/)
     .map(w => w.replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, ''))
     .filter(Boolean);
