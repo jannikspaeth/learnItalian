@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getConjugationRecords, recordExercise } from '@/lib/storage';
 import { ConjugationRecord, ConjugationExercise } from '@/lib/types';
 import Conjugation from '@/components/exercises/Conjugation';
@@ -71,6 +71,8 @@ export default function KonjugationPage() {
   const [uiLang] = useUiLang();
 
   const [records, setRecords] = useState<ConjugationRecord[]>([]);
+  // Verbs finished in this visit — known even while their save is still running.
+  const doneHere = useRef<Set<string>>(new Set());
   const [tab, setTab] = useState<Tab>('lernen');
   const [practicing, setPracticing] = useState<string | null>(null);
   const [exercise, setExercise] = useState<ConjugationExercise | null>(null);
@@ -187,22 +189,28 @@ export default function KonjugationPage() {
     }
   }
 
-  // "Next verb" in Learn: the result is saved, then the next due (or new) verb opens.
-  async function handleLearnComplete(correct: number, total: number) {
-    const done = exercise?.verb;
-    await recordExercise('conjugation', correct, total).catch(() => {});
-    const fresh = await getConjugationRecords();
-    setRecords(fresh);
-    const nextDue = dueVerbs(fresh).find(r => r.verb !== done);
-    startNew(nextDue?.verb, fresh.map(r => r.verb));
+  // A background save failed: say so (offline writes are queued and don't fail).
+  function saveFailed() {
+    setError(t('Could not save the last verb.', 'Das letzte Verb konnte nicht gespeichert werden.'));
   }
 
-  // Reviewing a verb from the list: save, then close the panel.
-  async function handleReviewComplete(correct: number, total: number) {
-    await recordExercise('conjugation', correct, total).catch(() => {});
+  // "Save & next verb" in Learn: the next due (or new) verb opens at once while
+  // the result is stored in the background.
+  function handleLearnComplete(correct: number, total: number, saved: Promise<ConjugationRecord[]>) {
+    if (exercise) doneHere.current.add(exercise.verb);
+    const nextDue = dueVerbs(records).find(r => !doneHere.current.has(r.verb));
+    const known = [...new Set([...records.map(r => r.verb), ...doneHere.current])];
+    startNew(nextDue?.verb, known);
+    saved.then(setRecords, saveFailed);
+    recordExercise('conjugation', correct, total).catch(() => {});
+  }
+
+  // Reviewing a verb from the list: close the panel, save in the background.
+  function handleReviewComplete(correct: number, total: number, saved: Promise<ConjugationRecord[]>) {
     setPracticing(null);
     setExercise(null);
-    await refresh();
+    saved.then(setRecords, saveFailed);
+    recordExercise('conjugation', correct, total).catch(() => {});
   }
 
   return (

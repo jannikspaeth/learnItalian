@@ -121,7 +121,21 @@ export async function getStats(): Promise<ProgressStats> {
   return data ? { ...defaultStats, ...data } : defaultStats;
 }
 
-export async function recordExercise(
+// Read-modify-writes of one resource run one after another, so saves that run in
+// the background (e.g. while the next verb is already on screen) never overwrite
+// each other.
+const chains = new Map<string, Promise<unknown>>();
+function serial<T>(resource: string, run: () => Promise<T>): Promise<T> {
+  const p = (chains.get(resource) ?? Promise.resolve()).then(run, run);
+  chains.set(resource, p.catch(() => {}));
+  return p;
+}
+
+export function recordExercise(type: ExerciseType, correct: number, total: number): Promise<void> {
+  return serial('stats', () => recordExerciseNow(type, correct, total));
+}
+
+async function recordExerciseNow(
   type: ExerciseType,
   correct: number,
   total: number
@@ -197,10 +211,18 @@ export interface SectionAttempt {
   userAnswers: string[];
 }
 
-export async function upsertConjugationAttempt(
+// Saves one drill and resolves with the updated list of verb records.
+export function upsertConjugationAttempt(
   verb: string,
   sections: SectionAttempt[]
-): Promise<void> {
+): Promise<ConjugationRecord[]> {
+  return serial('conjugation', () => upsertConjugationAttemptNow(verb, sections));
+}
+
+async function upsertConjugationAttemptNow(
+  verb: string,
+  sections: SectionAttempt[]
+): Promise<ConjugationRecord[]> {
   const raw = await getJsonStrict<unknown[]>('/api/data/conjugation');
   const records = raw.filter(
     (r): r is ConjugationRecord =>
@@ -261,6 +283,7 @@ export async function upsertConjugationAttempt(
   }
 
   await putJson('/api/data/conjugation', records);
+  return records;
 }
 
 // ─── grammar exercises ─────────────────────────────────────────────────────────

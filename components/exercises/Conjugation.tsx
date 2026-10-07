@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ConjugationExercise } from '@/lib/types';
+import type { ConjugationExercise, ConjugationRecord } from '@/lib/types';
 import { upsertConjugationAttempt, recordMistakes } from '@/lib/storage';
 import { conjugationMatches as answersMatch } from '@/lib/conjugation-match';
 import { verbMistake } from '@/lib/mistakes';
@@ -13,7 +13,9 @@ import { useT, useUiLang, tenseName } from '@/lib/ui-lang';
 interface Props {
   exercise: ConjugationExercise;
   lang: Lang;
-  onComplete?: (correct: number, total: number) => void;
+  // Called right away; `saved` resolves with the updated verb records once the
+  // result is stored, so the next verb can open without waiting for the network.
+  onComplete?: (correct: number, total: number, saved: Promise<ConjugationRecord[]>) => void;
   continueLabel?: string; // the button that saves the result and moves on
 }
 
@@ -84,7 +86,7 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
     setChecked(true);
   }
 
-  async function saveAndContinue() {
+  function saveAndContinue() {
     // Wrong forms (not forgiven as typos) go to "My mistakes".
     recordMistakes(
       exercise.sections.flatMap((s, si) =>
@@ -102,7 +104,7 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
         ),
       ),
     );
-    await upsertConjugationAttempt(
+    const saved = upsertConjugationAttempt(
       exercise.verb,
       exercise.sections.map((s, si) => ({
         tense: s.tense,
@@ -114,7 +116,7 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
         ),
       }))
     );
-    onComplete?.(totalCorrect, totalQuestions);
+    onComplete?.(totalCorrect, totalQuestions, saved);
   }
 
   function reset() {
