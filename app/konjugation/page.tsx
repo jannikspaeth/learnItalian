@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getConjugationRecords, recordExercise } from '@/lib/storage';
 import { ConjugationRecord, ConjugationExercise } from '@/lib/types';
+import { X } from 'lucide-react';
 import Conjugation from '@/components/exercises/Conjugation';
 import { TENSES_BY_LANG, defaultTenses, TENSE_STORAGE_KEY, TENSE_VALIDATORS } from '@/lib/tenses';
 import { useLocalSetting } from '@/lib/use-local-setting';
@@ -104,6 +105,14 @@ export default function KonjugationPage() {
 
   const refresh = useCallback(async () => setRecords(await getConjugationRecords()), []);
   useEffect(() => { refresh(); }, [refresh]);
+
+  // Focus mode while learning a verb: the tab bar steps aside (see globals.css).
+  const learning = practicing === '__new__';
+  useEffect(() => {
+    if (!learning) return;
+    document.body.dataset.focus = '1';
+    return () => { delete document.body.dataset.focus; };
+  }, [learning]);
 
   if (!ready || !profile || !verbPack) {
     return (
@@ -213,6 +222,51 @@ export default function KonjugationPage() {
     recordExercise('conjugation', correct, total).catch(() => {});
   }
 
+  // Learning a verb: nothing but the drill (focus mode).
+  if (learning) {
+    const stop = () => { setPracticing(null); setExercise(null); };
+    return (
+      <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
+        <div className="max-w-xl mx-auto p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={stop}
+              aria-label={t('Finish', 'Beenden')}
+              title={t('Finish', 'Beenden')}
+              className="w-11 h-11 -ml-2 shrink-0 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <p className="flex-1 text-xs font-semibold uppercase tracking-wider text-gray-500">
+              {t('Verbs', 'Verben')} · {catalog.length - unseenCount}/{catalog.length} {t('learned', 'gelernt')}
+            </p>
+            {exercise && !loading && (
+              <button
+                onClick={() => startNew(due.find(r => r.verb !== exercise.verb)?.verb)}
+                className="text-xs font-semibold text-gray-500 hover:text-gray-800 px-2 py-2"
+              >
+                {t('Skip', 'Überspringen')}
+              </button>
+            )}
+          </div>
+          {loading && (
+            <p className="text-center text-sm text-gray-400 animate-pulse py-4">{t('Loading…', 'Lädt …')}</p>
+          )}
+          {error && <div className="bg-red-50 rounded-xl p-3 text-sm text-red-700">{error}</div>}
+          {exercise && !loading && (
+            <Conjugation
+              key={exercise.verb}
+              exercise={exercise}
+              lang={lang}
+              onComplete={handleLearnComplete}
+              continueLabel={t('Save & next verb', 'Speichern & nächstes Verb')}
+            />
+          )}
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
@@ -305,58 +359,28 @@ export default function KonjugationPage() {
               </p>
             </div>
 
-            {practicing !== '__new__' && (
-              <div className="space-y-2">
-                {due.length > 0 && (
-                  <button
-                    onClick={() => startNew(due[0].verb)}
-                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-colors"
-                  >
-                    {t('Review due verbs', 'Fällige Verben wiederholen')} ({due.length}) →
-                  </button>
-                )}
+            <div className="space-y-2">
+              {due.length > 0 && (
                 <button
-                  onClick={() => startNew()}
-                  className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-semibold transition-colors"
+                  onClick={() => startNew(due[0].verb)}
+                  className="w-full py-3 border-2 border-red-700 text-red-700 hover:bg-red-50 rounded-full font-semibold transition-colors"
                 >
-                  {unseenCount > 0 ? t('Learn next verb →', 'Nächstes Verb lernen →') : t('Review random verb →', 'Zufälliges Verb wiederholen →')}
+                  {t('Review due verbs', 'Fällige Verben wiederholen')} ({due.length}) →
                 </button>
-                <p className="text-[11px] text-gray-400 text-center">
-                  {t(
-                    'Verbs come back for review: soon after a mistake, less often once you get them right.',
-                    'Verben kommen zur Wiederholung zurück: bald nach einem Fehler, seltener, wenn du sie kannst.',
-                  )}
-                </p>
-              </div>
-            )}
-
-            {practicing === '__new__' && (
-              <div>
-                {loading && (
-                  <p className="text-center text-sm text-gray-400 animate-pulse py-4">{t('Loading…', 'Lädt …')}</p>
+              )}
+              <button
+                onClick={() => startNew()}
+                className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-full font-semibold transition-colors"
+              >
+                {unseenCount > 0 ? t('Learn next verb →', 'Nächstes Verb lernen →') : t('Review random verb →', 'Zufälliges Verb wiederholen →')}
+              </button>
+              <p className="text-[11px] text-gray-400 text-center">
+                {t(
+                  'Verbs come back for review: soon after a mistake, less often once you get them right.',
+                  'Verben kommen zur Wiederholung zurück: bald nach einem Fehler, seltener, wenn du sie kannst.',
                 )}
-                {error && (
-                  <div className="bg-red-50 rounded-xl p-3 text-sm text-red-700">{error}</div>
-                )}
-                {exercise && !loading && (
-                  <Conjugation
-                    key={exercise.verb}
-                    exercise={exercise}
-                    lang={lang}
-                    onComplete={handleLearnComplete}
-                    continueLabel={t('Save & next verb →', 'Speichern & nächstes Verb →')}
-                  />
-                )}
-                {exercise && !loading && (
-                  <button
-                    onClick={() => startNew(due.find(r => r.verb !== exercise.verb)?.verb)}
-                    className="w-full mt-3 text-xs text-gray-400 hover:text-gray-600"
-                  >
-                    {t('Skip this verb', 'Verb überspringen')}
-                  </button>
-                )}
-              </div>
-            )}
+              </p>
+            </div>
           </div>
         )}
 

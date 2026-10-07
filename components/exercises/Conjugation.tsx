@@ -9,6 +9,7 @@ import { spokenForm } from '@/lib/speech';
 import type { Lang } from '@/lib/lang';
 import SpeakButton from '@/components/SpeakButton';
 import { useT, useUiLang, tenseName } from '@/lib/ui-lang';
+import FeedbackBar from '@/components/practice/FeedbackBar';
 
 interface Props {
   exercise: ConjugationExercise;
@@ -129,10 +130,10 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
   return (
     <div className="space-y-5">
       {/* Verb header */}
-      <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
+      <div className="bg-white border border-gray-200 rounded-3xl p-5 flex items-center justify-between">
         <div>
           <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">{t('Verb', 'Verb')}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-0.5">{exercise.verb}</p>
+          <p className="font-display text-4xl text-gray-900 mt-1">{exercise.verb}</p>
         </div>
         <div className="text-right">
           <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">{t('Tenses', 'Zeitformen')}</p>
@@ -307,47 +308,51 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
       {!checked ? (
         <button
           onClick={check}
-          className="w-full py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-medium transition-colors"
+          className="w-full h-12 bg-red-700 hover:bg-red-800 text-white rounded-full font-semibold transition-colors"
         >
           {t('Check', 'Prüfen')}
         </button>
       ) : (
-        <div className="space-y-3">
-          <div
-            className={`p-4 rounded-xl text-center font-medium ${
-              totalCorrect === totalQuestions
-                ? 'bg-green-100 text-green-800'
-                : totalCorrect >= totalQuestions * 0.7
-                ? 'bg-amber-50 text-amber-800'
-                : 'bg-red-50 text-red-800'
-            }`}
-          >
-            {perfectSections}/{exercise.sections.length} {t('tenses perfect', 'Zeitformen fehlerfrei')} ·{' '}
-            {totalCorrect}/{totalQuestions} {t('forms correct', 'Formen richtig')}
-            {totalCorrect === totalQuestions && ' 🎉'}
-          </div>
-          {!allWrongHandled && results.some(row => row.some(ok => !ok)) && (
-            <p className="text-xs text-gray-500 text-center">
-              {t(
-                'Rewrite each wrong form correctly – and tap “Typo” if it was just a slip.',
-                'Schreib jede falsche Form richtig ab – und tippe auf „Tippfehler“, wenn es nur ein Vertipper war.',
+        <FeedbackBar
+          correct={totalCorrect === totalQuestions}
+          title={totalCorrect === totalQuestions ? t('Perfect!', 'Perfekt!') : t('Check your mistakes', 'Schau dir die Fehler an')}
+          actions={
+            <div className="space-y-2 pt-1">
+              {!allWrongHandled && (
+                <p className="text-xs text-red-800 text-center">
+                  {t(
+                    'Rewrite each wrong form above – or tap “Typo” if it was just a slip.',
+                    'Schreib jede falsche Form oben ab – oder tippe auf „Tippfehler“, wenn es nur ein Vertipper war.',
+                  )}
+                </p>
               )}
-            </p>
-          )}
-          <button
-            onClick={saveAndContinue}
-            disabled={!allWrongHandled}
-            className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl font-medium transition-colors"
-          >
-            {continueLabel ?? t('Continue', 'Weiter')}
-          </button>
-          <button
-            onClick={reset}
-            className="w-full py-2 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"
-          >
-            {t('Try again', 'Nochmal')}
-          </button>
-        </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="px-4 h-12 rounded-full border-2 border-gray-300 text-gray-700 text-sm font-semibold hover:bg-white/60 transition-colors"
+                >
+                  {t('Try again', 'Nochmal')}
+                </button>
+                <button
+                  type="button"
+                  onClick={saveAndContinue}
+                  disabled={!allWrongHandled}
+                  className={`flex-1 h-12 rounded-full text-white font-semibold disabled:opacity-40 transition-colors ${
+                    totalCorrect === totalQuestions ? 'bg-green-700 hover:bg-green-800' : 'bg-red-700 hover:bg-red-800'
+                  }`}
+                >
+                  {continueLabel ?? t('Continue', 'Weiter')}
+                </button>
+              </div>
+            </div>
+          }
+        >
+          <p className="text-sm">
+            <strong>{totalCorrect}/{totalQuestions}</strong> {t('forms correct', 'Formen richtig')} ·{' '}
+            <strong>{perfectSections}/{exercise.sections.length}</strong> {t('tenses perfect', 'Zeitformen fehlerfrei')}
+          </p>
+        </FeedbackBar>
       )}
     </div>
   );

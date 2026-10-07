@@ -105,8 +105,8 @@ textarea:focus {
 body[data-focus] .app-tabs {
   display: none;
 }
-/* …and the page keeps room to scroll above the feedback bar. */
-body[data-focus] main {
+/* While the feedback bar is up, the page keeps room to scroll above it. */
+main:has(.feedback-bar) {
   padding-bottom: calc(15rem + env(safe-area-inset-bottom));
 }
 @media (prefers-reduced-motion: reduce) {

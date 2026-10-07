@@ -10,11 +10,15 @@ export default function FeedbackBar({
   children,
   onNext,
   secondary,
+  actions,
+  title,
 }: {
   correct: boolean;
   children?: React.ReactNode;      // the solution, notes, a speak button …
-  onNext: () => void;
+  onNext?: () => void;
   secondary?: { label: string; onClick: () => void };
+  actions?: React.ReactNode;       // replaces the Continue row (e.g. rating buttons)
+  title?: string;                  // replaces "Correct!" / "Almost – the answer is:"
 }) {
   const t = useT();
   return (
@@ -29,31 +33,33 @@ export default function FeedbackBar({
           <span className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${correct ? 'bg-green-700' : 'bg-red-700'}`}>
             {correct ? <Check className="w-5 h-5" strokeWidth={3} /> : <X className="w-5 h-5" strokeWidth={3} />}
           </span>
-          {correct ? t('Correct!', 'Richtig!') : t('Almost – the answer is:', 'Fast! Richtig ist:')}
+          {title ?? (correct ? t('Correct!', 'Richtig!') : t('Almost – the answer is:', 'Fast! Richtig ist:'))}
         </p>
         {children && <div className="text-gray-900">{children}</div>}
-        <div className="flex gap-2 pt-1">
-          {secondary && (
+        {actions ?? (
+          <div className="flex gap-2 pt-1">
+            {secondary && (
+              <button
+                type="button"
+                onClick={secondary.onClick}
+                className={`px-4 h-12 rounded-full border-2 text-sm font-semibold transition-colors ${
+                  correct ? 'border-green-300 text-green-800 hover:bg-green-100' : 'border-red-300 text-red-800 hover:bg-red-50'
+                }`}
+              >
+                {secondary.label}
+              </button>
+            )}
             <button
               type="button"
-              onClick={secondary.onClick}
-              className={`px-4 h-12 rounded-full border-2 text-sm font-semibold transition-colors ${
-                correct ? 'border-green-300 text-green-800 hover:bg-green-100' : 'border-red-300 text-red-800 hover:bg-red-50'
+              onClick={onNext}
+              className={`flex-1 h-12 rounded-full text-white font-semibold transition-colors ${
+                correct ? 'bg-green-700 hover:bg-green-800' : 'bg-red-700 hover:bg-red-800'
               }`}
             >
-              {secondary.label}
+              {t('Continue', 'Weiter')}
             </button>
-          )}
-          <button
-            type="button"
-            onClick={onNext}
-            className={`flex-1 h-12 rounded-full text-white font-semibold transition-colors ${
-              correct ? 'bg-green-700 hover:bg-green-800' : 'bg-red-700 hover:bg-red-800'
-            }`}
-          >
-            {t('Continue', 'Weiter')}
-          </button>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

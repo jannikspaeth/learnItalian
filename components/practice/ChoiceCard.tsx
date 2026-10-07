@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Lang } from '@/lib/lang';
 import SpeakButton from '@/components/SpeakButton';
-import { useT } from '@/lib/ui-lang';
 import FeedbackBar from './FeedbackBar';
 
 function shuffle<T>(arr: T[]): T[] {
@@ -37,7 +36,6 @@ export default function ChoiceCard({
 }) {
   const shuffled = useMemo(() => shuffle(options), [options]);
   const [picked, setPicked] = useState<string | null>(null);
-  const t = useT();
   const correct = picked === answer;
 
   // After picking, a new Enter press moves on (see TypeCard for why not autoFocus).
