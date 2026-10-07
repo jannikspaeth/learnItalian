@@ -7,6 +7,7 @@ import { getGrammarRecords, recordExercise } from '@/lib/storage';
 import { GrammarRecord } from '@/lib/types';
 import { useLearner } from '@/lib/use-profile';
 import { langInfo } from '@/lib/lang';
+import { X } from 'lucide-react';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
 import SpeakButton from '@/components/SpeakButton';
 import { useT } from '@/lib/ui-lang';
@@ -29,6 +30,14 @@ export default function GrammarPage() {
 
   const refresh = useCallback(async () => setRecords(await getGrammarRecords()), []);
   useEffect(() => { refresh(); }, [refresh]);
+
+  // Focus mode while practising a topic: the tab bar steps aside (see globals.css).
+  const focused = practicing !== null && tab === 'exercises';
+  useEffect(() => {
+    if (!focused) return;
+    document.body.dataset.focus = '1';
+    return () => { delete document.body.dataset.focus; };
+  }, [focused]);
 
   if (!ready || !profile) {
     return (
@@ -195,6 +204,37 @@ export default function GrammarPage() {
     );
   }
 
+  // Practising a topic: nothing but the exercise (focus mode).
+  if (focused && active) {
+    return (
+      <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
+        <div className="max-w-xl mx-auto p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setPracticing(null)}
+              aria-label={t('All topics', 'Alle Themen')}
+              title={t('All topics', 'Alle Themen')}
+              className="w-11 h-11 -ml-2 shrink-0 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              {t('Grammar', 'Grammatik')} · {active.level}
+            </p>
+          </div>
+          <h1 className="text-3xl text-gray-900">{active.title}</h1>
+          <GrammarExercise
+            key={active.id}
+            topic={active}
+            lang={lang}
+            onComplete={handleComplete}
+            onDone={() => setPracticing(null)}
+          />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
@@ -230,38 +270,21 @@ export default function GrammarPage() {
 
         {/* ===== EXERCISES ===== */}
         {tab === 'exercises' && (
-          active ? (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="font-bold text-gray-900 flex items-center gap-2">
-                  <span>{active.icon}</span> {active.title}
-                </h2>
-                <button
-                  onClick={() => setPracticing(null)}
-                  className="shrink-0 text-sm text-gray-500 hover:text-gray-800"
-                >
-                  ← {t('All topics', 'Alle Themen')}
-                </button>
-              </div>
-              <GrammarExercise key={active.id} topic={active} lang={lang} onComplete={handleComplete} />
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {GRAMMAR_LEVELS.map(level => {
-                const topics = GRAMMAR_TOPICS.filter(t => t.level === level.id);
-                const done = topics.filter(t => recordOf.get(t.id)?.mastered).length;
-                return (
-                  <section key={level.id} className="space-y-3">
-                    <h2 className="flex items-baseline justify-between px-1">
-                      <span className="text-sm font-bold text-gray-800">{level.label}</span>
-                      <span className="text-xs text-gray-400">{done}/{topics.length} {t('mastered', 'gemeistert')}</span>
-                    </h2>
-                    {topics.map(topicCard)}
-                  </section>
-                );
-              })}
-            </div>
-          )
+          <div className="space-y-6">
+            {GRAMMAR_LEVELS.map(level => {
+              const topics = GRAMMAR_TOPICS.filter(t => t.level === level.id);
+              const done = topics.filter(t => recordOf.get(t.id)?.mastered).length;
+              return (
+                <section key={level.id} className="space-y-3">
+                  <h2 className="flex items-baseline justify-between px-1">
+                    <span className="text-sm font-bold text-gray-800">{level.label}</span>
+                    <span className="text-xs text-gray-400">{done}/{topics.length} {t('mastered', 'gemeistert')}</span>
+                  </h2>
+                  {topics.map(topicCard)}
+                </section>
+              );
+            })}
+          </div>
         )}
 
         {/* ===== LESSONS ===== */}
