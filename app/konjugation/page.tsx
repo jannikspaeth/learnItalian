@@ -217,7 +217,7 @@ export default function KonjugationPage() {
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('Verbs', 'Verben')}</h1>
+          <h1 className="text-3xl text-gray-900">{t('Verbs', 'Verben')}</h1>
           <p className="text-gray-400 text-sm mt-0.5">
             {t('Practice conjugations and review mistakes', 'Konjugieren üben und Fehler wiederholen')}
           </p>

@@ -174,3 +174,6 @@ export function awardPoints(counts: Record<string, number>): Record<string, numb
   }
   return result;
 }
+
+// Daily goal shown on Today and Vocabulary: activity points (see stats.daily).
+export const DAILY_GOAL = 20;

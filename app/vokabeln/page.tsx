@@ -12,7 +12,7 @@ import {
 import { vocabMistake } from '@/lib/mistakes';
 import { VocabEntry, ProgressStats, RaceResponse } from '@/lib/types';
 import { useLearner } from '@/lib/use-profile';
-import { berlinToday } from '@/lib/race';
+import { berlinToday, DAILY_GOAL } from '@/lib/race';
 import { usePack, presentOf, VerbPack } from '@/lib/content';
 import { Lang, langInfo } from '@/lib/lang';
 import { TENSES_BY_LANG } from '@/lib/tenses';
@@ -41,7 +41,6 @@ import { speak } from '@/lib/speech';
 import { useAutoplay } from '@/lib/use-autoplay';
 import { useT, useUiLang, T } from '@/lib/ui-lang';
 
-const DAILY_GOAL = 20;
 // One Learn session introduces this many new words; finish early or keep going.
 const ROUND_SIZE = 20;
 
@@ -746,7 +745,7 @@ export default function VokabelnPage() {
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('Vocabulary', 'Vokabeln')}</h1>
+          <h1 className="text-3xl text-gray-900">{t('Vocabulary', 'Vokabeln')}</h1>
           <p className="text-gray-400 text-sm mt-0.5">
             {bekanntWords.length} {t('known', 'gekonnt')} · {dueToday.length} {t('due today', 'heute fällig')}
             {upcoming.length > 0 && ` · ${upcoming.length} ${t('coming up', 'demnächst')}`}

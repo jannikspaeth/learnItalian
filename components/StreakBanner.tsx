@@ -1,5 +1,6 @@
 'use client';
 
+import { Flame } from 'lucide-react';
 import { useT } from '@/lib/ui-lang';
 
 interface Props {
@@ -16,7 +17,7 @@ export default function StreakBanner({ streak, todayCount, goal }: Props) {
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4">
       <div className="flex items-center gap-2 shrink-0">
-        <span className="text-2xl">{streak > 0 ? '🔥' : '🌱'}</span>
+        <Flame className={`w-6 h-6 ${streak > 0 ? 'text-red-700' : 'text-gray-300'}`} />
         <div className="leading-tight">
           <p className="text-lg font-bold text-gray-900 tabular-nums">{streak}</p>
           <p className="text-xs text-gray-400 -mt-0.5">{streak === 1 ? t('day', 'Tag') : t('days', 'Tage')}</p>
@@ -27,12 +28,12 @@ export default function StreakBanner({ streak, todayCount, goal }: Props) {
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs font-medium text-gray-500">{t('Today’s goal', 'Tagesziel')}</span>
           <span className="text-xs font-semibold tabular-nums text-gray-700">
-            {todayCount} / {goal} {reached && '🎉'}
+            {todayCount} / {goal}
           </span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${reached ? 'bg-green-500' : 'bg-amber-500'}`}
+            className={`h-full rounded-full transition-all ${reached ? 'bg-green-600' : 'bg-red-700'}`}
             style={{ width: `${pct}%` }}
           />
         </div>

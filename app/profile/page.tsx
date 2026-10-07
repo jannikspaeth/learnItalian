@@ -83,7 +83,7 @@ export default function ProfilePage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <p className="text-4xl mb-3">🌍</p>
-          <h1 className="text-2xl font-bold text-gray-900">{t('Who are you?', 'Wer bist du?')}</h1>
+          <h1 className="text-3xl text-gray-900">{t('Who are you?', 'Wer bist du?')}</h1>
           <p className="text-sm text-gray-400 mt-1">{t('Choose your profile to continue.', 'Wähle dein Profil, um weiterzumachen.')}</p>
         </div>
         <div className="space-y-3">

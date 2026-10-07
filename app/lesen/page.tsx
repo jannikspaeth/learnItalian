@@ -71,8 +71,8 @@ export default function LesenPage() {
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <span>📰</span> {t('Reading', 'Lesen')}
+          <h1 className="text-3xl text-gray-900 flex items-center gap-2">
+            {t('Reading', 'Lesen')}
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
             {t(
@@ -243,7 +243,7 @@ function Reader({
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-3xl text-gray-900 flex items-center gap-2">
             <span>{text.icon}</span> {text.title}
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">{text.titleDe}</p>

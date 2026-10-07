@@ -169,7 +169,16 @@ alter table grammar     enable row level security;
   per topic in the `grammar` table) and **Lessons** (`lib/grammar-lessons.ts`; Italian: 29 lessons A1–B1 with a
   `level`, grouped by level, every exercise topic links one via `lessonId`; es/fr: first-steps lessons only).
 - `/race` — **THE RACE**: global competitive leaderboard (see below).
-- `/help`, `/profile`. Nav in `components/Navigation.tsx` (filters items by `onlyDirection`/`onlyLevel`).
+- `/help`, `/profile`. Nav in `components/Navigation.tsx`: mobile has four tabs (Heute · Üben · Rennen · Profil),
+  desktop a sidebar; the sections are listed once in `lib/sections.ts`. `/ueben` is the hub of all exercise types,
+  `/konto` the profile tab (language & level, switch profile, achievements, help, app language).
+
+## Look ("warm italiano")
+
+Cream ground, terracotta accent, olive for correct answers, DM Sans body + Fraunces serif for titles (`h1`,
+`.font-display`), icons from `lucide-react` (no emoji icons). The theme lives in `app/globals.css` `@theme`: the
+Tailwind `gray`/`red`/`green`/`white` palettes are re-tuned there, so keep using those class names
+(`red-700` = accent, `green-*` = correct, `gray-*` = warm neutrals).
 
 ## THE RACE (scoring model)
 

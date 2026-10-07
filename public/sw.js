@@ -19,7 +19,7 @@ const KEEP = [PAGES, STATIC, DATA];
 
 const ROUTES = [
   '/heute', '/vokabeln', '/konjugation', '/grammar', '/saetze', '/lesen',
-  '/race', '/erfolge', '/help', '/profile', '/sprache',
+  '/race', '/erfolge', '/help', '/profile', '/sprache', '/ueben', '/konto',
 ];
 const FILES = ['/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/favicon.ico'];
 

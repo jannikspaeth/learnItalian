@@ -1,14 +1,69 @@
 @import "tailwindcss";
 
+/* Design "warm italiano": the Tailwind palettes the app uses are re-tuned here, so
+   every page follows the theme without touching its classes.
+   gray = warm neutrals on a cream ground, red = terracotta (accent and mistakes),
+   green = olive (correct), white = warm paper for cards. */
+@theme {
+  --font-sans: var(--font-body), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-serif), Georgia, serif;
+
+  --color-white: #FFFDF9;
+
+  --color-gray-50: #FBF6EE;
+  --color-gray-100: #F3EADD;
+  --color-gray-200: #E8DDCC;
+  --color-gray-300: #D6C7B2;
+  --color-gray-400: #8F7E6E;
+  --color-gray-500: #6E5F55;
+  --color-gray-600: #5A4C43;
+  --color-gray-700: #46392F;
+  --color-gray-800: #352A22;
+  --color-gray-900: #2A211C;
+  --color-gray-950: #1A140F;
+
+  --color-red-50: #FBEFE9;
+  --color-red-100: #F7E3D8;
+  --color-red-200: #EBC8B6;
+  --color-red-300: #D9A58D;
+  --color-red-400: #C97B5E;
+  --color-red-500: #B95A3A;
+  --color-red-600: #B04A2D;
+  --color-red-700: #A63F24;
+  --color-red-800: #7F2F1A;
+  --color-red-900: #5E2313;
+  --color-red-950: #3A150B;
+
+  --color-green-50: #F2F5E8;
+  --color-green-100: #E4EBCF;
+  --color-green-200: #CBD8A6;
+  --color-green-300: #AFC27B;
+  --color-green-400: #8DA556;
+  --color-green-500: #6F873A;
+  --color-green-600: #5A6B2F;
+  --color-green-700: #4A5A26;
+  --color-green-800: #3B481F;
+  --color-green-900: #2E3818;
+  --color-green-950: #1A200D;
+}
+
 :root {
-  --background: #F9FAFB;
-  --foreground: #111827;
+  --background: #FBF6EE;
+  --foreground: #2A211C;
+}
+
+/* Page titles and big words in the serif display face. */
+h1,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   /* Installed app (full screen): keep content clear of the notch and side edges. */
   padding-top: env(safe-area-inset-top);

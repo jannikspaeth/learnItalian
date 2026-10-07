@@ -75,7 +75,7 @@ export default function SprachePage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <p className="text-4xl mb-3">🌍</p>
-          <h1 className="text-2xl font-bold text-gray-900">{t('Hi', 'Hallo')} {profile.name}!</h1>
+          <h1 className="text-3xl text-gray-900">{t('Hi', 'Hallo')} {profile.name}!</h1>
           <p className="text-sm text-gray-400 mt-1">{t('Which language do you want to learn?', 'Welche Sprache möchtest du lernen?')}</p>
         </div>
 

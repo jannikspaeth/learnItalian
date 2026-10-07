@@ -227,8 +227,8 @@ export default function RacePage() {
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-24 md:pb-8">
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <span>🏁</span> {t('THE RACE', 'DAS RENNEN')}
+          <h1 className="text-3xl text-gray-900 flex items-center gap-2">
+            {t('The Race', 'Das Rennen')}
             {lang && <span title={t(`${langInfo(lang).name} race`, `Rennen auf ${langInfo(lang).nameDe}`)}>{langInfo(lang).flag}</span>}
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
