@@ -91,3 +91,24 @@ textarea:focus {
     padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   }
 }
+
+/* Answer feedback slides up from the bottom. */
+@keyframes feedback-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.feedback-bar {
+  animation: feedback-up 0.22s ease-out;
+}
+
+/* Focus mode during a practice round: the tab bar steps aside. */
+body[data-focus] .app-tabs {
+  display: none;
+}
+/* …and the page keeps room to scroll above the feedback bar. */
+body[data-focus] main {
+  padding-bottom: calc(15rem + env(safe-area-inset-bottom));
+}
+@media (prefers-reduced-motion: reduce) {
+  .feedback-bar { animation: none; }
+}

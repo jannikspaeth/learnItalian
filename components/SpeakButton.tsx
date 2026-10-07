@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { speak, stopSpeaking, useSpeechSupported, NORMAL_RATE, SLOW_RATE } from '@/lib/speech';
 import type { Lang } from '@/lib/lang';
+import { Volume2, Turtle } from 'lucide-react';
 import { useT } from '@/lib/ui-lang';
 
 // 🔊 read-aloud button. Renders nothing where the browser can't speak. `slow`
@@ -33,7 +34,9 @@ export default function SpeakButton({
   if (!supported || !text.trim()) return null;
 
   const dims =
-    size === 'lg' ? 'h-12 min-w-12 text-2xl' : size === 'md' ? 'h-9 min-w-9 text-lg' : 'h-7 min-w-7 text-sm';
+    size === 'lg' ? 'h-12 min-w-12' : size === 'md' ? 'h-9 min-w-9' : 'h-7 min-w-7';
+  const icon = size === 'lg' ? 'w-6 h-6' : size === 'md' ? 'w-5 h-5' : 'w-4 h-4';
+  const Icon = slow ? Turtle : Volume2;
 
   return (
     <button
@@ -50,10 +53,10 @@ export default function SpeakButton({
       title={slow ? t('Read aloud slowly', 'Langsam vorlesen') : t('Read aloud', 'Vorlesen')}
       aria-label={slow ? t('Read aloud slowly', 'Langsam vorlesen') : t('Read aloud', 'Vorlesen')}
       className={`inline-flex items-center justify-center gap-1 px-1.5 rounded-full shrink-0 transition-colors ${dims} ${
-        playing ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700'
+        playing ? 'bg-red-700 text-white' : 'bg-red-50 text-red-700 hover:bg-red-100'
       } ${className}`}
     >
-      <span aria-hidden>{slow ? '🐢' : '🔊'}</span>
+      <Icon className={icon} aria-hidden />
       {label && <span className="text-xs font-medium pr-1">{label}</span>}
     </button>
   );

@@ -33,7 +33,7 @@ import { chosenTenses } from '@/lib/tenses';
 import { getConjugationExercise } from '@/lib/conjugation-client';
 import { TOPICS_BY_LANG } from '@/lib/grammar-by-lang';
 import { berlinToday, DAILY_GOAL } from '@/lib/race';
-import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw } from 'lucide-react';
+import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw, X } from 'lucide-react';
 import { checkWordAnswer, checkClozeAnswer } from '@/lib/answer-check';
 import { conjugationMatches } from '@/lib/conjugation-match';
 import { spokenForm } from '@/lib/speech';
@@ -88,12 +88,12 @@ function exerciseType(step: RoundStep): ExerciseType {
 }
 
 const BLOCK_LABEL: Record<RoundStep['kind'], [string, string]> = {
-  vocab: ['📖 Words', '📖 Wörter'],
-  verb: ['🔤 Verbs', '🔤 Verben'],
-  grammar: ['📘 Grammar', '📘 Grammatik'],
-  sentence: ['✍️ Sentences', '✍️ Sätze'],
-  dictation: ['🎧 Dictation', '🎧 Diktat'],
-  mistake: ['🩹 My mistakes', '🩹 Meine Fehler'],
+  vocab: ['Words', 'Wörter'],
+  verb: ['Verbs', 'Verben'],
+  grammar: ['Grammar', 'Grammatik'],
+  sentence: ['Sentences', 'Sätze'],
+  dictation: ['Dictation', 'Diktat'],
+  mistake: ['My mistakes', 'Meine Fehler'],
 };
 
 function shuffle<T>(arr: T[]): T[] {
@@ -153,6 +153,14 @@ export default function HeutePage() {
   }, []);
   // Leaving the page mid-round still counts what was done.
   useEffect(() => () => flushActivity(), [flushActivity]);
+
+  // Focus mode while practising: the tab bar steps aside (see globals.css).
+  const practising = (mode === 'round' || mode === 'mistakes') && steps.length > 0 && !finished;
+  useEffect(() => {
+    if (!practising) return;
+    document.body.dataset.focus = '1';
+    return () => { delete document.body.dataset.focus; };
+  }, [practising]);
 
   if (!ready || !profile || !vocabPack || !verbPack) {
     return (
@@ -556,19 +564,24 @@ export default function HeutePage() {
 
         {active && !finished && steps[idx] && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs text-gray-400">
-              <span className="font-medium text-gray-600">{block(steps[idx].kind)}</span>
-              <div className="flex items-center gap-3">
-                <span className="tabular-nums">{idx + 1} / {steps.length}</span>
-                <button onClick={backHome} className="hover:text-gray-600 transition-colors">{t('Finish', 'Beenden')}</button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={backHome}
+                aria-label={t('Finish', 'Beenden')}
+                title={t('Finish', 'Beenden')}
+                className="w-11 h-11 -ml-2 shrink-0 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-600 rounded-full transition-all"
+                  style={{ width: `${Math.round((idx / steps.length) * 100)}%` }}
+                />
               </div>
+              <span className="text-xs font-semibold text-gray-500 tabular-nums">{idx + 1}/{steps.length}</span>
             </div>
-            <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-red-600 rounded-full transition-all"
-                style={{ width: `${Math.round((idx / steps.length) * 100)}%` }}
-              />
-            </div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 text-center pt-2">{block(steps[idx].kind)}</p>
             {renderStep(steps[idx], idx)}
           </div>
         )}
