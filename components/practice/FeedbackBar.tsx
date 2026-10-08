@@ -12,6 +12,7 @@ export default function FeedbackBar({
   secondary,
   actions,
   title,
+  neutral = false,
 }: {
   correct: boolean;
   children?: React.ReactNode;      // the solution, notes, a speak button …
@@ -19,20 +20,23 @@ export default function FeedbackBar({
   secondary?: { label: string; onClick: () => void };
   actions?: React.ReactNode;       // replaces the Continue row (e.g. rating buttons)
   title?: string;                  // replaces "Correct!" / "Almost – the answer is:"
+  neutral?: boolean;               // no verdict yet (self-graded cards): plain colours, no icon
 }) {
   const t = useT();
   return (
     <div
       role="status"
       className={`feedback-bar fixed bottom-0 left-0 right-0 md:left-56 z-[60] border-t rounded-t-3xl px-5 pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] ${
-        correct ? 'bg-green-50 border-green-200' : 'bg-red-100 border-red-200'
+        neutral ? 'bg-white border-gray-200 shadow-[0_-8px_24px_rgba(42,33,28,0.08)]' : correct ? 'bg-green-50 border-green-200' : 'bg-red-100 border-red-200'
       }`}
     >
       <div className="max-w-xl mx-auto space-y-3">
-        <p className={`flex items-center gap-2.5 font-display text-[22px] ${correct ? 'text-green-800' : 'text-red-800'}`}>
-          <span className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${correct ? 'bg-green-700' : 'bg-red-700'}`}>
-            {correct ? <Check className="w-5 h-5" strokeWidth={3} /> : <X className="w-5 h-5" strokeWidth={3} />}
-          </span>
+        <p className={`flex items-center gap-2.5 font-display text-[22px] ${neutral ? 'text-gray-900' : correct ? 'text-green-800' : 'text-red-800'}`}>
+          {!neutral && (
+            <span className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${correct ? 'bg-green-700' : 'bg-red-700'}`}>
+              {correct ? <Check className="w-5 h-5" strokeWidth={3} /> : <X className="w-5 h-5" strokeWidth={3} />}
+            </span>
+          )}
           {title ?? (correct ? t('Correct!', 'Richtig!') : t('Almost – the answer is:', 'Fast! Richtig ist:'))}
         </p>
         {children && <div className="text-gray-900">{children}</div>}
