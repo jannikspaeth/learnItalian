@@ -176,7 +176,7 @@ alter table grammar     enable row level security;
 ## Look ("warm italiano")
 
 Cream ground, terracotta accent, olive for correct answers, DM Sans body + Fraunces serif for titles (`h1`,
-`.font-display`), icons from `lucide-react` (no emoji icons). The theme lives in `app/globals.css` `@theme`: the
+`.font-display`), icons from `lucide-react` (no emoji as UI icons; content emojis such as topic/badge icons and celebration toasts stay). The theme lives in `app/globals.css` `@theme`: the
 Tailwind `gray`/`red`/`green`/`white` palettes are re-tuned there, so keep using those class names
 (`red-700` = accent, `green-*` = correct, `gray-*` = warm neutrals). Practice rounds on Today run in focus mode
 (`body[data-focus]` hides the tab bar) and show the verdict in `components/practice/FeedbackBar.tsx`.

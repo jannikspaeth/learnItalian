@@ -33,7 +33,7 @@ import { chosenTenses } from '@/lib/tenses';
 import { getConjugationExercise } from '@/lib/conjugation-client';
 import { TOPICS_BY_LANG } from '@/lib/grammar-by-lang';
 import { berlinToday, DAILY_GOAL } from '@/lib/race';
-import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw, X } from 'lucide-react';
+import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw, X, PartyPopper } from 'lucide-react';
 import { checkWordAnswer, checkClozeAnswer } from '@/lib/answer-check';
 import { conjugationMatches } from '@/lib/conjugation-match';
 import { spokenForm } from '@/lib/speech';
@@ -588,7 +588,7 @@ export default function HeutePage() {
 
         {active && finished && (
           <div className="bg-white rounded-2xl border border-gray-200 p-6 text-center space-y-4">
-            <p className="text-4xl">{mode === 'round' ? '🎉' : '💪'}</p>
+            <PartyPopper className="w-10 h-10 text-red-700 mx-auto" />
             <p className="font-semibold text-gray-900">
               {mode === 'round' ? t("Today's round is done!", 'Die Tagesrunde ist geschafft!') : t('Mistake training done', 'Fehlertraining geschafft')}
             </p>
@@ -687,7 +687,7 @@ export default function HeutePage() {
 
               {mistakes.length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-2">
-                  {extras ? t('No mistakes collected – great! 🎉', 'Keine Fehler gesammelt – super! 🎉') : t('Loading…', 'Lädt …')}
+                  {extras ? t('No mistakes collected – great!', 'Keine Fehler gesammelt – super!') : t('Loading…', 'Lädt …')}
                 </p>
               ) : (
                 <>

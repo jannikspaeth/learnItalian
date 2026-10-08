@@ -38,7 +38,7 @@ import ChallengeStrip from '@/components/ChallengeStrip';
 import Celebration from '@/components/Celebration';
 import SpeakButton from '@/components/SpeakButton';
 import FeedbackBar from '@/components/practice/FeedbackBar';
-import { X, Flame } from 'lucide-react';
+import { X, Flame, PartyPopper, BookOpen, Volume2 } from 'lucide-react';
 import { speak } from '@/lib/speech';
 import { useAutoplay } from '@/lib/use-autoplay';
 import { useT, useUiLang, T } from '@/lib/ui-lang';
@@ -719,7 +719,7 @@ export default function VokabelnPage() {
       />
     ) : phase === 'done' ? (
       <div className="bg-white rounded-xl border border-gray-200 p-6 text-center space-y-3">
-        <p className="text-4xl">🎉</p>
+        <PartyPopper className="w-10 h-10 text-red-700 mx-auto" />
         <p className="font-semibold text-gray-900">{t('Session complete', 'Runde geschafft')}</p>
         <p className="text-sm text-gray-500">
           {sessionCorrect} / {doneCount} {t('correct', 'richtig')}
@@ -868,7 +868,7 @@ export default function VokabelnPage() {
                     <p className="text-xs text-gray-400 mt-3">
                       {unseenCount > 0
                         ? t(`${unseenCount} of ${topicCatalog.length} words not seen yet`, `${unseenCount} von ${topicCatalog.length} Wörtern noch nicht gesehen`)
-                        : t(`All ${topicCatalog.length} words in this topic already seen 🎉`, `Alle ${topicCatalog.length} Wörter dieses Themas schon gesehen 🎉`)}
+                        : t(`All ${topicCatalog.length} words in this topic already seen`, `Alle ${topicCatalog.length} Wörter dieses Themas schon gesehen`)}
                     </p>
                     {topicCatalog.length > 0 && (
                       <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -903,7 +903,7 @@ export default function VokabelnPage() {
             {phase === 'idle' ? (
               dueToday.length === 0 ? (
                 <div className="text-center py-14">
-                  <p className="text-4xl mb-3">🎉</p>
+                  <PartyPopper className="w-10 h-10 text-red-700 mx-auto mb-3" />
                   <p className="text-sm font-medium text-gray-500">{t('No words due today!', 'Heute ist nichts fällig!')}</p>
                   {upcoming.length > 0 && (
                     <p className="text-xs text-gray-400 mt-1">
@@ -940,7 +940,7 @@ export default function VokabelnPage() {
 
             {vocab.length === 0 ? (
               <div className="text-center py-14">
-                <p className="text-4xl mb-3">📚</p>
+                <BookOpen className="w-10 h-10 text-red-700 mx-auto mb-3" />
                 <p className="text-sm text-gray-400">
                   {t('No words seen yet. Start a learning round!', 'Noch keine Wörter gesehen. Starte eine Lernrunde!')}
                 </p>
@@ -1325,7 +1325,7 @@ function AutoplayToggle({ value, onChange }: { value: boolean; onChange: (v: boo
       onClick={() => onChange(!value)}
       className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 text-xs text-gray-500 hover:bg-gray-100 transition-colors"
     >
-      <span>🔊 {t('Read words aloud automatically', 'Wörter automatisch vorlesen')}</span>
+      <span className="inline-flex items-center gap-1.5"><Volume2 className="w-4 h-4 text-red-700" /> {t('Read words aloud automatically', 'Wörter automatisch vorlesen')}</span>
       <span className={`font-semibold ${value ? 'text-green-700' : 'text-gray-400'}`}>{value ? t('On', 'An') : t('Off', 'Aus')}</span>
     </button>
   );

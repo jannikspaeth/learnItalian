@@ -93,8 +93,8 @@ export default function OfflineSupport() {
         {online
           ? t(`⏳ Syncing ${pending} answer${pending === 1 ? '' : 's'}…`, `⏳ Übertrage ${pending} Antwort${pending === 1 ? '' : 'en'} …`)
           : pending > 0
-            ? t(`📴 Offline · ${pending} answer${pending === 1 ? '' : 's'} to sync`, `📴 Offline · ${pending} Antwort${pending === 1 ? '' : 'en'} ausstehend`)
-            : t('📴 Offline · progress syncs later', '📴 Offline · Fortschritt wird später übertragen')}
+            ? t(`Offline · ${pending} answer${pending === 1 ? '' : 's'} to sync`, `Offline · ${pending} Antwort${pending === 1 ? '' : 'en'} ausstehend`)
+            : t('Offline · progress syncs later', 'Offline · Fortschritt wird später übertragen')}
       </div>
     </div>
   );

@@ -66,7 +66,7 @@ export default function TopicPicker({
         <span className="flex items-center gap-2 min-w-0">
           <span className="text-gray-400 shrink-0">{t('Topic', 'Thema')}</span>
           <span className="font-medium text-gray-800 truncate">
-            {current ? `${current.icon} ${current.label}` : `📚 ${t('All topics', 'Alle Themen')}`}
+            {current ? `${current.icon} ${current.label}` : t('All topics', 'Alle Themen')}
           </span>
         </span>
         <span className="text-gray-400 shrink-0">{open ? '▲' : '▼'}</span>

@@ -1,5 +1,6 @@
 'use client';
 
+import { Globe, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { MAX_NAME_LENGTH, Profile, levelFor, mergeProfiles } from '@/lib/profiles';
@@ -82,7 +83,7 @@ export default function ProfilePage() {
     <main className="min-h-screen bg-gray-50 flex items-center justify-center p-6 pb-24 md:pb-6">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
-          <p className="text-4xl mb-3">🌍</p>
+          <Globe className="w-10 h-10 text-red-700 mx-auto mb-3" />
           <h1 className="text-3xl text-gray-900">{t('Who are you?', 'Wer bist du?')}</h1>
           <p className="text-sm text-gray-400 mt-1">{t('Choose your profile to continue.', 'Wähle dein Profil, um weiterzumachen.')}</p>
         </div>
@@ -118,7 +119,7 @@ export default function ProfilePage() {
                       onClick={() => { setConfirming(p.id); setDeleteError(''); }}
                       className="shrink-0 text-sm font-medium px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100"
                     >
-                      🗑 {t('Delete', 'Löschen')}
+                      <Trash2 className="inline w-3.5 h-3.5 -mt-0.5" /> {t('Delete', 'Löschen')}
                     </button>
                   )}
                 </div>

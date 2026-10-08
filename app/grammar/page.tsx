@@ -7,7 +7,7 @@ import { getGrammarRecords, recordExercise } from '@/lib/storage';
 import { GrammarRecord } from '@/lib/types';
 import { useLearner } from '@/lib/use-profile';
 import { langInfo } from '@/lib/lang';
-import { X } from 'lucide-react';
+import { X, BookMarked } from 'lucide-react';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
 import SpeakButton from '@/components/SpeakButton';
 import { useT } from '@/lib/ui-lang';
@@ -116,7 +116,7 @@ export default function GrammarPage() {
         <div className="flex items-center gap-3 text-xs">
           {lesson && (
             <button onClick={() => openLesson(lesson.id)} className="text-blue-600 hover:underline">
-              📘 {t('Lesson', 'Lektion')}: {lesson.title}
+              <BookMarked className="inline w-3.5 h-3.5 -mt-0.5" /> {t('Lesson', 'Lektion')}: {lesson.title}
             </button>
           )}
           {rec && rec.recentMistakes.length > 0 && (

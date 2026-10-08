@@ -7,21 +7,14 @@ import { useT, useUiLang } from '@/lib/ui-lang';
 import { langInfo } from '@/lib/lang';
 import { formatStars } from '@/lib/race';
 import { RaceResponse, RaceHistory } from '@/lib/types';
+import { Crown, Flame, Flag, TrendingUp, Medal, Clock, Star } from 'lucide-react';
 
 const REFRESH_MS = 20000;
 
-// Distinct car colors per racer (by sorted index).
-const CAR_COLORS = ['🔴', '🔵', '🟢', '🟡', '🟣'];
-const TRACK_TINTS = [
-  'bg-red-50',
-  'bg-blue-50',
-  'bg-green-50',
-  'bg-amber-50',
-  'bg-purple-50',
-];
-// SVG stroke colors for the progress chart, in the same order as the cars above
-// (tailwind -500 shades) so each line matches that racer's car.
-const LINE_COLORS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#a855f7'];
+// One colour per racer (by sorted index), warm and told apart by lightness too:
+// terracotta, slate blue, olive, ochre, plum. Used for the token on the track
+// and the matching line in the progress chart.
+const LINE_COLORS = ['#A63F24', '#3E6A8A', '#5A6B2F', '#B7791F', '#7B4B6B'];
 
 function fmtPoints(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
@@ -82,14 +75,14 @@ function ProgressOverTime({
   const tickIdx = n <= 1 ? [0] : [...new Set([0, Math.floor((n - 1) / 2), n - 1])];
 
   return (
-    <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
-      <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
-        <span>📈</span> {t('Progress over time', 'Verlauf')}
+    <section className="bg-white rounded-3xl border border-gray-200 p-5 space-y-3">
+      <h2 className="font-display text-xl text-gray-900 flex items-center gap-2">
+        <TrendingUp className="w-5 h-5 text-red-700" /> {t('Progress over time', 'Verlauf')}
       </h2>
 
       {empty ? (
         <p className="text-sm text-gray-400 py-3 text-center">
-          {t('No activity yet — start learning to grow your line! 🚀', 'Noch keine Aktivität – fang an zu lernen, damit deine Linie wächst! 🚀')}
+          {t('No activity yet — start learning to grow your line!', 'Noch keine Aktivität – fang an zu lernen, damit deine Linie wächst!')}
         </p>
       ) : (
         <>
@@ -97,7 +90,7 @@ function ProgressOverTime({
             {/* y baseline + top gridline with labels */}
             {[0, yMax].map((v, k) => (
               <g key={k}>
-                <line x1={PL} x2={W - PR} y1={y(v)} y2={y(v)} stroke="#f1f5f9" strokeWidth={1} />
+                <line x1={PL} x2={W - PR} y1={y(v)} y2={y(v)} stroke="#E8DDCC" strokeWidth={1} />
                 <text x={PL - 4} y={y(v) + 3} textAnchor="end" fontSize={8} fill="#94a3b8">
                   {Math.round(v)}
                 </text>
@@ -240,14 +233,14 @@ export default function RacePage() {
         </div>
 
         {/* ===== Cars racing the month's leader ===== */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+        <section className="bg-white rounded-3xl border border-gray-200 p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-gray-900 text-base">{t('Standings', 'Stand')}</h2>
+            <h2 className="font-display text-xl text-gray-900">{t('Standings', 'Stand')}</h2>
             <div className="text-right leading-tight">
               <p className="text-xs font-medium text-gray-500">{fmtMonth(month, loc)}</p>
               {daysLeft > 0 && (
                 <p className="text-[11px] text-gray-400">
-                  ⏳ {t(`${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`, `noch ${daysLeft} ${daysLeft === 1 ? 'Tag' : 'Tage'}`)}
+                  <Clock className="inline w-3 h-3 -mt-0.5" /> {t(`${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`, `noch ${daysLeft} ${daysLeft === 1 ? 'Tag' : 'Tage'}`)}
                 </p>
               )}
             </div>
@@ -255,22 +248,21 @@ export default function RacePage() {
           <div className="space-y-3">
             {racers.map((r, i) => {
               const pct = leaderPoints > 0 ? r.points / leaderPoints : 0;
-              const car = CAR_COLORS[i % CAR_COLORS.length];
-              const tint = TRACK_TINTS[i % TRACK_TINTS.length];
+              const color = LINE_COLORS[i % LINE_COLORS.length];
               const leader = i === 0 && r.points > 0;
               return (
                 <div key={r.id}>
                   <div className="flex items-center justify-between gap-3 mb-1">
                     <span className="text-sm font-semibold text-gray-800 flex items-center gap-1.5 min-w-0">
-                      {leader && <span title={t('Leader', 'Spitze')}>👑</span>}
+                      {leader && <Crown className="w-4 h-4 text-amber-600 shrink-0" aria-label={t('Leader', 'Spitze')} />}
                       <span className="truncate">{r.name + formatStars(r.stars)}</span>
                       {r.streak > 0 && (
                         <span
-                          className="inline-flex items-center gap-0.5 rounded-full bg-orange-50 px-1.5 py-0.5 text-[11px] font-bold leading-none text-orange-700 tabular-nums shrink-0"
+                          className="inline-flex items-center gap-0.5 rounded-full bg-red-50 px-1.5 py-0.5 text-[11px] font-bold leading-none text-red-700 tabular-nums shrink-0"
                           title={t(`${r.streak}-day streak`, `${r.streak} Tage in Folge`)}
                           aria-label={t(`${r.streak}-day streak`, `${r.streak} Tage in Folge`)}
                         >
-                          <span aria-hidden>🔥</span>
+                          <Flame className="w-3 h-3" aria-hidden />
                           {r.streak}
                         </span>
                       )}
@@ -279,26 +271,18 @@ export default function RacePage() {
                       {fmtPoints(r.points)}
                     </span>
                   </div>
-                  <div className={`relative h-9 rounded-lg ${tint} overflow-hidden`}>
+                  <div className="relative h-9 rounded-full bg-gray-100 overflow-hidden">
                     {/* finish line */}
-                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-base select-none">
-                      🏁
-                    </span>
+                    <Flag className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden />
                     {/* dashed track */}
-                    <div className="absolute left-0 right-7 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-gray-200" />
-                    {/* car */}
+                    <div className="absolute left-4 right-9 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-gray-300" />
+                    {/* racer token */}
                     <span
-                      className="absolute top-1/2 -translate-y-1/2 -scale-x-100 text-lg transition-all duration-700 select-none"
-                      style={{ left: `calc(${pct} * (100% - 3.25rem))` }}
-                    >
-                      🏎️
-                    </span>
-                    <span
-                      className="absolute top-1/2 -translate-y-1/2 -ml-3 text-[10px] transition-all duration-700 select-none"
-                      style={{ left: `calc(${pct} * (100% - 3.25rem))` }}
+                      className="absolute top-1/2 -translate-y-1/2 w-7 h-7 rounded-full text-white text-xs font-bold flex items-center justify-center shadow-sm transition-all duration-700 select-none"
+                      style={{ left: `calc(0.25rem + ${pct} * (100% - 3.5rem))`, background: color }}
                       aria-hidden
                     >
-                      {car}
+                      {r.name.slice(0, 1).toUpperCase()}
                     </span>
                   </div>
                 </div>
@@ -308,17 +292,17 @@ export default function RacePage() {
         </section>
 
         {/* ===== Today so far (live) ===== */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+        <section className="bg-white rounded-3xl border border-gray-200 p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-gray-900 text-base">{t('Today so far', 'Heute bisher')}</h2>
+            <h2 className="font-display text-xl text-gray-900">{t('Today so far', 'Heute bisher')}</h2>
             <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> live
+              <span className="w-1.5 h-1.5 rounded-full bg-green-600 animate-pulse" /> live
             </span>
           </div>
 
           {todayActive.length === 0 ? (
             <p className="text-sm text-gray-400 py-3 text-center">
-              {t('No activity yet today. Be the first! 🚀', 'Heute noch keine Aktivität. Sei der/die Erste! 🚀')}
+              {t('No activity yet today. Be the first!', 'Heute noch keine Aktivität. Sei der/die Erste!')}
             </p>
           ) : (
             <div className="space-y-2.5">
@@ -330,7 +314,7 @@ export default function RacePage() {
                   </span>
                   <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-red-500 rounded-full transition-all"
+                      className="h-full bg-red-700 rounded-full transition-all"
                       style={{ width: `${Math.round((r.todayCount / maxToday) * 100)}%` }}
                     />
                   </div>
@@ -353,20 +337,24 @@ export default function RacePage() {
         </section>
 
         {/* ===== All-time daily records ===== */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
-          <h2 className="font-bold text-gray-900 text-base flex items-center gap-2">
-            <span>🏅</span> {t('Daily records', 'Tagesrekorde')}
+        <section className="bg-white rounded-3xl border border-gray-200 p-5 space-y-3">
+          <h2 className="font-display text-xl text-gray-900 flex items-center gap-2">
+            <Medal className="w-5 h-5 text-red-700" /> {t('Daily records', 'Tagesrekorde')}
           </h2>
           {highscores.length === 0 ? (
             <p className="text-sm text-gray-400 py-2 text-center">{t('No records yet — go set one!', 'Noch keine Rekorde – stell einen auf!')}</p>
           ) : (
             <div className="space-y-2">
               {highscores.map((h, i) => {
-                const medal = ['🥇', '🥈', '🥉'][i];
+                const medal = ['bg-amber-500', 'bg-gray-400', 'bg-red-400'][i];
                 return (
                   <div key={`${h.date}-${h.name}-${i}`} className="flex items-center gap-3">
                     <span className="w-6 text-center text-sm shrink-0">
-                      {medal ?? <span className="text-gray-400">{i + 1}.</span>}
+                      {medal ? (
+                        <span className={`inline-flex w-6 h-6 rounded-full ${medal} text-white text-xs font-bold items-center justify-center`}>{i + 1}</span>
+                      ) : (
+                        <span className="text-gray-500">{i + 1}.</span>
+                      )}
                     </span>
                     <span className="text-sm font-semibold text-gray-800 flex-1 truncate">
                       {h.name}
@@ -390,7 +378,7 @@ export default function RacePage() {
               </p>
               {otherBests.map(h => (
                 <div key={`pb-${h.name}`} className="flex items-center gap-3">
-                  <span className="w-6 text-center text-sm shrink-0 text-gray-300">★</span>
+                  <Star className="w-4 h-4 mx-1 shrink-0 text-gray-300" />
                   <span className="text-sm font-medium text-gray-600 flex-1 truncate">{h.name}</span>
                   <span className="text-xs text-gray-400 tabular-nums shrink-0">{fmtDate(h.date, loc)}</span>
                   <span className="text-sm font-bold text-gray-700 tabular-nums w-10 text-right shrink-0">

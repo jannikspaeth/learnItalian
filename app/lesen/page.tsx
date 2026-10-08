@@ -12,6 +12,8 @@ import { buildIndex, lookup, tokenize, WordIndex, WordInfo } from '@/lib/reading
 import { normWord } from '@/lib/norm';
 import { speak, stopSpeaking, SLOW_RATE } from '@/lib/speech';
 import SpeakButton from '@/components/SpeakButton';
+import FeedbackBar from '@/components/practice/FeedbackBar';
+import { X, Volume2, Turtle, Square, Languages, Plus, Check, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/ui-lang';
 
 export default function LesenPage() {
@@ -107,25 +109,27 @@ export default function LesenPage() {
                   <button
                     key={text.id}
                     onClick={() => { setOpenId(text.id); window.scrollTo(0, 0); }}
-                    className={`w-full text-left bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors ${
+                    className={`w-full text-left bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 hover:border-red-200 transition-colors ${
                       muted ? 'opacity-80' : ''
                     }`}
                   >
-                    <span className="text-2xl shrink-0">{text.icon}</span>
+                    <span className="w-11 h-11 shrink-0 rounded-xl bg-red-50 text-red-700 flex items-center justify-center font-display text-xl">
+                      {text.title.replace(/^[^\p{L}]+/u, '').slice(0, 1)}
+                    </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block font-semibold text-gray-900">{text.title}</span>
-                      <span className="block text-xs text-gray-400">{text.titleDe}</span>
+                      <span className="block font-display text-lg text-gray-900 leading-tight">{text.title}</span>
+                      <span className="block text-xs text-gray-500">{text.titleDe}</span>
                     </span>
                     {rec ? (
                       <span
-                        className={`shrink-0 text-xs font-semibold px-2 py-1 rounded-lg ${
-                          rec.correct === rec.total ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                        className={`shrink-0 text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1 ${
+                          rec.correct === rec.total ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
                         }`}
                       >
-                        ✓ {rec.correct}/{rec.total}
+                        <Check className="w-3.5 h-3.5" /> {rec.correct}/{rec.total}
                       </span>
                     ) : (
-                      <span className="shrink-0 text-xs font-medium px-2 py-1 rounded-lg bg-gray-100 text-gray-500">{t('New', 'Neu')}</span>
+                      <ChevronRight className="w-5 h-5 shrink-0 text-gray-400" />
                     )}
                   </button>
                 );
@@ -170,6 +174,12 @@ function Reader({
   const paragraphs = useMemo(() => text.paragraphs.map(p => tokenize(p)), [text]);
   const readingAll = useRef(false);
   const t = useT();
+
+  // Reading view: the tab bar steps aside (see globals.css).
+  useEffect(() => {
+    document.body.dataset.focus = '1';
+    return () => { delete document.body.dataset.focus; };
+  }, []);
 
   // Your word list, to know whether a tapped word is new to you.
   useEffect(() => {
@@ -238,43 +248,50 @@ function Reader({
     <main className="md:ml-56 min-h-screen bg-gray-50 pb-48 md:pb-40">
       <div className="max-w-xl mx-auto p-5 space-y-5">
         <div className="flex items-center justify-between gap-3">
-          <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-800">← {t('All texts', 'Alle Texte')}</button>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-gray-500">{text.level}</span>
+          <button
+            onClick={onBack}
+            aria-label={t('All texts', 'Alle Texte')}
+            title={t('All texts', 'Alle Texte')}
+            className="w-11 h-11 -ml-2 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">{text.level}</span>
         </div>
 
         <div>
-          <h1 className="text-3xl text-gray-900 flex items-center gap-2">
-            <span>{text.icon}</span> {text.title}
-          </h1>
-          <p className="text-gray-400 text-sm mt-0.5">{text.titleDe}</p>
+          <h1 className="text-3xl text-gray-900">{text.title}</h1>
+          <p className="text-gray-500 text-sm mt-1">{text.titleDe}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => readAll()}
-            className="px-3 py-1.5 rounded-lg bg-red-700 hover:bg-red-800 text-white text-sm font-semibold transition-colors"
+            className="h-10 px-4 rounded-full bg-red-700 hover:bg-red-800 text-white text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
           >
-            🔊 {t('Listen', 'Anhören')}
+            <Volume2 className="w-4 h-4" /> {t('Listen', 'Anhören')}
           </button>
           <button
             onClick={() => readAll(SLOW_RATE)}
-            className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold transition-colors"
+            className="h-10 px-4 rounded-full bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
           >
-            🐢 {t('Slowly', 'Langsam')}
+            <Turtle className="w-4 h-4" /> {t('Slowly', 'Langsam')}
           </button>
           <button
             onClick={() => { readingAll.current = false; stopSpeaking(); }}
-            className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold transition-colors"
+            aria-label={t('Stop', 'Stopp')}
+            title={t('Stop', 'Stopp')}
+            className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors inline-flex items-center justify-center"
           >
-            ⏹ {t('Stop', 'Stopp')}
+            <Square className="w-3.5 h-3.5 fill-current" />
           </button>
-          <span className="text-xs text-gray-400">{t('Tap a word for its meaning.', 'Tippe auf ein Wort für die Bedeutung.')}</span>
+          <span className="text-xs text-gray-500">{t('Tap a word for its meaning.', 'Tippe auf ein Wort für die Bedeutung.')}</span>
         </div>
 
-        <article className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-5">
+        <article className="bg-white rounded-3xl border border-gray-200 p-5 space-y-5">
           {paragraphs.map((tokens, p) => (
             <div key={p} className="space-y-2">
-              <p className="text-[17px] leading-8 text-gray-900 whitespace-pre-line">
+              <p className="font-display !font-normal text-[19px] leading-8 text-gray-900 whitespace-pre-line">
                 {tokens.map((tok, t) =>
                   tok.word ? (
                     <span
@@ -284,7 +301,7 @@ function Reader({
                       onClick={() => tap(p, t, tok.text)}
                       onKeyDown={e => { if (e.key === 'Enter') tap(p, t, tok.text); }}
                       className={`cursor-pointer rounded px-px transition-colors ${
-                        selected?.p === p && selected.t === t ? 'bg-amber-200' : 'hover:bg-amber-50'
+                        selected?.p === p && selected.t === t ? 'bg-red-100 text-red-800' : 'hover:bg-red-50'
                       }`}
                     >
                       {tok.text}
@@ -304,9 +321,9 @@ function Reader({
                       return n;
                     })
                   }
-                  className="text-xs text-gray-400 hover:text-gray-600"
+                  className="text-xs text-gray-500 hover:text-gray-800 inline-flex items-center gap-1"
                 >
-                  🇩🇪 {showDe.has(p) ? t('Hide translation', 'Übersetzung ausblenden') : t('Translation', 'Übersetzung')}
+                  <Languages className="w-3.5 h-3.5" /> {showDe.has(p) ? t('Hide translation', 'Übersetzung ausblenden') : t('Translation', 'Übersetzung')}
                 </button>
               </div>
               {showDe.has(p) && (
@@ -319,8 +336,8 @@ function Reader({
         </article>
 
         {/* Comprehension questions */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <h2 className="font-bold text-gray-900">{t('Did you understand it?', 'Hast du es verstanden?')}</h2>
+        <section className="bg-white rounded-3xl border border-gray-200 p-5 space-y-4">
+          <h2 className="font-display text-xl text-gray-900">{t('Did you understand it?', 'Hast du es verstanden?')}</h2>
           {text.questions.map((q, i) => (
             <div key={i} className="space-y-2">
               <p className="text-sm font-medium text-gray-800">{i + 1}. {q.q}</p>
@@ -334,7 +351,7 @@ function Reader({
                       key={o}
                       disabled={checked}
                       onClick={() => setAnswers(a => a.map((v, k) => (k === i ? o : v)))}
-                      className={`text-left px-3 py-2 rounded-xl border-2 text-sm transition-colors ${
+                      className={`text-left px-3 py-2.5 rounded-xl border-2 text-[15px] transition-colors ${
                         right
                           ? 'border-green-500 bg-green-50 text-green-800'
                           : wrong
@@ -355,48 +372,52 @@ function Reader({
             <button
               onClick={check}
               disabled={answers.some(a => a === null)}
-              className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-xl font-semibold transition-colors"
+              className="w-full h-12 bg-red-700 hover:bg-red-800 disabled:bg-gray-200 disabled:text-gray-500 text-white rounded-full font-semibold transition-colors"
             >
               {t('Check answers', 'Antworten prüfen')}
             </button>
           ) : (
-            <div className="space-y-3">
-              <div
-                className={`p-4 rounded-xl text-center font-medium ${
-                  correct === text.questions.length ? 'bg-green-100 text-green-800' : 'bg-amber-50 text-amber-800'
-                }`}
-              >
-                {t(`${correct} of ${text.questions.length} correct`, `${correct} von ${text.questions.length} richtig`)}
-                {correct === text.questions.length ? ' – bravo! 🎉' : ''}
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={onBack}
-                  className="flex-1 py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm transition-colors"
-                >
-                  {t('All texts', 'Alle Texte')}
-                </button>
-                {onNext && (
+            <FeedbackBar
+              correct={correct === text.questions.length}
+              title={correct === text.questions.length ? 'Bravo!' : t(`${correct} of ${text.questions.length} correct`, `${correct} von ${text.questions.length} richtig`)}
+              actions={
+                <div className="flex gap-2 pt-1">
                   <button
-                    onClick={onNext}
-                    className="flex-1 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition-colors"
+                    type="button"
+                    onClick={onBack}
+                    className="flex-1 h-12 rounded-full border-2 border-gray-300 text-gray-700 text-sm font-semibold hover:bg-white/60 transition-colors"
                   >
-                    {t('Next text →', 'Nächster Text →')}
+                    {t('All texts', 'Alle Texte')}
                   </button>
-                )}
-              </div>
-            </div>
+                  {onNext && (
+                    <button
+                      type="button"
+                      onClick={onNext}
+                      className={`flex-1 h-12 rounded-full text-white text-sm font-semibold transition-colors ${
+                        correct === text.questions.length ? 'bg-green-700 hover:bg-green-800' : 'bg-red-700 hover:bg-red-800'
+                      }`}
+                    >
+                      {t('Next text', 'Nächster Text')}
+                    </button>
+                  )}
+                </div>
+              }
+            >
+              {correct < text.questions.length && (
+                <p className="text-sm text-gray-700">{t('The right answers are marked above.', 'Die richtigen Antworten sind oben markiert.')}</p>
+              )}
+            </FeedbackBar>
           )}
         </section>
       </div>
 
       {/* Word panel */}
       {selected && (
-        <div className="fixed left-0 right-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-4 md:left-56 z-40 px-3">
-          <div className="max-w-xl mx-auto bg-white rounded-2xl border border-gray-200 shadow-xl p-4 space-y-2">
+        <div className="fixed left-0 right-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-4 md:left-56 z-40 px-3">
+          <div className="max-w-xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-xl p-4 space-y-2">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <p className="font-display text-xl text-gray-900 flex items-center gap-2">
                   {selected.text}
                   <SpeakButton text={selected.text} lang={lang} />
                 </p>
@@ -413,9 +434,9 @@ function Reader({
               <button
                 onClick={() => setSelected(null)}
                 aria-label={t('Close', 'Schließen')}
-                className="shrink-0 w-7 h-7 rounded-lg bg-gray-100 text-gray-400 hover:bg-gray-200"
+                className="shrink-0 w-9 h-9 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
             {addable && myWords && (
@@ -424,9 +445,9 @@ function Reader({
               ) : (
                 <button
                   onClick={addWord}
-                  className="w-full py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 text-sm font-semibold transition-colors"
+                  className="w-full h-10 rounded-full bg-red-50 text-red-700 hover:bg-red-100 text-sm font-semibold transition-colors inline-flex items-center justify-center gap-1.5"
                 >
-                  ＋ {t(`Add „${addable.word}“ to my words`, `„${addable.word}“ zu meinen Wörtern`)}
+                  <Plus className="w-4 h-4" /> {t(`Add „${addable.word}“ to my words`, `„${addable.word}“ zu meinen Wörtern`)}
                 </button>
               )
             )}

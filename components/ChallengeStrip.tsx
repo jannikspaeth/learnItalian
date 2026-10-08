@@ -1,6 +1,9 @@
 'use client';
 
 import { useT } from '@/lib/ui-lang';
+import { Medal, Crown, TrendingUp, Target, Flag, Star } from 'lucide-react';
+
+const ICONS = { medal: Medal, crown: Crown, up: TrendingUp, flag: Flag, star: Star };
 
 // Compact gamified targets shown under the streak banner. All inputs are plain
 // numbers; each line hides itself when it isn't meaningful yet.
@@ -27,7 +30,7 @@ export default function ChallengeStrip({
 }) {
   const t = useT();
   const cards = (n: number) => (n === 1 ? t('1 card', '1 Karte') : t(`${n} cards`, `${n} Karten`));
-  const lines: { icon: string; text?: string; achieved?: string; next?: string; done?: boolean }[] = [];
+  const lines: { icon: keyof typeof ICONS; text?: string; achieved?: string; next?: string; done?: boolean }[] = [];
 
 
   const allTimeMilestones: { threshold: number; label: string; place: number }[] = [];
@@ -50,18 +53,18 @@ export default function ChallengeStrip({
     if (achieved && next) {
       const gap = next.threshold - todayCount;
       lines.push({
-        icon: '🏅',
+        icon: 'medal',
         achieved: congratsForPlace(achieved.place),
         next: t(`${cards(gap)} from ${next.label}`, `noch ${cards(gap)} bis ${next.label}`),
       });
     } else if (next) {
       const gap = next.threshold - todayCount;
       lines.push({
-        icon: '🏅',
+        icon: 'medal',
         text: t(`${cards(gap)} from ${next.label}`, `noch ${cards(gap)} bis ${next.label}`),
       });
     } else if (achieved) {
-      lines.push({ icon: '🏅', text: congratsForPlace(achieved.place), done: true });
+      lines.push({ icon: 'medal', text: congratsForPlace(achieved.place), done: true });
     }
   }
 
@@ -69,36 +72,38 @@ export default function ChallengeStrip({
     const gap = personalBest - todayCount;
     lines.push(
       gap > 0
-        ? { icon: '⭐', text: t(`${cards(gap)} from your best (${personalBest})`, `noch ${cards(gap)} bis zu deinem Rekord (${personalBest})`) }
-        : { icon: '⭐', text: t('New personal best!', 'Neuer persönlicher Rekord!'), done: true },
+        ? { icon: 'star', text: t(`${cards(gap)} from your best (${personalBest})`, `noch ${cards(gap)} bis zu deinem Rekord (${personalBest})`) }
+        : { icon: 'star', text: t('New personal best!', 'Neuer persönlicher Rekord!'), done: true },
     );
   }
 
   if (rank != null) {
-    if (todayCount === 0) lines.push({ icon: '🏎️', text: t('Do some cards to enter today’s ranking', 'Übe ein paar Karten, um heute in die Wertung zu kommen') });
-    else if (rank === 1) lines.push({ icon: '👑', text: t('You’re #1 today!', 'Du bist heute die Nummer 1!'), done: true });
-    else lines.push({ icon: '🏎️', text: t(`You’re #${rank} today`, `Du bist heute auf Platz ${rank}`) });
+    if (todayCount === 0) lines.push({ icon: 'flag', text: t('Do some cards to enter today’s ranking', 'Übe ein paar Karten, um heute in die Wertung zu kommen') });
+    else if (rank === 1) lines.push({ icon: 'crown', text: t('You’re #1 today!', 'Du bist heute die Nummer 1!'), done: true });
+    else lines.push({ icon: 'flag', text: t(`You’re #${rank} today`, `Du bist heute auf Platz ${rank}`) });
   }
 
   if (yesterday > 0) {
     const gap = yesterday - todayCount;
     lines.push(
       gap > 0
-        ? { icon: '📈', text: t(`${cards(gap)} to beat yesterday (${yesterday})`, `noch ${cards(gap)}, um gestern zu schlagen (${yesterday})`) }
-        : { icon: '📈', text: t('Beat yesterday!', 'Gestern übertroffen!'), done: true },
+        ? { icon: 'up', text: t(`${cards(gap)} to beat yesterday (${yesterday})`, `noch ${cards(gap)}, um gestern zu schlagen (${yesterday})`) }
+        : { icon: 'up', text: t('Beat yesterday!', 'Gestern übertroffen!'), done: true },
     );
   }
 
   if (lines.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-1.5">
-      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-1">
-        <span>🎯</span> {t('Challenges', 'Herausforderungen')}
+    <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+      <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+        <Target className="w-3.5 h-3.5 text-red-700" /> {t('Challenges', 'Herausforderungen')}
       </p>
-      {lines.map((l, i) => (
+      {lines.map((l, i) => {
+        const Icon = ICONS[l.icon];
+        return (
         <div key={i} className="flex items-center gap-2 text-sm">
-          <span className="w-5 text-center">{l.icon}</span>
+          <Icon className={`w-4 h-4 shrink-0 ${l.done ? 'text-green-700' : 'text-red-700'}`} />
           {l.achieved != null ? (
             <span>
               <span className="font-semibold text-green-700">{l.achieved}</span>
@@ -108,7 +113,8 @@ export default function ChallengeStrip({
             <span className={l.done ? 'font-semibold text-green-700' : 'text-gray-700'}>{l.text}</span>
           )}
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

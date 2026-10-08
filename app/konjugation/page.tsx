@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getConjugationRecords, recordExercise } from '@/lib/storage';
 import { ConjugationRecord, ConjugationExercise } from '@/lib/types';
-import { X } from 'lucide-react';
+import { X, PartyPopper, SpellCheck } from 'lucide-react';
 import Conjugation from '@/components/exercises/Conjugation';
 import { TENSES_BY_LANG, defaultTenses, TENSE_STORAGE_KEY, TENSE_VALIDATORS } from '@/lib/tenses';
 import { useLocalSetting } from '@/lib/use-local-setting';
@@ -387,7 +387,7 @@ export default function KonjugationPage() {
         {/* Empty states for other tabs */}
         {tab !== 'lernen' && displayed.length === 0 && (
           <div className="text-center py-14">
-            <p className="text-4xl mb-3">{tab === 'mistakes' ? '🎉' : '🔤'}</p>
+            {tab === 'mistakes' ? <PartyPopper className="w-10 h-10 text-red-700 mx-auto mb-3" /> : <SpellCheck className="w-10 h-10 text-red-700 mx-auto mb-3" />}
             <p className="text-sm text-gray-500 font-medium">
               {tab === 'mistakes' ? t('No errors – all mastered!', 'Keine Fehler – alles gemeistert!') : t('No verbs practiced yet.', 'Noch keine Verben geübt.')}
             </p>
