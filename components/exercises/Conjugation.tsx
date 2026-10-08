@@ -10,6 +10,7 @@ import type { Lang } from '@/lib/lang';
 import SpeakButton from '@/components/SpeakButton';
 import { useT, useUiLang, tenseName } from '@/lib/ui-lang';
 import FeedbackBar from '@/components/practice/FeedbackBar';
+import { Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Props {
   exercise: ConjugationExercise;
@@ -27,6 +28,8 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
     exercise.sections.map(s => s.pronouns.map(() => ''))
   );
   const [checked, setChecked] = useState(false);
+  // Tense notes can give the answer away: folded until asked for (open after checking).
+  const [openNotes, setOpenNotes] = useState<Set<number>>(new Set());
   // Rewrite-to-learn: after checking, the learner retypes each wrong form.
   const [retypes, setRetypes] = useState<string[][]>(
     exercise.sections.map(s => s.pronouns.map(() => ''))
@@ -124,6 +127,7 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
     setAnswers(exercise.sections.map(s => s.pronouns.map(() => '')));
     setRetypes(exercise.sections.map(s => s.pronouns.map(() => '')));
     setTypoForgiven(exercise.sections.map(s => s.pronouns.map(() => false)));
+    setOpenNotes(new Set());
     setChecked(false);
   }
 
@@ -294,11 +298,32 @@ export default function Conjugation({ exercise, lang, onComplete, continueLabel 
               </div>
 
               {/* Notes */}
-              {section.notes && (
-                <div className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-xs text-amber-700">
-                  {section.notes}
+              {section.notes && (checked || openNotes.has(si) ? (
+                <div className="px-4 py-2 bg-amber-50 border-t border-amber-100 text-xs text-amber-800 flex items-start gap-2">
+                  <Lightbulb className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                  <span className="flex-1">{section.notes}</span>
+                  {!checked && (
+                    <button
+                      type="button"
+                      onClick={() => setOpenNotes(prev => { const n = new Set(prev); n.delete(si); return n; })}
+                      aria-label={t('Hide hint', 'Hinweis ausblenden')}
+                      className="shrink-0 text-amber-700 hover:text-amber-900"
+                    >
+                      <ChevronUp className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
-              )}
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setOpenNotes(prev => new Set(prev).add(si))}
+                  className="w-full px-4 py-2 bg-amber-50/60 border-t border-amber-100 text-xs font-medium text-amber-800 hover:bg-amber-50 flex items-center gap-2 transition-colors"
+                >
+                  <Lightbulb className="w-3.5 h-3.5" />
+                  <span className="flex-1 text-left">{t('Show hint', 'Hinweis anzeigen')}</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              ))}
             </div>
           );
         })}
