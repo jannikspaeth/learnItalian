@@ -210,6 +210,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📍',
     title: 'hay oder está/están?',
     level: 'A1',
+    lessonId: 'es-gibt',
     instruction: 'Setze hay, está oder están ein.',
     explanation:
       'hay (es gibt) nennt, dass etwas existiert – mit un/una, Zahlen, Mengenwörtern oder ohne Artikel. ' +
@@ -239,6 +240,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '❤️',
     title: 'gustar (me gusta / me gustan)',
     level: 'A1',
+    lessonId: 'piacere',
     instruction: 'Setze die passende Form oder das Pronomen ein.',
     explanation:
       'Bei gustar ist das, was gefällt, das Subjekt: Singular oder Infinitiv → gusta, Mehrzahl → gustan. ' +
@@ -269,7 +271,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🫵',
     title: 'Possessivbegleiter (mi, tu, su …)',
     level: 'A1',
-    lessonId: 'pronomen',
+    lessonId: 'possessiv',
     instruction: 'Setze das passende Possessiv ein.',
     explanation:
       'Vor dem Nomen: mi(s), tu(s), su(s), nuestro/a(s), vuestro/a(s), su(s). Sie richten sich nach dem Besitz, ' +
@@ -300,6 +302,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '❓',
     title: 'Fragewörter (qué, quién, dónde …)',
     level: 'A1',
+    lessonId: 'fragen',
     instruction: 'Setze das passende Fragewort ein.',
     explanation:
       'qué (was), quién/quiénes (wer), dónde (wo), adónde (wohin), de dónde (woher), cuándo (wann), cómo (wie), ' +
@@ -329,6 +332,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🚫',
     title: 'Verneinung (no, nada, nadie, nunca …)',
     level: 'A1',
+    lessonId: 'fragen',
     instruction: 'Setze das passende Verneinungswort ein.',
     explanation:
       'no steht vor dem Verb. Doppelte Verneinung ist im Spanischen normal: No tengo nada. No viene nadie. ' +
@@ -358,6 +362,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎨',
     title: 'Adjektive angleichen',
     level: 'A1',
+    lessonId: 'adjektive',
     instruction: 'Setze das Adjektiv in der richtigen Form ein.',
     explanation:
       'Adjektive stehen meist nach dem Nomen und richten sich nach Geschlecht und Zahl: -o/-a/-os/-as. ' +
@@ -387,6 +392,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🧭',
     title: 'Präpositionen (a, en, de, con …)',
     level: 'A1',
+    lessonId: 'praepositionen',
     instruction: 'Setze die passende Präposition ein.',
     explanation:
       'a: Richtung, Uhrzeit, und vor Personen als Objekt (Veo a mi madre). en: Ort und Verkehrsmittel (en autobús). ' +
@@ -418,6 +424,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '👉',
     title: 'Demonstrativa (este, ese, aquel)',
     level: 'A2',
+    lessonId: 'es-gibt',
     instruction: 'Setze das passende Demonstrativum ein.',
     explanation:
       'este/esta/estos/estas: hier, nah beim Sprecher (auch: diese Woche, dieses Jahr). ese/esa/esos/esas: da, ' +
@@ -447,6 +454,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🪞',
     title: 'Reflexive Verben (levantarse …)',
     level: 'A2',
+    lessonId: 'reflexiv',
     instruction: 'Setze das Reflexivpronomen oder die Verbform ein.',
     explanation:
       'Reflexivpronomen: me, te, se, nos, os, se – vor dem konjugierten Verb (me levanto). ' +
@@ -477,6 +485,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '✅',
     title: 'Pretérito perfecto (he hablado)',
     level: 'A2',
+    lessonId: 'preterito-perfecto',
     instruction: 'Setze das Verb im pretérito perfecto ein.',
     explanation:
       'haber im Präsens (he, has, ha, hemos, habéis, han) + Partizip (-ado / -ido). Das Partizip bleibt immer ' +
@@ -506,6 +515,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏪',
     title: 'Pretérito indefinido (hablé, comí)',
     level: 'A2',
+    lessonId: 'preterito-indefinido',
     instruction: 'Setze das Verb im pretérito indefinido ein.',
     explanation:
       'Für abgeschlossene Handlungen zu einem Zeitpunkt der Vergangenheit (ayer, el año pasado, en 2010). ' +
@@ -535,6 +545,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🕰️',
     title: 'Pretérito imperfecto (hablaba, comía)',
     level: 'A2',
+    lessonId: 'imperfecto',
     instruction: 'Setze das Verb im imperfecto ein.',
     explanation:
       'Für Gewohnheiten, Beschreibungen und Hintergrund in der Vergangenheit (antes, de niño, siempre, todos los días). ' +
@@ -564,6 +575,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔮',
     title: 'Zukunft (ir a + Infinitiv, futuro simple)',
     level: 'A2',
+    lessonId: 'futuro',
     instruction: 'Setze die passende Zukunftsform ein.',
     explanation:
       'ir a + Infinitiv: Pläne und Absichten (Voy a estudiar). Futuro simple: Infinitiv + -é, -ás, -á, -emos, -éis, -án ' +
@@ -592,6 +604,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎯',
     title: 'Direkte Objektpronomen (lo, la, los, las)',
     level: 'A2',
+    lessonId: 'objektpronomen',
     instruction: 'Setze das passende direkte Objektpronomen ein.',
     explanation:
       'me, te, lo/la, nos, os, los/las ersetzen das direkte Objekt (Akkusativ). lo = ihn/es, la = sie (eine), ' +
@@ -621,6 +634,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎁',
     title: 'Indirekte Objektpronomen (le, les …)',
     level: 'A2',
+    lessonId: 'objektpronomen',
     instruction: 'Setze das passende indirekte Objektpronomen ein.',
     explanation:
       'me, te, le, nos, os, les ersetzen das indirekte Objekt (Dativ: wem?). le = ihm/ihr/Ihnen, les = ihnen/Ihnen. ' +
@@ -650,6 +664,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📊',
     title: 'Vergleiche (más … que, tan … como)',
     level: 'A2',
+    lessonId: 'vergleiche',
     instruction: 'Setze das passende Wort ein.',
     explanation:
       'más/menos + Adjektiv + que (mehr/weniger … als). tan + Adjektiv + como (so … wie); tanto/a/os/as + Nomen + como. ' +
@@ -680,6 +695,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📢',
     title: 'Imperativ (¡habla!, ¡hable!, ¡hablad!)',
     level: 'A2',
+    lessonId: 'imperativ',
     instruction: 'Setze den bejahten Imperativ ein.',
     explanation:
       'tú: wie die 3. Person Singular Präsens (habla, come). Unregelmäßig: di, haz, ve, pon, sal, sé, ten, ven. ' +
@@ -709,6 +725,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏳',
     title: 'Verlaufsform (estar + gerundio)',
     level: 'A2',
+    lessonId: 'gerundio',
     instruction: 'Setze estar oder das Gerundium ein.',
     explanation:
       'estar + Gerundium beschreibt, was gerade passiert: Estoy comiendo. Gerundium: -ar → -ando, -er/-ir → -iendo. ' +
@@ -740,6 +757,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎬',
     title: 'Indefinido oder Imperfecto?',
     level: 'B1',
+    lessonId: 'imperfecto',
     instruction: 'Wähle die passende Vergangenheitsform.',
     explanation:
       'Indefinido: abgeschlossene, einmalige Handlungen und Ereignisse (ayer, de repente, en 2015) – die Handlung ' +
@@ -770,6 +788,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '↔️',
     title: 'por oder para?',
     level: 'B1',
+    lessonId: 'por-para',
     instruction: 'Setze por oder para ein.',
     explanation:
       'para: Ziel, Zweck (um … zu), Empfänger, Richtung, Frist, Meinung (para mí). ' +
@@ -799,6 +818,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🤔',
     title: 'Konditional (hablaría)',
     level: 'B1',
+    lessonId: 'condicional',
     instruction: 'Setze das Verb im condicional ein.',
     explanation:
       'Infinitiv + -ía, -ías, -ía, -íamos, -íais, -ían (hablaría, comería). Gleiche unregelmäßige Stämme wie im ' +
@@ -828,6 +848,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🌈',
     title: 'Subjuntivo presente (que hable)',
     level: 'B1',
+    lessonId: 'subjuntivo',
     instruction: 'Setze das Verb im subjuntivo ein.',
     explanation:
       'Bildung: yo-Form Präsens ohne -o + vertauschte Endung: -ar → -e (hable), -er/-ir → -a (coma, tenga, haga). ' +
@@ -858,6 +879,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔍',
     title: 'Subjuntivo oder Indikativ?',
     level: 'B1',
+    lessonId: 'subjuntivo',
     instruction: 'Wähle Indikativ oder Subjuntivo.',
     explanation:
       'Indikativ bei Tatsachen, Wissen und bejahter Meinung: creo que, pienso que, sé que, es obvio que. ' +
@@ -887,6 +909,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🧩',
     title: 'Doppelte Pronomen (me lo, se lo)',
     level: 'B1',
+    lessonId: 'pronombres-combinados',
     instruction: 'Setze die passenden Pronomen ein.',
     explanation:
       'Reihenfolge: indirekt vor direkt – me lo, te la, nos los, os las. le/les wird vor lo/la/los/las zu se: ' +
@@ -916,6 +939,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔗',
     title: 'Relativpronomen (que, quien, donde …)',
     level: 'B1',
+    lessonId: 'relativ',
     instruction: 'Setze das passende Relativpronomen ein.',
     explanation:
       'que: das häufigste (Personen und Sachen). Nach Präposition bei Personen: quien / el que / la que. ' +
@@ -945,6 +969,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔀',
     title: 'Bedingungssätze (si …)',
     level: 'B1',
+    lessonId: 'bedingungssaetze',
     instruction: 'Setze das Verb in der passenden Form ein.',
     explanation:
       'Reale Bedingung: si + Präsens → Präsens, Futur oder Imperativ (Si tengo tiempo, iré). ' +
@@ -974,6 +999,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏮️',
     title: 'Plusquamperfekt (había hablado)',
     level: 'B1',
+    lessonId: 'pluscuamperfecto',
     instruction: 'Setze das Verb im pluscuamperfecto ein.',
     explanation:
       'haber im Imperfecto (había, habías, había, habíamos, habíais, habían) + Partizip. Beschreibt, was vor ' +
@@ -1003,6 +1029,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '👤',
     title: 'Unpersönliches se (se habla, se venden)',
     level: 'B1',
+    lessonId: 'si',
     instruction: 'Setze das Verb in der passenden Form ein.',
     explanation:
       'se + 3. Person drückt „man“ oder ein Passiv aus. Steht ein Nomen im Plural dabei, steht auch das Verb im ' +

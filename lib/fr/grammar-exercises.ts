@@ -233,6 +233,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📍',
     title: 'à und de mit Artikel (au, du, aux …)',
     level: 'A1',
+    lessonId: 'praepositionen',
     instruction: 'Setze Präposition + Artikel zusammen ein.',
     explanation:
       'à + le = au, à + les = aux, de + le = du, de + les = des. à la, à l\', de la, de l\' bleiben getrennt. ' +
@@ -261,7 +262,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🫵',
     title: 'Possessivbegleiter (mon, ma, mes …)',
     level: 'A1',
-    lessonId: 'pronomen',
+    lessonId: 'possessiv',
     instruction: 'Setze den passenden Possessivbegleiter ein.',
     explanation:
       'mon/ma/mes, ton/ta/tes, son/sa/ses, notre/nos, votre/vos, leur/leurs. Sie richten sich nach dem Besitz, ' +
@@ -290,6 +291,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '❓',
     title: 'Fragewörter (où, quand, comment …)',
     level: 'A1',
+    lessonId: 'fragen',
     instruction: 'Setze das passende Fragewort ein.',
     explanation:
       'où (wo/wohin), d\'où (woher), quand (wann), comment (wie), pourquoi (warum; Antwort: parce que), ' +
@@ -318,6 +320,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🚫',
     title: 'Verneinung (ne … pas, ne … jamais …)',
     level: 'A1',
+    lessonId: 'fragen',
     instruction: 'Setze den fehlenden Teil der Verneinung ein.',
     explanation:
       'Die Verneinung umschließt das Verb: ne … pas (nicht), ne … plus (nicht mehr), ne … jamais (nie), ' +
@@ -347,6 +350,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎨',
     title: 'Adjektive angleichen',
     level: 'A1',
+    lessonId: 'adjektive',
     instruction: 'Setze das Adjektiv in der richtigen Form ein.',
     explanation:
       'Weiblich meist + -e, Mehrzahl + -s. Besondere Formen: blanc → blanche, heureux → heureuse, bon → bonne, ' +
@@ -376,6 +380,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🌍',
     title: 'Städte und Länder (à, en, au, aux)',
     level: 'A1',
+    lessonId: 'praepositionen',
     instruction: 'Setze die passende Präposition ein.',
     explanation:
       'Städte: à (à Paris). Weibliche Länder (meist auf -e) und Länder mit Vokal: en (en France, en Italie). ' +
@@ -406,6 +411,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '👉',
     title: 'Demonstrativbegleiter (ce, cet, cette, ces)',
     level: 'A2',
+    lessonId: 'demonstrativpronomen',
     instruction: 'Setze den passenden Demonstrativbegleiter ein.',
     explanation:
       'ce (männlich), cet (männlich vor Vokal oder stummem h), cette (weiblich), ces (Mehrzahl). ' +
@@ -434,6 +440,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🪞',
     title: 'Reflexive Verben (se lever …)',
     level: 'A2',
+    lessonId: 'reflexiv',
     instruction: 'Setze das Reflexivpronomen oder die Verbform ein.',
     explanation:
       'me, te, se, nous, vous, se stehen vor dem Verb; vor Vokal: m\', t\', s\'. Im bejahten Imperativ hinten: ' +
@@ -462,6 +469,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '✅',
     title: 'Passé composé mit avoir',
     level: 'A2',
+    lessonId: 'passe-compose',
     instruction: 'Setze das Hilfsverb oder das Partizip ein.',
     explanation:
       'avoir im Präsens + Partizip: -er → -é, -ir → -i, -re → -u. Unregelmäßig: fait, dit, écrit, pris, mis, vu, lu, ' +
@@ -490,6 +498,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🚪',
     title: 'Passé composé mit être',
     level: 'A2',
+    lessonId: 'passe-compose',
     instruction: 'Setze das Hilfsverb oder das angeglichene Partizip ein.',
     explanation:
       'Mit être: Verben der Bewegung/Veränderung (aller, venir, arriver, partir, entrer, sortir, monter, descendre, ' +
@@ -519,6 +528,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🕰️',
     title: 'Imparfait (je parlais)',
     level: 'A2',
+    lessonId: 'imparfait',
     instruction: 'Setze das Verb im imparfait ein.',
     explanation:
       'Stamm der nous-Form im Präsens (nous parlons → parl-) + -ais, -ais, -ait, -ions, -iez, -aient. ' +
@@ -547,6 +557,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔮',
     title: 'Futur simple',
     level: 'A2',
+    lessonId: 'futur',
     instruction: 'Setze das Verb im futur simple ein.',
     explanation:
       'Infinitiv (bei -re ohne e) + -ai, -as, -a, -ons, -ez, -ont. Unregelmäßige Stämme: ser- (être), aur- (avoir), ' +
@@ -576,6 +587,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎯',
     title: 'Direkte Objektpronomen (le, la, les)',
     level: 'A2',
+    lessonId: 'objektpronomen',
     instruction: 'Setze das passende direkte Objektpronomen ein.',
     explanation:
       'me, te, le/la (vor Vokal: l\'), nous, vous, les ersetzen das direkte Objekt (Akkusativ). Sie stehen vor dem ' +
@@ -604,6 +616,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎁',
     title: 'Indirekte Objektpronomen (lui, leur)',
     level: 'A2',
+    lessonId: 'objektpronomen',
     instruction: 'Setze das passende indirekte Objektpronomen ein.',
     explanation:
       'me, te, lui, nous, vous, leur ersetzen „à + Person" (Dativ: wem?). lui = ihm/ihr, leur = ihnen. ' +
@@ -632,6 +645,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📊',
     title: 'Vergleiche (plus … que, aussi … que)',
     level: 'A2',
+    lessonId: 'vergleiche',
     instruction: 'Setze das passende Wort ein.',
     explanation:
       'plus / moins / aussi + Adjektiv + que. Mit Nomen: plus de / moins de / autant de … que. ' +
@@ -661,6 +675,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📢',
     title: 'Imperativ (parle ! parlez !)',
     level: 'A2',
+    lessonId: 'imperativ',
     instruction: 'Setze den bejahten Imperativ ein.',
     explanation:
       'Formen von tu, nous, vous ohne Pronomen. Bei -er-Verben (und aller) fällt das -s der tu-Form weg: parle, va. ' +
@@ -690,6 +705,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏳',
     title: 'Nahe Zukunft, jüngste Vergangenheit, Verlauf',
     level: 'A2',
+    lessonId: 'futur-proche',
     instruction: 'Setze das fehlende Wort ein.',
     explanation:
       'aller + Infinitiv: gleich/bald (je vais partir). venir de + Infinitiv: gerade eben (je viens de manger). ' +
@@ -721,6 +737,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🎬',
     title: 'Imparfait oder Passé composé?',
     level: 'B1',
+    lessonId: 'imparfait',
     instruction: 'Wähle die passende Vergangenheitsform.',
     explanation:
       'Passé composé: abgeschlossene, einmalige Handlungen und Ereignisse (hier, soudain, en 2015) – der Vordergrund. ' +
@@ -750,6 +767,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🤔',
     title: 'Konditional (je voudrais)',
     level: 'B1',
+    lessonId: 'conditionnel',
     instruction: 'Setze das Verb im conditionnel ein.',
     explanation:
       'Stamm des Futurs + Endungen des Imparfait: -ais, -ais, -ait, -ions, -iez, -aient (je parlerais, je serais, ' +
@@ -778,6 +796,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🌈',
     title: 'Subjonctif présent (que je parle)',
     level: 'B1',
+    lessonId: 'subjonctif',
     instruction: 'Setze das Verb im subjonctif ein.',
     explanation:
       'Stamm der ils-Form (ils partent → part-) + -e, -es, -e, -ions, -iez, -ent. Unregelmäßig: être (sois), ' +
@@ -807,6 +826,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔍',
     title: 'Subjonctif oder Indikativ?',
     level: 'B1',
+    lessonId: 'subjonctif',
     instruction: 'Wähle Indikativ oder Subjonctif.',
     explanation:
       'Indikativ bei Tatsachen, Wissen, bejahter Meinung und Hoffnung: je pense que, je crois que, je sais que, ' +
@@ -836,6 +856,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🧩',
     title: 'Die Pronomen y und en',
     level: 'B1',
+    lessonId: 'y-en',
     instruction: 'Setze y oder en ein.',
     explanation:
       'y ersetzt einen Ort (à Paris, en France, chez moi) oder à + Sache (penser à, croire à). ' +
@@ -865,6 +886,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔗',
     title: 'Relativpronomen (qui, que, où, dont)',
     level: 'B1',
+    lessonId: 'relativ',
     instruction: 'Setze das passende Relativpronomen ein.',
     explanation:
       'qui: Subjekt (… qui habite ici). que/qu\': direktes Objekt (… que je lis). où: Ort und Zeit (la ville où, le jour où). ' +
@@ -893,6 +915,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🔀',
     title: 'Bedingungssätze (si …)',
     level: 'B1',
+    lessonId: 'bedingungssaetze',
     instruction: 'Setze das Verb in der passenden Form ein.',
     explanation:
       'Reale Bedingung: si + Präsens → Futur, Präsens oder Imperativ (Si j\'ai le temps, j\'irai). ' +
@@ -922,6 +945,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⏮️',
     title: 'Plusquamperfekt (j\'avais parlé)',
     level: 'B1',
+    lessonId: 'plus-que-parfait',
     instruction: 'Setze das Hilfsverb oder das Partizip ein.',
     explanation:
       'avoir oder être im imparfait (avais, étais …) + Partizip. Beschreibt, was vor einem anderen Zeitpunkt in der ' +
@@ -950,6 +974,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🪢',
     title: 'Doppelte Pronomen (je te le donne)',
     level: 'B1',
+    lessonId: 'pronoms-doubles',
     instruction: 'Setze das fehlende Pronomen ein.',
     explanation:
       'Reihenfolge vor dem Verb: me/te/nous/vous → le/la/les → lui/leur → y → en. Also: je te le donne, ' +
@@ -978,6 +1003,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '⌛',
     title: 'depuis, pendant oder il y a?',
     level: 'B1',
+    lessonId: 'depuis-pendant',
     instruction: 'Setze depuis, pendant oder il y a ein.',
     explanation:
       'depuis: seit – etwas dauert noch an (meist mit Präsens): j\'habite ici depuis trois ans. ' +
