@@ -28,7 +28,7 @@ export default function Navigation() {
   const myStars = profile ? formatStars(stars[profile.id] ?? 0) : '';
   const t = useT();
   const langName = info ? t(info.name, info.nameDe) : '…';
-  const on = (href: string) => path.startsWith(href);
+  const on = (href: string) => path?.startsWith(href) ?? false;
 
   const sideLink = (href: string, label: string, Icon: React.ComponentType<{ className?: string }>) => (
     <Link
@@ -81,7 +81,7 @@ export default function Navigation() {
       {/* ── Mobile bottom bar ── */}
       <nav className="app-tabs md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 z-50 grid grid-cols-4 safe-area-inset-bottom">
         {tabs.map(({ href, label: [en, de], Icon, match }) => {
-          const active = match.some(m => path.startsWith(m));
+          const active = match.some(m => path?.startsWith(m) ?? false);
           return (
             <Link
               key={href}

@@ -36,7 +36,6 @@ import { berlinToday, DAILY_GOAL } from '@/lib/race';
 import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw, X, PartyPopper } from 'lucide-react';
 import { checkWordAnswer, checkClozeAnswer } from '@/lib/answer-check';
 import { conjugationMatches } from '@/lib/conjugation-match';
-import { spokenForm } from '@/lib/speech';
 import { Confidence, VOCAB_KNOWN_LEVEL, VOCAB_INTERVALS, computeNewLevel, nextReviewDate } from '@/lib/srs';
 import {
   RoundStep,
@@ -59,7 +58,9 @@ import {
   sentenceMistake,
   dictationMistake,
 } from '@/lib/mistakes';
+import { pickVerbStep, CLOZE_TEMPLATES_BY_LANG } from '@/lib/verb-cloze';
 import TypeCard from '@/components/practice/TypeCard';
+import VerbClozeCard from '@/components/practice/VerbClozeCard';
 import ChoiceCard from '@/components/practice/ChoiceCard';
 import SelfCard from '@/components/practice/SelfCard';
 import DictationCard from '@/components/practice/DictationCard';
@@ -95,15 +96,6 @@ const BLOCK_LABEL: Record<RoundStep['kind'], [string, string]> = {
   dictation: ['Dictation', 'Diktat'],
   mistake: ['My mistakes', 'Meine Fehler'],
 };
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 export default function HeutePage() {
   const { profile, lang, beginner, ready } = useLearner();
@@ -214,25 +206,15 @@ export default function HeutePage() {
         getConjugationExercise({ lang, verb, beginner, tenses }).catch(() => null),
       ),
     );
+    const templates = CLOZE_TEMPLATES_BY_LANG[lang];
     const out: RoundStep[] = [];
     for (const ex of exercises) {
       if (!ex?.sections?.length) continue;
       const rec = records.find(r => r.verb === ex.verb);
-      let section = ex.sections[Math.floor(Math.random() * ex.sections.length)];
-      let pi = Math.floor(Math.random() * section.pronouns.length);
-      for (const s of shuffle(ex.sections)) {
-        const miss = rec?.sections.find(rs => rs.tense === s.tense)?.recentMistakes[0];
-        const at = miss ? s.pronouns.indexOf(miss.pronoun) : -1;
-        if (at >= 0) { section = s; pi = at; break; }
-      }
-      out.push({
-        kind: 'verb',
-        verb: ex.verb,
-        tense: section.tense,
-        tenseLabel: section.tenseName_de,
-        pronoun: section.pronouns[pi],
-        answer: section.answers[pi],
+      const step = pickVerbStep(ex, templates, {
+        missedPronoun: tense => rec?.sections.find(rs => rs.tense === tense)?.recentMistakes[0]?.pronoun,
       });
+      out.push({ kind: 'verb', ...step });
     }
     return out;
   }
@@ -388,19 +370,7 @@ export default function HeutePage() {
         );
       }
       case 'verb':
-        return (
-          <TypeCard
-            key={key}
-            label={`${t('Conjugate', 'Konjugiere')} · ${tenseName(step.tenseLabel, uiLang)}`}
-            prompt={<span><span className="text-gray-400 font-medium">{step.pronoun}</span> ＿＿</span>}
-            sub={step.verb}
-            answer={step.answer}
-            check={v => ({ correct: conjugationMatches(v, step.answer) })}
-            speakText={spokenForm(step.pronoun, step.answer, lang)}
-            lang={lang}
-            onResult={handleResult}
-          />
-        );
+        return <VerbClozeCard key={key} step={step} lang={lang} onResult={handleResult} />;
       case 'grammar':
         return (
           <ChoiceCard

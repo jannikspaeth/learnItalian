@@ -23,7 +23,17 @@ export type RoundStep =
       currentLevel: number;
       example?: string;
     }
-  | { kind: 'verb'; verb: string; tense: string; tenseLabel: string; pronoun: string; answer: string }
+  | {
+      kind: 'verb';
+      verb: string;
+      tense: string;
+      tenseLabel: string;
+      pronoun: string;
+      answer: string;
+      // Present ⇒ a cloze sentence (tense hidden); absent ⇒ the plain pronoun drill.
+      clozeBefore?: string;
+      clozeAfter?: string;
+    }
   | { kind: 'grammar'; topicId: string; topicTitle: string; item: GrammarItem }
   | { kind: 'sentence'; key: string; de: string; text: string }
   | { kind: 'dictation'; key: string; de: string; text: string }
