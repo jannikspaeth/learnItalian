@@ -3,6 +3,7 @@ import type { Lang } from './lang';
 import { IT_CLOZE_TEMPLATES } from './verb-cloze-templates';
 import { ES_CLOZE_TEMPLATES } from './es/verb-cloze-templates';
 import { FR_CLOZE_TEMPLATES } from './fr/verb-cloze-templates';
+import { PT_CLOZE_TEMPLATES } from './pt/verb-cloze-templates';
 
 // A fill-in-the-blank sentence for one specific (tense, person) of ANY verb —
 // e.g. "Ieri ___ fino a tardi." (passato prossimo, io). `person` indexes the
@@ -27,6 +28,7 @@ export const CLOZE_TEMPLATES_BY_LANG: Record<Lang, ClozeTemplate[]> = {
   it: IT_CLOZE_TEMPLATES,
   es: ES_CLOZE_TEMPLATES,
   fr: FR_CLOZE_TEMPLATES,
+  pt: PT_CLOZE_TEMPLATES,
 };
 
 export interface VerbStep {

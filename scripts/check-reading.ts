@@ -2,21 +2,23 @@
 // tap-to-translate lookup the app uses (lib/reading/lookup.ts) — the rule
 // stated in lib/reading/it.ts's header comment. Run with tsx (TypeScript,
 // since lookup.ts/content.ts aren't duplicated in plain JS here):
-//   npx tsx scripts/check-reading.ts <it|es|fr> [textId]
+//   npx tsx scripts/check-reading.ts <it|es|fr|pt> [textId]
 // Prints every word that comes back with no translation, grouped by text.
 
 import { loadPack } from '../lib/content';
 import { buildIndex, lookup, tokenize } from '../lib/reading/lookup';
+import { isLang } from '../lib/lang';
 import type { Lang } from '../lib/lang';
 import type { ReadingText } from '../lib/reading/types';
 
 async function main() {
-  const lang = process.argv[2] as Lang | undefined;
+  const langArg = process.argv[2];
   const onlyId = process.argv[3];
-  if (lang !== 'it' && lang !== 'es' && lang !== 'fr') {
-    console.error('Usage: npx tsx scripts/check-reading.ts <it|es|fr> [textId]');
+  if (!isLang(langArg)) {
+    console.error('Usage: npx tsx scripts/check-reading.ts <it|es|fr|pt> [textId]');
     process.exit(1);
   }
+  const lang: Lang = langArg;
 
   const { READING_TEXTS } = (await import(`../lib/reading/${lang}`)) as { READING_TEXTS: ReadingText[] };
   const [vocab, forms] = await Promise.all([loadPack('vocab', lang), loadPack('forms', lang)]);

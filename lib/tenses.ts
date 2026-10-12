@@ -32,6 +32,15 @@ export type EsTenseId =
   | 'condicional'
   | 'subjuntivo';
 
+export type PtTenseId =
+  | 'presente'
+  | 'preterito_perfeito'
+  | 'imperfeito'
+  | 'futuro'
+  | 'imperativo'
+  | 'condicional'
+  | 'conjuntivo';
+
 export interface TenseInfo<Id extends string = string> {
   id: Id;
   label: string;
@@ -69,14 +78,26 @@ export const FR_TENSES: TenseInfo<FrTenseId>[] = [
   { id: 'subjonctif', label: 'Subjonctif présent', level: 'B1' },
 ];
 
-export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES, fr: FR_TENSES };
+export const PT_TENSES: TenseInfo<PtTenseId>[] = [
+  { id: 'presente', label: 'Presente', level: 'A1' },
+  { id: 'preterito_perfeito', label: 'Pretérito perfeito simples', level: 'A2' },
+  { id: 'imperfeito', label: 'Pretérito imperfeito', level: 'A2' },
+  { id: 'futuro', label: 'Futuro simples', level: 'A2' },
+  { id: 'imperativo', label: 'Imperativo', level: 'A2' },
+  { id: 'condicional', label: 'Condicional', level: 'B1' },
+  { id: 'conjuntivo', label: 'Conjuntivo presente', level: 'B1' },
+];
+
+export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES, fr: FR_TENSES, pt: PT_TENSES };
 
 // Default tenses for a learner who hasn't picked any: beginners start with the
 // present only, everyone else with the core tenses of their language.
 export function defaultTenses(lang: Lang, beginner: boolean): string[] {
   if (lang === 'fr') return beginner ? ['present'] : ['present', 'passe_compose', 'imparfait'];
   if (beginner) return ['presente'];
-  return lang === 'it' ? ['presente', 'passato_prossimo', 'imperfetto'] : ['presente', 'indefinido', 'futuro'];
+  if (lang === 'it') return ['presente', 'passato_prossimo', 'imperfetto'];
+  if (lang === 'pt') return ['presente', 'preterito_perfeito', 'imperfeito'];
+  return ['presente', 'indefinido', 'futuro'];
 }
 
 // Per-device tense choice for the verb drills, stored as "presente,imperfetto"
@@ -85,6 +106,7 @@ export const TENSE_STORAGE_KEY: Record<Lang, string> = {
   it: 'italienisch_verb_tenses',
   es: 'italienisch_verb_tenses_es',
   fr: 'italienisch_verb_tenses_fr',
+  pt: 'italienisch_verb_tenses_pt',
 };
 
 function makeTenseValidator(lang: Lang) {
@@ -95,6 +117,7 @@ export const TENSE_VALIDATORS: Record<Lang, (v: string) => v is string> = {
   it: makeTenseValidator('it'),
   es: makeTenseValidator('es'),
   fr: makeTenseValidator('fr'),
+  pt: makeTenseValidator('pt'),
 };
 
 // The tenses this device drills (client only).

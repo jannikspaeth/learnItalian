@@ -28,6 +28,7 @@ const FORM_STOPWORDS: Record<Lang, Set<string>> = {
   it: new Set(['mi', 'ti', 'si', 'ci', 'vi', 'che', 'io', 'tu', 'lui', 'lei', 'noi', 'voi', 'loro']),
   es: new Set(['me', 'te', 'se', 'nos', 'os', 'que', 'yo', 'tú', 'él', 'ella', 'usted']),
   fr: new Set(['me', 'te', 'se', 'nous', 'vous', 'que', 'je', 'tu', 'il', 'elle', 'ils', 'elles', 'qu', 'm', 't', 's', 'j']),
+  pt: new Set(['me', 'te', 'se', 'nos', 'vos', 'lhe', 'lhes', 'que', 'eu', 'tu', 'ele', 'ela', 'você', 'vocês', 'eles', 'elas']),
 };
 
 export function key(word: string): string {
@@ -61,6 +62,10 @@ function participleVariants(w: string, lang: Lang): string[] {
     return m ? [m[1] + 'a', m[1] + 'i', m[1] + 'e'] : [];
   }
   if (lang === 'es') {
+    const m = w.match(/^(\p{L}{2,}[ai]d)o$/u);
+    return m ? [m[1] + 'a', m[1] + 'os', m[1] + 'as'] : [];
+  }
+  if (lang === 'pt') {
     const m = w.match(/^(\p{L}{2,}[ai]d)o$/u);
     return m ? [m[1] + 'a', m[1] + 'os', m[1] + 'as'] : [];
   }
@@ -126,7 +131,7 @@ function baseCandidates(w: string, lang: Lang): string[] {
     if (w.endsWith('s')) c.push(stem(1));
     if (w.endsWith('as')) c.push(stem(2) + 'o');
     if (w.endsWith('a')) c.push(stem(1) + 'o');
-  } else {
+  } else if (lang === 'fr') {
     if (w.endsWith('aux')) c.push(stem(3) + 'al', stem(3) + 'ail');
     if (w.endsWith('eaux')) c.push(stem(1));
     if (w.endsWith('euses')) c.push(stem(5) + 'eux');
@@ -138,6 +143,22 @@ function baseCandidates(w: string, lang: Lang): string[] {
     if (w.endsWith('es')) c.push(stem(2), stem(1));
     if (w.endsWith('s') || w.endsWith('x')) c.push(stem(1));
     if (w.endsWith('e')) c.push(stem(1));
+  } else {
+    // Portuguese: superlative -íssimo, plural ão→ões/ães/ãos, -al/-el/-ol/-ul → -ais/-eis/-óis/-uis,
+    // regular -s plural, feminine -a → -o.
+    const sup = w.match(/^(\p{L}{2,}?)íssim[oa]s?$/u);
+    if (sup) c.push(sup[1] + 'o', sup[1] + 'a');
+    if (w.endsWith('ões')) c.push(stem(3) + 'ão');
+    if (w.endsWith('ães')) c.push(stem(3) + 'ão');
+    if (w.endsWith('ãos')) c.push(stem(1));
+    if (w.endsWith('ais')) c.push(stem(3) + 'al');
+    if (w.endsWith('eis')) c.push(stem(3) + 'el');
+    if (w.endsWith('óis')) c.push(stem(3) + 'ol');
+    if (w.endsWith('uis')) c.push(stem(3) + 'ul');
+    if (w.endsWith('res') || w.endsWith('zes') || w.endsWith('ses')) c.push(stem(2));
+    if (w.endsWith('s')) c.push(stem(1));
+    if (w.endsWith('as')) c.push(stem(2) + 'o');
+    if (w.endsWith('a')) c.push(stem(1) + 'o');
   }
   return c.filter(x => x.length > 1);
 }
@@ -228,6 +249,11 @@ function gerundBase(w: string, lang: Lang): string[] {
     if (!m) return [];
     if (m[1] === 's' && m[2] === 'iendo') return ['ser'];
     return m[2] === 'ando' ? [m[1] + 'ar'] : [m[1] + 'er', m[1] + 'ir'];
+  }
+  if (lang === 'pt') {
+    const m = w.match(/^(\p{L}{2,})(ando|endo|indo)$/u);
+    if (!m) return [];
+    return m[2] === 'ando' ? [m[1] + 'ar'] : m[2] === 'endo' ? [m[1] + 'er'] : [m[1] + 'ir'];
   }
   const m = w.match(/^(\p{L}{2,})ant$/u); // participe présent: parlant → parler
   return m ? [m[1] + 'er', m[1] + 'ir', m[1] + 're'] : [];

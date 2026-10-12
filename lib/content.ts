@@ -38,21 +38,25 @@ const loaders = {
     it: () => import('./packs/it-vocab').then(m => m.default),
     es: () => import('./packs/es-vocab').then(m => m.default),
     fr: () => import('./packs/fr-vocab').then(m => m.default),
+    pt: () => import('./packs/pt-vocab').then(m => m.default),
   },
   verbs: {
     it: () => import('./packs/it-verbs').then(m => m.default),
     es: () => import('./packs/es-verbs').then(m => m.default),
     fr: () => import('./packs/fr-verbs').then(m => m.default),
+    pt: () => import('./packs/pt-verbs').then(m => m.default),
   },
   forms: {
     it: () => import('./packs/it-forms').then(m => m.default),
     es: () => import('./packs/es-forms').then(m => m.default),
     fr: () => import('./packs/fr-forms').then(m => m.default),
+    pt: () => import('./packs/pt-forms').then(m => m.default),
   },
   reading: {
     it: () => import('./packs/it-reading').then(m => m.default),
     es: () => import('./packs/es-reading').then(m => m.default),
     fr: () => import('./packs/fr-reading').then(m => m.default),
+    pt: () => import('./packs/pt-reading').then(m => m.default),
   },
 };
 

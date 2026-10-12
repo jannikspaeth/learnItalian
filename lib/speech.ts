@@ -7,7 +7,7 @@ import type { Lang } from './lang';
 // offline-capable on most devices, no server. Voice quality depends on the device;
 // when no voice for the language is installed the browser falls back to its default.
 
-const BCP47: Record<Lang, string> = { it: 'it-IT', es: 'es-ES', fr: 'fr-FR' };
+const BCP47: Record<Lang, string> = { it: 'it-IT', es: 'es-ES', fr: 'fr-FR', pt: 'pt-PT' };
 
 export const NORMAL_RATE = 0.95;
 export const SLOW_RATE = 0.65;
