@@ -88,7 +88,9 @@ export const PT_TENSES: TenseInfo<PtTenseId>[] = [
   { id: 'conjuntivo', label: 'Conjuntivo presente', level: 'B1' },
 ];
 
-export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES, fr: FR_TENSES, pt: PT_TENSES };
+// Brazilian Portuguese drills the same 7 tenses as European Portuguese (the
+// rule engine shares its core with lib/pt/verb-catalog.ts — see lib/br/verb-catalog.ts).
+export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES, fr: FR_TENSES, pt: PT_TENSES, br: PT_TENSES };
 
 // Default tenses for a learner who hasn't picked any: beginners start with the
 // present only, everyone else with the core tenses of their language.
@@ -96,7 +98,7 @@ export function defaultTenses(lang: Lang, beginner: boolean): string[] {
   if (lang === 'fr') return beginner ? ['present'] : ['present', 'passe_compose', 'imparfait'];
   if (beginner) return ['presente'];
   if (lang === 'it') return ['presente', 'passato_prossimo', 'imperfetto'];
-  if (lang === 'pt') return ['presente', 'preterito_perfeito', 'imperfeito'];
+  if (lang === 'pt' || lang === 'br') return ['presente', 'preterito_perfeito', 'imperfeito'];
   return ['presente', 'indefinido', 'futuro'];
 }
 
@@ -107,6 +109,7 @@ export const TENSE_STORAGE_KEY: Record<Lang, string> = {
   es: 'italienisch_verb_tenses_es',
   fr: 'italienisch_verb_tenses_fr',
   pt: 'italienisch_verb_tenses_pt',
+  br: 'italienisch_verb_tenses_br',
 };
 
 function makeTenseValidator(lang: Lang) {
@@ -118,6 +121,7 @@ export const TENSE_VALIDATORS: Record<Lang, (v: string) => v is string> = {
   es: makeTenseValidator('es'),
   fr: makeTenseValidator('fr'),
   pt: makeTenseValidator('pt'),
+  br: makeTenseValidator('br'),
 };
 
 // The tenses this device drills (client only).

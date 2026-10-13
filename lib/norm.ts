@@ -13,6 +13,7 @@ const ARTICLE_RE: Record<Lang, RegExp> = {
   es: /^(?:el|la|los|las|un|una|unos|unas|der|die|das|ein|eine|einen|einem|einer)\s+/i,
   fr: /^(?:(?:le|la|les|un|une|des|der|die|das|ein|eine|einen|einem|einer)\s+|l['’]\s*)/i,
   pt: /^(?:o|a|os|as|um|uma|uns|umas|der|die|das|ein|eine|einen|einem|einer)\s+/i,
+  br: /^(?:o|a|os|as|um|uma|uns|umas|der|die|das|ein|eine|einen|einem|einer)\s+/i,
 };
 
 export function normWord(s: string, lang: Lang = 'it'): string {

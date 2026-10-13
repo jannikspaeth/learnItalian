@@ -29,6 +29,7 @@ const FORM_STOPWORDS: Record<Lang, Set<string>> = {
   es: new Set(['me', 'te', 'se', 'nos', 'os', 'que', 'yo', 'tú', 'él', 'ella', 'usted']),
   fr: new Set(['me', 'te', 'se', 'nous', 'vous', 'que', 'je', 'tu', 'il', 'elle', 'ils', 'elles', 'qu', 'm', 't', 's', 'j']),
   pt: new Set(['me', 'te', 'se', 'nos', 'vos', 'lhe', 'lhes', 'que', 'eu', 'tu', 'ele', 'ela', 'você', 'vocês', 'eles', 'elas']),
+  br: new Set(['me', 'te', 'se', 'nos', 'vos', 'lhe', 'lhes', 'que', 'eu', 'tu', 'ele', 'ela', 'você', 'vocês', 'eles', 'elas']),
 };
 
 export function key(word: string): string {
@@ -65,7 +66,7 @@ function participleVariants(w: string, lang: Lang): string[] {
     const m = w.match(/^(\p{L}{2,}[ai]d)o$/u);
     return m ? [m[1] + 'a', m[1] + 'os', m[1] + 'as'] : [];
   }
-  if (lang === 'pt') {
+  if (lang === 'pt' || lang === 'br') {
     const m = w.match(/^(\p{L}{2,}[ai]d)o$/u);
     return m ? [m[1] + 'a', m[1] + 'os', m[1] + 'as'] : [];
   }
@@ -250,7 +251,7 @@ function gerundBase(w: string, lang: Lang): string[] {
     if (m[1] === 's' && m[2] === 'iendo') return ['ser'];
     return m[2] === 'ando' ? [m[1] + 'ar'] : [m[1] + 'er', m[1] + 'ir'];
   }
-  if (lang === 'pt') {
+  if (lang === 'pt' || lang === 'br') {
     const m = w.match(/^(\p{L}{2,})(ando|endo|indo)$/u);
     if (!m) return [];
     return m[2] === 'ando' ? [m[1] + 'ar'] : m[2] === 'endo' ? [m[1] + 'er'] : [m[1] + 'ir'];

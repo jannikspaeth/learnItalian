@@ -172,4 +172,6 @@ const PT: Record<string, Gloss> = {
   euros: 'Euro', euro: 'Euro', portugal: 'Portugal', lisboa: 'Lissabon', porto: 'Porto', alemanha: 'Deutschland',
 };
 
-export const COMMON_WORDS: Record<Lang, Record<string, Gloss>> = { it: IT, es: ES, fr: FR, pt: PT };
+// Brazilian Portuguese shares the same closed-class little words (articles,
+// contractions, pronouns, conjunctions) as European Portuguese.
+export const COMMON_WORDS: Record<Lang, Record<string, Gloss>> = { it: IT, es: ES, fr: FR, pt: PT, br: PT };
