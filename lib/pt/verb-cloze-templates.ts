@@ -1,37 +1,100 @@
 import type { ClozeTemplate } from '../verb-cloze';
 
-// European Portuguese cloze sentences, 3 per tense (person index into the
+// European Portuguese cloze sentences, a dozen per tense (person index into the
 // 6-person tenses' `pronouns` — eu, tu, ele/ela, nós, vocês, eles/elas — or 0-2
-// for imperativo: tu, nós, vocês). EP is a null-subject language, so the subject
-// is dropped where the form is unambiguous and spelled out where eu and ele/ela
-// share a form (imperfeito, condicional, conjuntivo).
+// for imperativo: tu, nós, vocês). EP drops the subject freely, but the blank
+// hides the form, so every frame names who is meant. Frames stay verb-neutral
+// (time, place and manner only, never an object); imperativo uses a vocative.
 export const PT_CLOZE_TEMPLATES: ClozeTemplate[] = [
   // presente
-  { tense: 'presente', person: 0, before: 'Todos os dias ', after: ' às sete.' },
+  { tense: 'presente', person: 0, before: 'Todos os dias eu ', after: ' às sete.' },
+  { tense: 'presente', person: 0, before: 'Normalmente eu ', after: ' bastante cedo.' },
+  { tense: 'presente', person: 1, before: 'Tu ', after: ' sempre demasiado depressa.' },
+  { tense: 'presente', person: 1, before: 'E tu, ', after: ' muito ao domingo?' },
+  { tense: 'presente', person: 2, before: 'O meu irmão ', after: ' todos os dias.' },
+  { tense: 'presente', person: 2, before: 'Ao domingo, a Ana ', after: ' com gosto.' },
   { tense: 'presente', person: 3, before: 'Ao sábado, nós ', after: ' até tarde.' },
+  { tense: 'presente', person: 3, before: 'Eu e o Marco ', after: ' muitas vezes juntos.' },
+  { tense: 'presente', person: 4, before: 'Vocês ', after: ' sempre com calma.' },
+  { tense: 'presente', person: 4, before: 'Meninos, vocês ', after: ' muito pouco.' },
   { tense: 'presente', person: 5, before: 'Os meus amigos ', after: ' sempre juntos.' },
+  { tense: 'presente', person: 5, before: 'As crianças ', after: ' com gosto no jardim.' },
   // pretérito perfeito simples
-  { tense: 'preterito_perfeito', person: 0, before: 'Ontem ', after: ' até tarde.' },
+  { tense: 'preterito_perfeito', person: 0, before: 'Ontem eu ', after: ' até tarde.' },
+  { tense: 'preterito_perfeito', person: 0, before: 'Esta manhã eu ', after: ' muito cedo.' },
+  { tense: 'preterito_perfeito', person: 1, before: 'Ontem à noite tu ', after: ' com os teus amigos.' },
+  { tense: 'preterito_perfeito', person: 1, before: 'Na semana passada tu ', after: ' imenso.' },
   { tense: 'preterito_perfeito', person: 2, before: 'No fim de semana passado, o Pedro ', after: ' com os amigos.' },
-  { tense: 'preterito_perfeito', person: 3, before: 'Ontem à noite ', after: ' juntos.' },
-  // pretérito imperfeito (eu/ele iguais → sujeito explícito)
+  { tense: 'preterito_perfeito', person: 2, before: 'Ontem, a minha irmã ', after: ' o dia todo.' },
+  { tense: 'preterito_perfeito', person: 3, before: 'Ontem à noite, nós ', after: ' juntos.' },
+  { tense: 'preterito_perfeito', person: 3, before: 'Eu e o Luís ', after: ' até à meia-noite.' },
+  { tense: 'preterito_perfeito', person: 4, before: 'Ontem vocês ', after: ' demasiado.' },
+  { tense: 'preterito_perfeito', person: 4, before: 'Meninos, ontem vocês ', after: ' muito bem.' },
+  { tense: 'preterito_perfeito', person: 5, before: 'Os meus pais ', after: ' o dia todo.' },
+  { tense: 'preterito_perfeito', person: 5, before: 'Ontem, as crianças ', after: ' no jardim.' },
+  // pretérito imperfeito
   { tense: 'imperfeito', person: 0, before: 'Em criança, eu ', after: ' todos os dias.' },
+  { tense: 'imperfeito', person: 0, before: 'Antigamente eu ', after: ' com muito gosto.' },
+  { tense: 'imperfeito', person: 1, before: 'Em pequeno, tu ', after: ' imenso.' },
+  { tense: 'imperfeito', person: 1, before: 'Antigamente tu ', after: ' mais vezes.' },
   { tense: 'imperfeito', person: 2, before: 'Quando era jovem, o meu pai ', after: ' todos os fins de semana.' },
+  { tense: 'imperfeito', person: 2, before: 'A Ana ', after: ' sempre ao domingo.' },
   { tense: 'imperfeito', person: 3, before: 'Antigamente, nós ', after: ' muitas vezes juntos.' },
+  { tense: 'imperfeito', person: 3, before: 'Em novos, eu e o meu irmão ', after: ' todos os verões.' },
+  { tense: 'imperfeito', person: 4, before: 'Antigamente vocês ', after: ' muito mais.' },
+  { tense: 'imperfeito', person: 4, before: 'Em crianças, vocês ', after: ' todos os dias.' },
+  { tense: 'imperfeito', person: 5, before: 'Os meus avós ', after: ' sempre às seis.' },
+  { tense: 'imperfeito', person: 5, before: 'Antigamente, os meus amigos ', after: ' todos os fins de semana.' },
   // futuro simples
-  { tense: 'futuro', person: 0, before: 'Amanhã ', after: ' o dia todo.' },
-  { tense: 'futuro', person: 3, before: 'No próximo mês ', after: ' juntos.' },
+  { tense: 'futuro', person: 0, before: 'Amanhã eu ', after: ' o dia todo.' },
+  { tense: 'futuro', person: 0, before: 'Para a semana eu ', after: ' outra vez.' },
+  { tense: 'futuro', person: 1, before: 'Amanhã tu ', after: ' com calma.' },
+  { tense: 'futuro', person: 1, before: 'Depois de amanhã tu ', after: ' de certeza.' },
+  { tense: 'futuro', person: 2, before: 'Hoje à noite, o Pedro ', after: ' em casa.' },
+  { tense: 'futuro', person: 2, before: 'Amanhã a minha irmã ', after: ' o dia todo.' },
+  { tense: 'futuro', person: 3, before: 'No próximo mês, nós ', after: ' juntos.' },
+  { tense: 'futuro', person: 3, before: 'Daqui a uma semana, eu e a Ana ', after: ' outra vez.' },
+  { tense: 'futuro', person: 4, before: 'Amanhã vocês ', after: ' sem mim.' },
+  { tense: 'futuro', person: 4, before: 'Para o ano, vocês ', after: ' muito mais.' },
   { tense: 'futuro', person: 5, before: 'Em breve, os teus amigos ', after: ' aqui.' },
+  { tense: 'futuro', person: 5, before: 'Amanhã, as crianças ', after: ' no jardim.' },
   // imperativo (tu, nós, vocês)
   { tense: 'imperativo', person: 0, before: 'Anda, ', after: ' já!' },
+  { tense: 'imperativo', person: 0, before: 'Pedro, ', after: ' com calma!' },
+  { tense: 'imperativo', person: 0, before: 'Por favor, ', after: ' agora!' },
+  { tense: 'imperativo', person: 0, before: 'Chiu, ', after: ' mais baixo!' },
   { tense: 'imperativo', person: 1, before: 'Então, ', after: ' juntos!' },
+  { tense: 'imperativo', person: 1, before: 'Vá, ', after: ' nós também!' },
+  { tense: 'imperativo', person: 1, before: 'Bom, ', after: ' juntos agora!' },
   { tense: 'imperativo', person: 2, before: 'Meninos, ', after: ' com calma!' },
-  // condicional (eu/ele iguais → sujeito explícito)
+  { tense: 'imperativo', person: 2, before: 'Rapazes, ', after: ' já!' },
+  { tense: 'imperativo', person: 2, before: 'Vá lá, meninos, ', after: ' todos juntos!' },
+  { tense: 'imperativo', person: 2, before: 'Por favor, meninos, ', after: ' mais devagar!' },
+  { tense: 'imperativo', person: 2, before: 'Amigos, ', after: ' com calma!' },
+  // condicional
   { tense: 'condicional', person: 0, before: 'Com mais tempo, eu ', after: ' com muito gosto.' },
-  { tense: 'condicional', person: 2, before: 'No teu lugar, a Ana ', after: ' de certeza.' },
+  { tense: 'condicional', person: 0, before: 'Eu ', after: ' com gosto, mas não posso.' },
+  { tense: 'condicional', person: 1, before: 'No meu lugar, tu ', after: ' de certeza.' },
+  { tense: 'condicional', person: 1, before: 'Tu ', after: ' amanhã com mais gosto, não?' },
+  { tense: 'condicional', person: 2, before: 'No teu lugar, ele ', after: ' de certeza.' },
+  { tense: 'condicional', person: 2, before: 'A Ana ', after: ' com gosto, mas não tem tempo.' },
   { tense: 'condicional', person: 3, before: 'Sem pressa, nós ', after: ' com calma.' },
-  // conjuntivo presente (eu/ele iguais → sujeito explícito)
-  { tense: 'conjuntivo', person: 0, before: 'A minha mãe quer que eu ', after: ' mais.' },
+  { tense: 'condicional', person: 3, before: 'Eu e tu ', after: ' com gosto convosco.' },
+  { tense: 'condicional', person: 4, before: 'Vocês ', after: ' amanhã com mais gosto?' },
+  { tense: 'condicional', person: 4, before: 'No nosso lugar, vocês ', after: ' logo.' },
+  { tense: 'condicional', person: 5, before: 'Os meus amigos ', after: ' com gosto connosco.' },
+  { tense: 'condicional', person: 5, before: 'Sem nós, eles ', after: ' menos vezes.' },
+  // conjuntivo presente (o "que" faz parte da frase)
+  { tense: 'conjuntivo', person: 0, before: 'Espero que eu ', after: ' em breve.' },
+  { tense: 'conjuntivo', person: 0, before: 'É melhor que eu ', after: ' agora.' },
+  { tense: 'conjuntivo', person: 1, before: 'Quero que tu ', after: ' em breve.' },
+  { tense: 'conjuntivo', person: 1, before: 'É importante que tu ', after: ' com calma.' },
   { tense: 'conjuntivo', person: 2, before: 'Espero que o Pedro ', after: ' bem.' },
+  { tense: 'conjuntivo', person: 2, before: 'Talvez a Ana ', after: ' hoje.' },
+  { tense: 'conjuntivo', person: 3, before: 'É preciso que nós ', after: ' já.' },
+  { tense: 'conjuntivo', person: 3, before: 'Espero que nós ', after: ' juntos.' },
   { tense: 'conjuntivo', person: 4, before: 'É importante que vocês ', after: ' hoje.' },
+  { tense: 'conjuntivo', person: 4, before: 'Não creio que vocês ', after: ' o suficiente.' },
+  { tense: 'conjuntivo', person: 5, before: 'Espero que os meus amigos ', after: ' amanhã.' },
+  { tense: 'conjuntivo', person: 5, before: 'Quero que eles ', after: ' connosco.' },
 ];

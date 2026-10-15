@@ -1,7 +1,7 @@
 'use client';
 
 import type { Lang } from '@/lib/lang';
-import type { VerbStep } from '@/lib/verb-cloze';
+import { clozeLead, type VerbStep } from '@/lib/verb-cloze';
 import { conjugationMatches } from '@/lib/conjugation-match';
 import { spokenForm } from '@/lib/speech';
 import { useT, useUiLang, tenseName } from '@/lib/ui-lang';
@@ -24,18 +24,19 @@ export default function VerbClozeCard({
   const check = (v: string) => ({ correct: conjugationMatches(v, step.answer) });
 
   if (step.clozeBefore !== undefined) {
+    const before = clozeLead(step.clozeBefore, step.answer, lang);
     return (
       <TypeCard
         label={t('Complete the sentence', 'Vervollständige den Satz')}
         prompt={
           <span>
-            {step.clozeBefore}
+            {before}
             <span className="text-gray-400 font-medium">({step.verb})</span> ＿＿{step.clozeAfter}
           </span>
         }
         answer={step.answer}
         check={check}
-        speakText={`${step.clozeBefore}${step.answer}${step.clozeAfter}`}
+        speakText={`${before}${step.answer}${step.clozeAfter}`}
         lang={lang}
         onResult={onResult}
       />

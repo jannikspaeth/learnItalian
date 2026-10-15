@@ -1,34 +1,101 @@
 import type { ClozeTemplate } from '../verb-cloze';
 
-// French cloze sentences, 3 per tense (person index into the 6-person tenses'
-// `pronouns`, or 0-2 for impératif: tu, nous, vous).
+// French cloze sentences, a dozen per tense (person index into the 6-person
+// tenses' `pronouns`, or 0-2 for impératif: tu, nous, vous). French needs its
+// subject pronoun, so every frame names it right before the blank; "je" before
+// a vowel is elided to "j'" when the sentence is put together
+// (`clozeLead` in lib/verb-cloze.ts). Frames stay verb-neutral (time, place and
+// manner only, never an object). Impératif uses a vocative instead.
 export const FR_CLOZE_TEMPLATES: ClozeTemplate[] = [
   // présent
-  { tense: 'present', person: 0, before: 'Tous les matins, ', after: ' à sept heures.' },
+  { tense: 'present', person: 0, before: 'Tous les matins, je ', after: ' à sept heures.' },
+  { tense: 'present', person: 0, before: "D'habitude, je ", after: ' assez tôt.' },
+  { tense: 'present', person: 1, before: 'Tu ', after: ' toujours trop vite.' },
+  { tense: 'present', person: 1, before: 'Et toi, tu ', after: ' souvent le dimanche ?' },
+  { tense: 'present', person: 2, before: 'Mon frère ', after: ' tous les jours.' },
+  { tense: 'present', person: 2, before: 'Le dimanche, Anne ', after: ' avec plaisir.' },
   { tense: 'present', person: 3, before: 'Le samedi, nous ', after: " jusqu'à tard." },
+  { tense: 'present', person: 3, before: 'Marc et moi, nous ', after: ' souvent ensemble.' },
+  { tense: 'present', person: 4, before: 'Vous ', after: ' toujours calmement.' },
+  { tense: 'present', person: 4, before: 'Les enfants, vous ', after: ' trop peu.' },
   { tense: 'present', person: 5, before: 'Mes amis ', after: ' toujours ensemble.' },
+  { tense: 'present', person: 5, before: 'Les enfants ', after: ' volontiers dans le jardin.' },
   // passé composé
-  { tense: 'passe_compose', person: 0, before: 'Hier, ', after: " jusqu'à tard." },
+  { tense: 'passe_compose', person: 0, before: 'Hier, je ', after: " jusqu'à tard." },
+  { tense: 'passe_compose', person: 0, before: 'Ce matin, je ', after: ' très tôt.' },
+  { tense: 'passe_compose', person: 1, before: 'Hier soir, tu ', after: ' avec tes amis.' },
+  { tense: 'passe_compose', person: 1, before: 'La semaine dernière, tu ', after: ' énormément.' },
   { tense: 'passe_compose', person: 2, before: 'Le week-end dernier, Marc ', after: ' avec des amis.' },
+  { tense: 'passe_compose', person: 2, before: 'Hier, ma sœur ', after: ' toute la journée.' },
   { tense: 'passe_compose', person: 3, before: 'Hier soir, nous ', after: ' ensemble.' },
-  // imparfait (je/tu identiques → sujet explicite)
+  { tense: 'passe_compose', person: 3, before: 'Luc et moi, nous ', after: " jusqu'à minuit." },
+  { tense: 'passe_compose', person: 4, before: 'Hier, vous ', after: ' vraiment trop.' },
+  { tense: 'passe_compose', person: 4, before: 'Les enfants, hier vous ', after: ' très bien.' },
+  { tense: 'passe_compose', person: 5, before: 'Mes parents ', after: ' toute la journée.' },
+  { tense: 'passe_compose', person: 5, before: 'Hier, les enfants ', after: ' dans le jardin.' },
+  // imparfait
   { tense: 'imparfait', person: 0, before: "Quand j'étais petit, je ", after: ' toujours avec plaisir.' },
-  { tense: 'imparfait', person: 2, before: 'Avant, mon père ', after: ' chaque week-end.' },
+  { tense: 'imparfait', person: 0, before: 'Avant, je ', after: ' tous les jours.' },
+  { tense: 'imparfait', person: 1, before: 'Petit, tu ', after: ' énormément.' },
+  { tense: 'imparfait', person: 1, before: 'Avant, tu ', after: ' plus souvent.' },
+  { tense: 'imparfait', person: 2, before: 'Jeune, mon père ', after: ' chaque week-end.' },
+  { tense: 'imparfait', person: 2, before: 'Anne ', after: ' toujours le dimanche.' },
   { tense: 'imparfait', person: 3, before: 'Avant, nous ', after: ' souvent ensemble.' },
+  { tense: 'imparfait', person: 3, before: 'Mon frère et moi, nous ', after: ' chaque été.' },
+  { tense: 'imparfait', person: 4, before: 'Avant, vous ', after: ' beaucoup plus.' },
+  { tense: 'imparfait', person: 4, before: 'Enfants, vous ', after: ' tous les jours.' },
+  { tense: 'imparfait', person: 5, before: 'Mes grands-parents ', after: ' toujours à six heures.' },
+  { tense: 'imparfait', person: 5, before: 'Avant, mes amis ', after: ' chaque week-end.' },
   // futur simple
-  { tense: 'futur', person: 0, before: 'Demain, ', after: ' toute la journée.' },
+  { tense: 'futur', person: 0, before: 'Demain, je ', after: ' toute la journée.' },
+  { tense: 'futur', person: 0, before: 'La semaine prochaine, je ', after: ' de nouveau.' },
+  { tense: 'futur', person: 1, before: 'Demain, tu ', after: ' calmement.' },
+  { tense: 'futur', person: 1, before: 'Après-demain, tu ', after: ' sûrement.' },
+  { tense: 'futur', person: 2, before: 'Ce soir, Marc ', after: ' à la maison.' },
+  { tense: 'futur', person: 2, before: 'Demain, ma sœur ', after: ' toute la journée.' },
   { tense: 'futur', person: 3, before: 'Le mois prochain, nous ', after: ' ensemble.' },
+  { tense: 'futur', person: 3, before: 'Dans une semaine, Anne et moi, nous ', after: ' de nouveau.' },
+  { tense: 'futur', person: 4, before: 'Demain, vous ', after: ' sans moi.' },
+  { tense: 'futur', person: 4, before: "L'année prochaine, vous ", after: ' beaucoup plus.' },
   { tense: 'futur', person: 5, before: 'Bientôt, tes amis ', after: ' ici.' },
+  { tense: 'futur', person: 5, before: 'Demain, les enfants ', after: ' dans le jardin.' },
   // impératif (tu, nous, vous)
   { tense: 'imperatif', person: 0, before: 'Allez, ', after: ' tout de suite !' },
+  { tense: 'imperatif', person: 0, before: 'Marc, ', after: ' calmement !' },
+  { tense: 'imperatif', person: 0, before: "S'il te plaît, ", after: ' maintenant !' },
+  { tense: 'imperatif', person: 0, before: 'Vas-y, ', after: ' sans peur !' },
+  { tense: 'imperatif', person: 0, before: 'Chut, ', after: ' moins fort !' },
   { tense: 'imperatif', person: 1, before: 'Bon, ', after: ' ensemble !' },
+  { tense: 'imperatif', person: 1, before: 'Bon alors, ', after: ' nous aussi !' },
+  { tense: 'imperatif', person: 1, before: 'Alors, ', after: ' ensemble maintenant !' },
   { tense: 'imperatif', person: 2, before: 'Les enfants, ', after: ' calmement !' },
-  // conditionnel (je/tu identiques → sujet explicite)
+  { tense: 'imperatif', person: 2, before: 'Madame, ', after: " s'il vous plaît !" },
+  { tense: 'imperatif', person: 2, before: 'Excusez-moi, ', after: ' plus lentement !' },
+  { tense: 'imperatif', person: 2, before: 'Les amis, ', after: ' tous ensemble !' },
+  // conditionnel
   { tense: 'conditionnel', person: 0, before: 'Avec plus de temps, je ', after: ' avec plaisir.' },
+  { tense: 'conditionnel', person: 0, before: 'Je ', after: ' avec plaisir, mais je ne peux pas.' },
+  { tense: 'conditionnel', person: 1, before: 'À ma place, tu ', after: ' sûrement.' },
+  { tense: 'conditionnel', person: 1, before: 'Tu ', after: ' plus volontiers demain, non ?' },
   { tense: 'conditionnel', person: 2, before: 'À ta place, il ', after: ' sûrement.' },
+  { tense: 'conditionnel', person: 2, before: 'Anne ', after: " avec plaisir, mais elle n'a pas le temps." },
   { tense: 'conditionnel', person: 3, before: 'Sans se presser, nous ', after: ' calmement.' },
-  // subjonctif présent (je/il identiques → sujet explicite)
-  { tense: 'subjonctif', person: 0, before: "J'espère que je ", after: ' bientôt.' },
+  { tense: 'conditionnel', person: 3, before: 'Toi et moi, nous ', after: ' volontiers avec vous.' },
+  { tense: 'conditionnel', person: 4, before: 'Vous ', after: ' plus volontiers demain ?' },
+  { tense: 'conditionnel', person: 4, before: 'À notre place, vous ', after: ' tout de suite.' },
+  { tense: 'conditionnel', person: 5, before: 'Mes amis ', after: ' volontiers avec nous.' },
+  { tense: 'conditionnel', person: 5, before: 'Sans nous, ils ', after: ' moins volontiers.' },
+  // subjonctif présent (le "que" fait partie de la phrase)
+  { tense: 'subjonctif', person: 0, before: 'Il faut que je ', after: ' tout de suite.' },
+  { tense: 'subjonctif', person: 0, before: 'Il vaut mieux que je ', after: ' maintenant.' },
   { tense: 'subjonctif', person: 1, before: 'Je veux que tu ', after: ' bientôt.' },
+  { tense: 'subjonctif', person: 1, before: 'Il est important que tu ', after: ' calmement.' },
   { tense: 'subjonctif', person: 2, before: "Il faut qu'il ", after: ' bientôt.' },
+  { tense: 'subjonctif', person: 2, before: "Je ne crois pas qu'Anne ", after: " aujourd'hui." },
+  { tense: 'subjonctif', person: 3, before: 'Il faut que nous ', after: ' tout de suite.' },
+  { tense: 'subjonctif', person: 3, before: 'Il est important que nous ', after: ' ensemble.' },
+  { tense: 'subjonctif', person: 4, before: 'Il vaut mieux que vous ', after: ' maintenant.' },
+  { tense: 'subjonctif', person: 4, before: 'Je ne crois pas que vous ', after: ' assez.' },
+  { tense: 'subjonctif', person: 5, before: 'Il faut que mes amis ', after: ' demain.' },
+  { tense: 'subjonctif', person: 5, before: "Il faut qu'ils ", after: ' avec nous.' },
 ];

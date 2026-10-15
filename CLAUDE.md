@@ -160,7 +160,11 @@ alter table grammar     enable row level security;
   in `lib/tenses.ts`). Verbs have review intervals (`lib/verb-review.ts`: level 1–6, 1/3/7/14/30/60 days, a
   mistake resets to level 1; stored on the `ConjugationRecord`) and a "Review due verbs" button. Answer checking
   (`lib/conjugation-match.ts`) is **accent-insensitive** and accepts either ending of
-  essere-participles written `andato/a` / `andati/e`.
+  essere-participles written `andato/a` / `andati/e`. A **Sätze** tab (and part of the daily round)
+  drills single forms as cloze sentences: verb-neutral frames in `lib/verb-cloze-templates.ts`
+  (+ `lib/{es,fr,pt,br}/`), a dozen per tense covering every person, with the subject named so only
+  one form fits; `lib/verb-cloze.ts` picks them, walking through a tense's whole set before any
+  sentence repeats.
   Every catalog word has a `topic` (`lib/vocab-topics.ts`); Learn can be narrowed to one topic
   (per-device choice) and the Words list grouped by topic. Imported words get their topic from
   `scripts/vocab-import-topics.mjs` (verbs auto-detected by ending).
