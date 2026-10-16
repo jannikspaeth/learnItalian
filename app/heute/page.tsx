@@ -34,7 +34,7 @@ import { getConjugationExercise } from '@/lib/conjugation-client';
 import { TOPICS_BY_LANG } from '@/lib/grammar-by-lang';
 import { berlinToday, DAILY_GOAL } from '@/lib/race';
 import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw, X, PartyPopper } from 'lucide-react';
-import { checkWordAnswer, checkClozeAnswer } from '@/lib/answer-check';
+import { checkWordAnswer, checkClozeAnswer, checkPhraseAnswer } from '@/lib/answer-check';
 import { conjugationMatches } from '@/lib/conjugation-match';
 import { Confidence, VOCAB_KNOWN_LEVEL, VOCAB_INTERVALS, computeNewLevel, nextReviewDate } from '@/lib/srs';
 import {
@@ -59,6 +59,7 @@ import {
   dictationMistake,
 } from '@/lib/mistakes';
 import { pickVerbStep, CLOZE_TEMPLATES_BY_LANG } from '@/lib/verb-cloze';
+import { checkNumberAnswer, parseNumberMistake } from '@/lib/numbers';
 import TypeCard from '@/components/practice/TypeCard';
 import VerbClozeCard from '@/components/practice/VerbClozeCard';
 import ChoiceCard from '@/components/practice/ChoiceCard';
@@ -76,6 +77,9 @@ const MISTAKE_TYPE: Record<MistakeKind, ExerciseType> = {
   grammar: 'grammar',
   sentence: 'sentence',
   dictation: 'sentence',
+  article: 'article',
+  number: 'numbers',
+  phrase: 'phrase',
 };
 function exerciseType(step: RoundStep): ExerciseType {
   switch (step.kind) {
@@ -501,6 +505,53 @@ export default function HeutePage() {
             onDone={(_, typed, r) => handleResult(r.perfect, typed)}
           />
         );
+      case 'article': {
+        const noun = m.prompt.replace(/^___\s*/, '');
+        return (
+          <ChoiceCard
+            key={key}
+            label={t('Which article?', 'Welcher Artikel?')}
+            before=""
+            after={` ${noun}`}
+            answer={m.answer}
+            options={m.options ?? []}
+            hint={m.hint}
+            lang={lang}
+            onResult={handleResult}
+          />
+        );
+      }
+      case 'number': {
+        const item = parseNumberMistake(m.id, m.prompt);
+        return (
+          <TypeCard
+            key={key}
+            label={t('Write it in digits', 'In Zahlen schreiben')}
+            prompt={m.prompt}
+            sub={last}
+            answer={m.answer}
+            check={v => ({ correct: item ? checkNumberAnswer(v, item) : checkClozeAnswer(v, m.answer) })}
+            speakText={m.speak}
+            speakPrompt
+            lang={lang}
+            onResult={handleResult}
+          />
+        );
+      }
+      case 'phrase':
+        return (
+          <TypeCard
+            key={key}
+            label={`${t('Phrase', 'Wendung')} 🇩🇪 → ${flag}`}
+            prompt={m.prompt}
+            sub={m.hint ?? last}
+            answer={m.answer}
+            check={v => ({ correct: checkPhraseAnswer(v, m.answer, m.alternatives) })}
+            speakText={m.speak}
+            lang={lang}
+            onResult={handleResult}
+          />
+        );
     }
   }
 
@@ -647,8 +698,8 @@ export default function HeutePage() {
                   </h2>
                   <p className="text-sm text-gray-500 mt-0.5">
                     {t(
-                      `Everything you got wrong – words, verbs, grammar, sentences, dictation. Get it right ${MISTAKE_CLEAR_AFTER}× in a row and it disappears.`,
-                      `Alles, was du falsch hattest – Wörter, Verben, Grammatik, Sätze, Diktat. Hast du es ${MISTAKE_CLEAR_AFTER}× hintereinander richtig, verschwindet es.`,
+                      `Everything you got wrong – words, verbs, grammar, sentences, dictation, articles, numbers, phrases. Get it right ${MISTAKE_CLEAR_AFTER}× in a row and it disappears.`,
+                      `Alles, was du falsch hattest – Wörter, Verben, Grammatik, Sätze, Diktat, Artikel, Zahlen, Redemittel. Hast du es ${MISTAKE_CLEAR_AFTER}× hintereinander richtig, verschwindet es.`,
                     )}
                   </p>
                 </div>

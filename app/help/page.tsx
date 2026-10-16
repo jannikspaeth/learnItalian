@@ -228,6 +228,33 @@ export default function HelpPage() {
           </P>
         </Section>
 
+        <Section icon="💬" title={<Tx en="Phrases" de="Redemittel" />}>
+          <P>
+            <Tx
+              en={<>100 ready-made sentences for ten real situations – greetings, politeness, small talk, restaurant, shopping, getting around, hotel, doctor, phone and emergencies. The German sentence is shown, you write it in the language you are learning; several wordings are accepted, and 🔊 reads the answer out. Each phrase has its own review schedule: four correct answers, spread over three weeks, and it counts as safe. A phrase counts two points for the race, like a sentence.</>}
+              de={<>100 fertige Sätze für zehn echte Situationen – Begrüßung, Höflichkeit, Small Talk, Restaurant, Einkaufen, Unterwegs, Hotel, Arzt, Telefon und Notfall. Der deutsche Satz steht da, du schreibst ihn in deiner Lernsprache; mehrere Formulierungen gelten, und 🔊 liest die Lösung vor. Jede Wendung hat ihren eigenen Wiederholungsplan: vier richtige Antworten über drei Wochen verteilt, dann gilt sie als sicher. Eine Wendung zählt im Rennen zwei Punkte, wie ein Satz.</>}
+            />
+          </P>
+        </Section>
+
+        <Section icon="⚡" title={<Tx en="Article blitz" de="Artikel-Blitz" />}>
+          <P>
+            <Tx
+              en={<>Twenty nouns without their article – tap the one that belongs to it, and the next noun comes straight away. Your own words come first, then the rest of the catalog. The round keeps your best score and its time; wrong taps land in <strong>My mistakes</strong>. Articles count half a point each for the race, like verbs.</>}
+              de={<>Zwanzig Nomen ohne Artikel – tippe den passenden an, und das nächste Nomen kommt sofort. Zuerst deine eigenen Wörter, dann der restliche Katalog. Die Runde merkt sich deinen Bestwert und die Zeit; falsche Antworten landen in <strong>Meine Fehler</strong>. Artikel zählen im Rennen je einen halben Punkt, wie Verben.</>}
+            />
+          </P>
+        </Section>
+
+        <Section icon="🔢" title={<Tx en="Numbers & time" de="Zahlen & Uhrzeit" />}>
+          <P>
+            <Tx
+              en={<>Numbers, clock times and dates, all generated – so no two rounds are the same. Either you <strong>hear</strong> it and write the digits (as at a counter or on the phone), or you see the digits and pick the written form out of four. 15:45 may be typed as 3:45 too, and 12.3. as 12.03. – only noon and midnight have to be told apart. Each item counts one point for the race.</>}
+              de={<>Zahlen, Uhrzeiten und Datumsangaben, alle generiert – keine Runde ist wie die andere. Entweder du <strong>hörst</strong> sie und schreibst die Ziffern (wie am Schalter oder am Telefon), oder du siehst die Ziffern und wählst die Wortform aus vier. 15:45 darfst du auch als 3:45 tippen und 12.3. als 12.03. – nur Mittag und Mitternacht musst du auseinanderhalten. Jede Aufgabe zählt im Rennen einen Punkt.</>}
+            />
+          </P>
+        </Section>
+
         <Section icon="👤" title={<Tx en="Profiles & app language" de="Profile & App-Sprache" />}>
           <P>
             <Tx

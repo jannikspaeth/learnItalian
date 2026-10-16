@@ -28,7 +28,7 @@ function warmLanguage(lang: Lang, profileId: string) {
   const key = `${profileId}:${lang}`;
   if (warmed.has(key) || !navigator.onLine) return;
   warmed.add(key);
-  for (const kind of ['vocab', 'verbs', 'forms', 'reading'] as const) loadPack(kind, lang).catch(() => {});
+  for (const kind of ['vocab', 'verbs', 'forms', 'reading', 'phrases'] as const) loadPack(kind, lang).catch(() => {});
   loadExamples(lang).catch(() => {});
   import('@/lib/conjugation-client').then(m => m.getConjugationExercise({ lang })).catch(() => {});
   // Fetching through the service worker stores the latest copy for offline use.

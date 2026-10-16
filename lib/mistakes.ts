@@ -16,6 +16,9 @@ export const MISTAKE_KINDS: { id: MistakeKind; icon: string; label: string; labe
   { id: 'grammar', icon: '📘', label: 'Grammar', labelDe: 'Grammatik' },
   { id: 'sentence', icon: '✍️', label: 'Sentences', labelDe: 'Sätze' },
   { id: 'dictation', icon: '🎧', label: 'Dictation', labelDe: 'Diktat' },
+  { id: 'article', icon: '🔸', label: 'Articles', labelDe: 'Artikel' },
+  { id: 'number', icon: '🔢', label: 'Numbers', labelDe: 'Zahlen' },
+  { id: 'phrase', icon: '💬', label: 'Phrases', labelDe: 'Wendungen' },
 ];
 
 export function kindInfo(kind: MistakeKind) {
@@ -166,6 +169,65 @@ export function dictationMistake(o: { key: string; text: string; de: string; use
     prompt: o.de,
     answer: o.text,
     speak: o.text,
+    userAnswer: o.userAnswer,
+  };
+}
+
+export function articleMistake(o: {
+  key: string;        // normWord of the noun
+  noun: string;       // noun without its article
+  article: string;    // the correct article
+  options: string[];  // all articles offered
+  de: string;
+  userAnswer?: string;
+}): NewMistake {
+  return {
+    id: `article:${o.key}`,
+    kind: 'article',
+    prompt: `___ ${o.noun}`,
+    answer: o.article,
+    options: o.options,
+    hint: o.de,
+    speak: `${o.article}${o.article.endsWith("'") ? '' : ' '}${o.noun}`,
+    userAnswer: o.userAnswer,
+  };
+}
+
+export function numberMistake(o: {
+  key: string;        // kind + value, e.g. 'time:15:45'
+  prompt: string;     // what was shown ("15:45", "342", "12.03.")
+  answer: string;     // the expected answer (digits or words)
+  hint: string;       // the written form, for the solution line
+  speak: string;      // the spoken form in the target language
+  userAnswer?: string;
+}): NewMistake {
+  return {
+    id: `number:${o.key}`,
+    kind: 'number',
+    prompt: o.prompt,
+    answer: o.answer,
+    hint: o.hint,
+    speak: o.speak,
+    userAnswer: o.userAnswer,
+  };
+}
+
+export function phraseMistake(o: {
+  id: string;         // phrase id (lib/phrases)
+  de: string;         // the German phrase, asked
+  target: string;     // the expected phrase
+  alternatives?: string[];
+  situation: string;  // shown as context
+  userAnswer?: string;
+}): NewMistake {
+  return {
+    id: `phrase:${o.id}`,
+    kind: 'phrase',
+    prompt: o.de,
+    answer: o.target,
+    alternatives: o.alternatives,
+    hint: o.situation,
+    speak: o.target,
     userAnswer: o.userAnswer,
   };
 }

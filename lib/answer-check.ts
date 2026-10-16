@@ -97,3 +97,30 @@ export function checkClozeAnswer(value: string, answer: string, alternatives: st
   if (!v) return false;
   return [answer, ...alternatives].some(a => foldCloze(a) === v);
 }
+
+// ─── Set phrases (lib/phrases) ────────────────────────────────────────────────────
+
+// A whole phrase typed out: punctuation, capitals, accents, apostrophes and
+// spacing are all ignored, so "Come sta?" also accepts "come sta" and
+// "s'il vous plaît" also accepts "sil vous plait" or "s il vous plait". Grading
+// a long sentence has to be forgiving — the correct wording is shown anyway.
+export function foldPhrase(s: string): string {
+  return stripAccents(
+    s
+      .toLowerCase()
+      .replace(APOSTROPHES, '')
+      .replace(/[.,;:!?¡¿"„“”«»…–—-]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
+}
+
+export function checkPhraseAnswer(value: string, answer: string, alternatives: string[] = []): boolean {
+  const v = foldPhrase(value);
+  if (!v) return false;
+  const tight = v.replace(/\s/g, '');
+  return [answer, ...alternatives].some(a => {
+    const f = foldPhrase(a);
+    return f === v || f.replace(/\s/g, '') === tight;
+  });
+}

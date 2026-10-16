@@ -1,4 +1,4 @@
-import { BookOpen, SpellCheck, BookMarked, PenLine, Newspaper, Trophy, CircleHelp } from 'lucide-react';
+import { BookOpen, SpellCheck, BookMarked, PenLine, Newspaper, Trophy, CircleHelp, Zap, Hash, MessagesSquare } from 'lucide-react';
 
 // The app's sections, shared by the navigation, the "Practise" hub and the
 // profile page. Labels are [English, German].
@@ -33,6 +33,24 @@ export const PRACTICE = [
     label: ['Reading', 'Lesen'],
     hint: ['Short texts, tap any word', 'Kurze Texte, jedes Wort antippbar'],
     Icon: Newspaper,
+  },
+  {
+    href: '/redemittel',
+    label: ['Phrases', 'Redemittel'],
+    hint: ['What to say in real situations', 'Was man in echten Situationen sagt'],
+    Icon: MessagesSquare,
+  },
+  {
+    href: '/artikel',
+    label: ['Article blitz', 'Artikel-Blitz'],
+    hint: ['Gender of every noun, fast', 'Genus im Schnelldurchlauf'],
+    Icon: Zap,
+  },
+  {
+    href: '/zahlen',
+    label: ['Numbers & time', 'Zahlen & Uhrzeit'],
+    hint: ['Numbers, clock times, dates', 'Zahlen, Uhrzeiten, Datum'],
+    Icon: Hash,
   },
 ] as const;
 

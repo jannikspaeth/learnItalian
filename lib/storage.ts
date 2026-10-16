@@ -146,17 +146,17 @@ async function recordExerciseNow(
   const lastDay = stats.lastActivity ? new Date(stats.lastActivity).toDateString() : '';
   const yesterday = new Date(Date.now() - 86400000).toDateString();
 
-  // Per-day activity tally: every vocabulary flashcard (+1); every conjugated form
-  // or grammar item counts for half credit, repeats included.
-  // Drives the daily goal and the race.
+  // Per-day activity tally: every vocabulary flashcard and every number, time or
+  // date (+1); every conjugated form, grammar item or tapped article counts for
+  // half credit, repeats included. Drives the daily goal and the race.
   const dayKey = berlinToday();
   const daily = pruneDaily({ ...(stats.daily ?? {}) });
-  if (type === 'vocabulary') {
+  if (type === 'vocabulary' || type === 'numbers') {
     daily[dayKey] = (daily[dayKey] ?? 0) + total;
-  } else if (type === 'conjugation' || type === 'grammar') {
+  } else if (type === 'conjugation' || type === 'grammar' || type === 'article') {
     daily[dayKey] = (daily[dayKey] ?? 0) + Math.round(total / 2); // half credit per item
-  } else if (type === 'sentence' || type === 'reading') {
-    // 2 points per translated/dictated sentence or answered reading question
+  } else if (type === 'sentence' || type === 'reading' || type === 'phrase') {
+    // 2 points per translated/dictated sentence, reading question or set phrase
     daily[dayKey] = (daily[dayKey] ?? 0) + total * 2;
   }
 
@@ -329,7 +329,14 @@ export async function upsertGrammarAttempt(
 // ─── extras: mistakes, reading progress, daily rounds ───────────────────────────────
 
 function normalizeExtras(d: Partial<UserExtras> | null | undefined): UserExtras {
-  return { mistakes: d?.mistakes ?? [], reading: d?.reading ?? {}, rounds: d?.rounds ?? {} };
+  return {
+    mistakes: d?.mistakes ?? [],
+    reading: d?.reading ?? {},
+    rounds: d?.rounds ?? {},
+    articles: d?.articles,
+    numbers: d?.numbers,
+    phrases: d?.phrases ?? {},
+  };
 }
 
 // Tolerant read for display.
@@ -357,6 +364,31 @@ export function updateExtras(change: (e: UserExtras) => UserExtras | void): Prom
 export function recordMistakes(items: NewMistake[]): void {
   if (items.length === 0) return;
   updateExtras(e => ({ ...e, mistakes: addMistakes(e.mistakes, items) })).catch(() => {});
+}
+
+// A finished blitz round (articles, or numbers/times/dates): bumps the counter and
+// keeps the best score — more correct wins, same score and less time wins.
+export function recordBlitzRound(
+  kind: 'articles' | 'numbers',
+  correct: number,
+  total: number,
+  seconds: number,
+): Promise<UserExtras> {
+  return updateExtras(e => {
+    const prev = e[kind];
+    const better = !prev || correct > prev.best || (correct === prev.best && seconds < (prev.bestSeconds ?? Infinity));
+    return {
+      ...e,
+      [kind]: {
+        rounds: (prev?.rounds ?? 0) + 1,
+        best: better ? correct : prev.best,
+        bestSeconds: better ? Math.round(seconds) : prev.bestSeconds,
+        lastCorrect: correct,
+        lastTotal: total,
+        last: new Date().toISOString(),
+      },
+    };
+  });
 }
 
 // ─── the race (global standings) ───────────────────────────────────────────────
