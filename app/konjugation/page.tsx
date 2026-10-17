@@ -7,6 +7,8 @@ import { X, PartyPopper, SpellCheck, ChevronDown, TriangleAlert, Check } from 'l
 import Conjugation from '@/components/exercises/Conjugation';
 import { TENSES_BY_LANG, defaultTenses, TENSE_STORAGE_KEY, TENSE_VALIDATORS } from '@/lib/tenses';
 import { useLocalSetting } from '@/lib/use-local-setting';
+import { useVerbShort } from '@/lib/use-verb-short';
+import { hasCompoundTense, shortenExercise } from '@/lib/verb-parts';
 import { useLearner } from '@/lib/use-profile';
 import { usePack } from '@/lib/content';
 import { getConjugationExercise } from '@/lib/conjugation-client';
@@ -92,6 +94,7 @@ export default function KonjugationPage() {
   const [clozeLoading, setClozeLoading] = useState(false);
   // Ordered list of active sort keys; each is a tie-breaker for the previous one.
   const [tenseChoice, setTenseChoice] = useLocalSetting<string>(TENSE_STORAGE_KEY[lang], '', TENSE_VALIDATORS[lang]);
+  const [short, setShort] = useVerbShort();
   const [sorts, setSorts] = useState<{ key: VerbSort; dir: 'asc' | 'desc' }[]>([
     { key: 'recent', dir: 'desc' },
   ]);
@@ -135,6 +138,9 @@ export default function KonjugationPage() {
   const catalog = verbPack.verbs;
   const TENSES = TENSES_BY_LANG[lang];
   const tenses: string[] = tenseChoice ? tenseChoice.split(',') : defaultTenses(lang, beginner);
+  // With the short form on, the compound tense is asked as auxiliary + participle.
+  const shortLabels = { aux: t('Auxiliary', 'Hilfsverb'), participle: t('Participle', 'Partizip') };
+  const shown = exercise && short ? shortenExercise(lang, exercise, shortLabels) : exercise;
 
   function toggleTense(id: string) {
     const next = tenses.includes(id) ? tenses.filter(t => t !== id) : [...tenses, id];
@@ -308,8 +314,8 @@ export default function KonjugationPage() {
           {error && <div className="bg-red-50 rounded-xl p-3 text-sm text-red-700">{error}</div>}
           {exercise && !loading && (
             <Conjugation
-              key={exercise.verb}
-              exercise={exercise}
+              key={`${exercise.verb}-${short ? 'short' : 'full'}`}
+              exercise={shown!}
               lang={lang}
               onComplete={handleLearnComplete}
               continueLabel={t('Save & next verb', 'Speichern & nächstes Verb')}
@@ -350,6 +356,27 @@ export default function KonjugationPage() {
               );
             })}
           </div>
+          {hasCompoundTense(lang, tenses) && (
+            <label className="flex items-start gap-2.5 pt-1 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={short}
+                onChange={e => { setShort(e.target.checked); setPracticing(null); setExercise(null); }}
+                className="mt-0.5 w-4 h-4 accent-red-700"
+              />
+              <span className="text-xs text-gray-600 leading-snug">
+                <span className="font-semibold text-gray-800">
+                  {t('Compound tense: just the parts', 'Zusammengesetzte Zeit: nur die Bausteine')}
+                </span>
+                <span className="block text-gray-400">
+                  {t(
+                    'Asks the auxiliary and the participle once instead of all six persons.',
+                    'Fragt Hilfsverb und Partizip einmal ab statt aller sechs Personen.',
+                  )}
+                </span>
+              </span>
+            </label>
+          )}
         </div>
 
         {/* Stats */}
@@ -655,7 +682,8 @@ export default function KonjugationPage() {
                     )}
                     {exercise && !loading && (
                       <Conjugation
-                        exercise={exercise}
+                        key={short ? 'short' : 'full'}
+                        exercise={shown!}
                         lang={lang}
                         onComplete={handleReviewComplete}
                         continueLabel={t('Save & close', 'Speichern & schließen')}

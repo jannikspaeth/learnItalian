@@ -190,7 +190,12 @@ alter table grammar     enable row level security;
   condizionale, congiuntivo); irregulars live in `IRREGULAR` (or via `base` for prefixed verbs).
   A per-device tense picker chooses what to drill (default: present for A1, else pres/pp/imperf; `TENSE_STORAGE_KEY`
   in `lib/tenses.ts`). Verbs have review intervals (`lib/verb-review.ts`: level 1–6, 1/3/7/14/30/60 days, a
-  mistake resets to level 1; stored on the `ConjugationRecord`) and a "Review due verbs" button. Answer checking
+  mistake resets to level 1; stored on the `ConjugationRecord`) and a "Review due verbs" button.
+  A per-device checkbox under the tense picker asks the **compound tense as auxiliary + participle**
+  instead of all six persons (`lib/verb-parts.ts` splits a finished form, `lib/use-verb-short.ts` holds
+  the setting): it `passato_prossimo`, es `perfecto`, fr `passe_compose` — pt/br drill no compound tense,
+  so the box is hidden. The table component is untouched: the exercise is rewritten to two rows before it
+  reaches it, so checking, mistakes and the review schedule all keep working. Answer checking
   (`lib/conjugation-match.ts`) is **accent-insensitive** and accepts either ending of
   essere-participles written `andato/a` / `andati/e`. A **Sätze** tab (and part of the daily round)
   drills single forms as cloze sentences: verb-neutral frames in `lib/verb-cloze-templates.ts`

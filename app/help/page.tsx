@@ -220,6 +220,21 @@ export default function HelpPage() {
           </P>
         </Section>
 
+        <Section icon='scale' title={<Tx en="Compound tenses: just the parts" de="Zusammengesetzte Zeiten: nur die Bausteine" />}>
+          <P>
+            <Tx
+              en={<>Typing out a compound tense person by person (<em>ho capito, hai capito, ha capito …</em>) only ever asks two things: which auxiliary the verb takes and what its participle is. Tick <strong>Compound tense: just the parts</strong> under the tense picker on the Verbs page and the table asks exactly those two — <em>avere</em> and <em>capito</em> — instead of six forms. The auxiliary is wanted in the infinitive (avere / essere, haber, avoir / être), the participle as it stands, agreement endings included (<em>andato/a</em>, <em>allé(e)</em>).</>}
+              de={<>Eine zusammengesetzte Zeit Person für Person zu tippen (<em>ho capito, hai capito, ha capito …</em>) fragt immer nur zwei Dinge ab: welches Hilfsverb das Verb nimmt und wie sein Partizip aussieht. Setz unter der Zeitformen-Auswahl auf der Verben-Seite den Haken bei <strong>Zusammengesetzte Zeit: nur die Bausteine</strong> – dann fragt die Tabelle genau diese zwei ab, <em>avere</em> und <em>capito</em>, statt sechs Formen. Das Hilfsverb im Infinitiv (avere / essere, haber, avoir / être), das Partizip so wie es dasteht, mit Angleichung (<em>andato/a</em>, <em>allé(e)</em>).</>}
+            />
+          </P>
+          <P>
+            <Tx
+              en={<>Italian, Spanish and French have such a tense (passato prossimo, pretérito perfecto, passé composé); Portuguese doesn&apos;t, so the box doesn&apos;t appear there. The other tenses are always asked in full, and so are the sentence drills.</>}
+              de={<>Italienisch, Spanisch und Französisch haben so eine Zeit (passato prossimo, pretérito perfecto, passé composé); Portugiesisch nicht, dort erscheint der Haken deshalb nicht. Alle anderen Zeitformen werden weiter vollständig abgefragt, die Satzübungen sowieso.</>}
+            />
+          </P>
+        </Section>
+
         <Section icon='bookmark' title={<Tx en="Grammar" de="Grammatik" />}>
           <P>
             <Tx
