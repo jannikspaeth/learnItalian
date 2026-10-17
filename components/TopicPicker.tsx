@@ -45,7 +45,7 @@ export default function TopicPicker({
         }`}
       >
         <div className="flex items-center gap-2">
-          <span className="text-base shrink-0">{icon}</span>
+          <Icon name={icon} className="w-4 h-4 shrink-0 text-gray-500" />
           <span className="text-sm font-medium text-gray-800 truncate">{label}</span>
         </div>
         <div className="mt-1.5 flex items-center gap-2">

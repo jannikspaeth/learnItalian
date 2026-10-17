@@ -1022,8 +1022,8 @@ export default function VokabelnPage() {
                             className="w-full flex items-center gap-2 px-1 py-1 text-left"
                           >
                             <ChevronRight className={`w-3.5 h-3.5 text-gray-400 shrink-0 transition-transform ${expanded ? 'rotate-90' : ''}`} />
+                            {section.icon && <Icon name={section.icon} className="w-4 h-4 shrink-0 text-gray-400" />}
                             <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${section.badgeClass}`}>
-                              {section.icon && <Icon name={section.icon} className="w-4 h-4 inline mr-1.5 -mt-0.5 text-gray-400" />}
                               {section.label}
                             </span>
                             <span className="text-xs text-gray-400 tabular-nums">{section.entries.length}</span>
