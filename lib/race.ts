@@ -111,13 +111,6 @@ export function monthWinners(
   return winners;
 }
 
-// Render an accumulated star count behind a name: '' for 0, repeated ⭐ up to 5,
-// then a compact '⭐×N'. Leading space so it can be appended directly after a name.
-export function formatStars(n: number): string {
-  if (!n || n <= 0) return '';
-  return n <= 5 ? ' ' + '⭐'.repeat(n) : ` ⭐×${n}`;
-}
-
 // Award stars for any finished month not yet counted, mutating state. Idempotent
 // via state.settledMonths. On the first run under the monthly model (settledMonths
 // undefined) it seeds the finished months WITHOUT awarding, so months that ended

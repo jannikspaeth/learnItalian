@@ -2,6 +2,7 @@
 
 import { Badge, BADGE_CATEGORIES, CATEGORY_DE, badgeText, visibleBadges } from '@/lib/achievements';
 import { useUiLang } from '@/lib/ui-lang';
+import Icon from '@/components/Icon';
 
 function BadgeTile({ b, isNew }: { b: Badge; isNew: boolean }) {
   const [uiLang] = useUiLang();
@@ -24,7 +25,7 @@ function BadgeTile({ b, isNew }: { b: Badge; isNew: boolean }) {
         </span>
       )}
       <div className="flex items-center gap-2">
-        <span className={`text-xl ${b.unlocked ? '' : 'grayscale opacity-40'}`}>{b.icon}</span>
+        <Icon name={b.icon} className={`w-5 h-5 shrink-0 ${b.unlocked ? 'text-amber-600' : 'text-gray-300'}`} />
         <div className="min-w-0">
           <p className={`text-xs font-semibold truncate ${b.unlocked ? 'text-gray-900' : 'text-gray-500'}`}>
             {text.label}

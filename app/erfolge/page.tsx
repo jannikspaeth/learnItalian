@@ -86,8 +86,8 @@ export default function ErfolgePage() {
       setNewIds(new Set(fresh));
       setCelebration(
         fresh.length === 1
-          ? t('Achievement unlocked! 🏆', 'Erfolg freigeschaltet! 🏆')
-          : t(`${fresh.length} achievements unlocked! 🏆`, `${fresh.length} Erfolge freigeschaltet! 🏆`),
+          ? t('Achievement unlocked!', 'Erfolg freigeschaltet!')
+          : t(`${fresh.length} achievements unlocked!`, `${fresh.length} Erfolge freigeschaltet!`),
       );
     }
   }, [loaded, profile, lang, vocab, stats, race, sentencesDone, verbsDone, t]);

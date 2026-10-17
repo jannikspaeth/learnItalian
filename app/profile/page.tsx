@@ -7,7 +7,7 @@ import { MAX_NAME_LENGTH, Profile, levelFor, mergeProfiles } from '@/lib/profile
 import { LANGUAGES } from '@/lib/lang';
 import { useProfile } from '@/lib/use-profile';
 import { useStars } from '@/lib/use-stars';
-import { formatStars } from '@/lib/race';
+import Stars from '@/components/Stars';
 import { createProfile, deleteProfile, getProfiles } from '@/lib/storage';
 import { useT } from '@/lib/ui-lang';
 import UiLangToggle from '@/components/UiLangToggle';
@@ -91,7 +91,7 @@ export default function ProfilePage() {
           {profiles.map(p => {
             const info = (
               <>
-                <p className="font-bold text-gray-900 text-lg">{p.name + formatStars(stars[p.id] ?? 0)}</p>
+                <p className="font-bold text-gray-900 text-lg"><>{p.name}<Stars n={stars[p.id] ?? 0} /></></p>
                 <p className="text-sm text-gray-400 mt-0.5">
                   {LANGUAGES.filter(l => levelFor(p, l.id))
                     .map(l => `${l.flag} ${levelFor(p, l.id)}`)

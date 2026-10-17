@@ -7,9 +7,10 @@ import { getGrammarRecords, recordExercise } from '@/lib/storage';
 import { GrammarRecord } from '@/lib/types';
 import { useLearner } from '@/lib/use-profile';
 import { langInfo } from '@/lib/lang';
-import { X, BookMarked } from 'lucide-react';
+import { X, BookMarked, ChevronRight } from 'lucide-react';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
 import SpeakButton from '@/components/SpeakButton';
+import Icon from '@/components/Icon';
 import { useT } from '@/lib/ui-lang';
 
 type Tab = 'exercises' | 'lessons';
@@ -82,13 +83,13 @@ export default function GrammarPage() {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="font-semibold text-gray-900 flex items-center gap-2">
-              <span>{tp.icon}</span>
+              <Icon name={tp.icon} className="w-4 h-4 text-red-700" />
               <span>{tp.title}</span>
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
               {tp.items.length} {t('sentences', 'Sätze')}
               {rec && ` · ${rec.totalAttempts}× ${t('practised', 'geübt')}`}
-              {rec?.mastered && ` · ✓ ${t('mastered', 'gemeistert')}`}
+              {rec?.mastered && ` · ${t('mastered', 'gemeistert')}`}
             </p>
           </div>
           <button
@@ -162,15 +163,15 @@ export default function GrammarPage() {
           className="w-full flex items-center justify-between gap-3 p-5 text-left hover:bg-gray-50 transition-colors"
         >
           <span className="flex items-center gap-2.5 min-w-0">
-            <span className="text-xl shrink-0">{lesson.icon}</span>
+            <Icon name={lesson.icon} className="w-5 h-5 shrink-0 text-red-700" />
             <span className="min-w-0">
               <span className="block font-bold text-gray-900 text-base">{lesson.title}</span>
               <span className="block text-xs text-gray-400 mt-0.5">{lesson.intro}</span>
             </span>
           </span>
-          <span className={`text-gray-300 transition-transform shrink-0 ${isOpen ? 'rotate-90' : ''}`}>
-            ▶
-          </span>
+          <ChevronRight
+            className={`w-4 h-4 text-gray-300 transition-transform shrink-0 ${isOpen ? 'rotate-90' : ''}`}
+          />
         </button>
 
         {isOpen && (

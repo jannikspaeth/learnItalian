@@ -21,6 +21,7 @@ import {
 import type { WritingProgress } from '@/lib/types';
 import { LetterCard, OrderCard, TransformCard } from '@/components/practice/WritingCards';
 import SpeakButton from '@/components/SpeakButton';
+import Icon from '@/components/Icon';
 
 type Tab = 'order' | 'transform' | 'letter' | 'free';
 type Rating = 'good' | 'partly' | 'again';
@@ -238,7 +239,10 @@ export default function SchreibenPage() {
         <div className="max-w-xl mx-auto p-5 space-y-5">
           <div className="flex items-center gap-3">{stop}<p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('Free writing', 'Frei schreiben')}</p></div>
           <div>
-            <h1 className="text-3xl text-gray-900">{task.icon} {task.title}</h1>
+            <h1 className="text-3xl text-gray-900 flex items-center gap-2.5">
+              <Icon name={task.icon} className="w-7 h-7 text-red-700" />
+              {task.title}
+            </h1>
             <p className="text-gray-600 text-sm mt-1">{task.task}</p>
           </div>
 
@@ -397,7 +401,7 @@ export default function SchreibenPage() {
                 onClick={() => setLetter(l)}
                 className="w-full flex items-center gap-4 bg-white border border-gray-200 rounded-2xl p-4 text-left hover:border-red-200 hover:bg-red-50/40 transition-colors"
               >
-                <span className="text-2xl shrink-0">{l.icon}</span>
+                <Icon name={l.icon} className="w-6 h-6 shrink-0 text-red-700" />
                 <span className="flex-1 min-w-0">
                   <span className="block font-display text-lg text-gray-900">{l.title}</span>
                   <span className="block text-sm text-gray-500">{l.intro}</span>
@@ -425,7 +429,7 @@ export default function SchreibenPage() {
                   onClick={() => { setTask(task); setText(''); setRevealed(false); }}
                   className="w-full flex items-center gap-4 bg-white border border-gray-200 rounded-2xl p-4 text-left hover:border-red-200 hover:bg-red-50/40 transition-colors"
                 >
-                  <span className="text-2xl shrink-0">{task.icon}</span>
+                  <Icon name={task.icon} className="w-6 h-6 shrink-0 text-red-700" />
                   <span className="flex-1 min-w-0">
                     <span className="block font-display text-lg text-gray-900">{task.title}</span>
                     <span className="block text-sm text-gray-500">{task.task}</span>

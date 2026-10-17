@@ -4,6 +4,7 @@
 // level. Keep each lesson tight: a one-line intro, a few sections, and concrete
 // target→de examples. Exercise sets link here via `lessonId`.
 
+import type { IconName } from './icon-names';
 export interface GrammarExample {
   target: string; // sentence in the target language
   de: string;
@@ -17,7 +18,7 @@ export interface GrammarSection {
 
 export interface GrammarLesson {
   id: string;
-  icon: string;
+  icon: IconName;
   title: string;
   level?: 'A1' | 'A2' | 'B1'; // lessons without a level are listed as one group
   intro: string;
@@ -27,7 +28,7 @@ export interface GrammarLesson {
 export const GRAMMAR_LESSONS: GrammarLesson[] = [
   {
     id: 'aussprache',
-    icon: '🗣️',
+    icon: 'speech',
     title: 'Aussprache & Alphabet',
     level: 'A1',
     intro: 'Gute Nachricht: Italienisch wird fast so gelesen, wie es geschrieben wird.',
@@ -81,7 +82,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronomen',
-    icon: '👤',
+    icon: 'user',
     title: 'Personalpronomen (ich, du, er …)',
     level: 'A1',
     intro: 'Diese kleinen Wörter brauchst du, um über Personen zu sprechen.',
@@ -119,7 +120,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'artikel',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Nomen & Artikel (il / la)',
     level: 'A1',
     intro: 'Jedes Nomen ist männlich oder weiblich – lerne den Artikel immer mit.',
@@ -171,7 +172,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'essere-avere',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'Essere & Avere (sein & haben)',
     level: 'A1',
     intro: 'Die zwei wichtigsten Verben – beide unregelmäßig, beide überall.',
@@ -206,7 +207,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'praesens',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Regelmäßige Verben im Präsens',
     level: 'A1',
     intro: 'Die meisten Verben enden auf -are, -ere oder -ire. Du tauschst einfach die Endung.',
@@ -247,7 +248,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'zahlen',
-    icon: '🔢',
+    icon: 'hash',
     title: 'Zahlen, Uhrzeit & Datum',
     level: 'A1',
     intro: 'Zählen, die Uhrzeit sagen und ein Datum nennen – mit ein paar einfachen Mustern.',
@@ -313,7 +314,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'es-gibt',
-    icon: '👉',
+    icon: 'pointer',
     title: "c'è / ci sono, questo & quello",
     level: 'A1',
     intro: 'Sagen, was es gibt – und auf Dinge zeigen.',
@@ -355,7 +356,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'adjektive',
-    icon: '🎨',
+    icon: 'palette',
     title: 'Adjektive',
     level: 'A1',
     intro: 'Adjektive passen sich dem Nomen an – und stehen meistens dahinter.',
@@ -409,7 +410,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'possessiv',
-    icon: '🏠',
+    icon: 'home',
     title: 'Possessivpronomen (mein, dein …)',
     level: 'A1',
     intro: 'Im Italienischen steht vor „mein“ meistens ein Artikel – il mio libro.',
@@ -453,7 +454,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'fragen',
-    icon: '❓',
+    icon: 'question',
     title: 'Fragen & Verneinung',
     level: 'A1',
     intro: 'Fragen stellen ist leicht: gleiche Wortstellung, nur die Stimme geht nach oben.',
@@ -504,7 +505,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'praepositionen',
-    icon: '📍',
+    icon: 'pin',
     title: 'Präpositionen (a, di, in, da …)',
     level: 'A1',
     intro: 'Kleine Wörter, große Wirkung – und mit dem Artikel verschmelzen sie.',
@@ -560,7 +561,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'unregelmaessig',
-    icon: '⚡',
+    icon: 'zap',
     title: 'Wichtige unregelmäßige Verben',
     level: 'A1',
     intro: 'Eine Handvoll Verben kommt ständig vor – und tanzt aus der Reihe.',
@@ -612,7 +613,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'piacere',
-    icon: '❤️',
+    icon: 'heart',
     title: 'Mögen: mi piace',
     level: 'A1',
     intro: '„Mir gefällt …“ – so drückt man im Italienischen aus, was man mag.',
@@ -653,7 +654,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'reflexiv',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Reflexive Verben',
     level: 'A1',
     intro: 'Verben mit „sich“ – im Italienischen deutlich häufiger als im Deutschen.',
@@ -693,7 +694,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'passato-prossimo',
-    icon: '⏪',
+    icon: 'rewind',
     title: 'Passato prossimo (Perfekt)',
     level: 'A2',
     intro: 'Die wichtigste Vergangenheitsform – gebildet wie das deutsche Perfekt.',
@@ -745,7 +746,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imperfetto',
-    icon: '🎞️',
+    icon: 'film',
     title: 'Imperfetto – und wann welche Vergangenheit?',
     level: 'A2',
     intro: 'Das Imperfetto erzählt, wie es war. Das Passato prossimo sagt, was passiert ist.',
@@ -791,7 +792,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'futuro',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Futuro semplice',
     level: 'A2',
     intro: 'Für Pläne, Versprechen und Vermutungen.',
@@ -830,7 +831,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'objektpronomen',
-    icon: '🎯',
+    icon: 'target',
     title: 'Objektpronomen (lo, la, gli, le …)',
     level: 'A2',
     intro: 'Statt ein Nomen zu wiederholen, nimmt man ein kurzes Pronomen – und stellt es vor das Verb.',
@@ -881,7 +882,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imperativ',
-    icon: '📢',
+    icon: 'megaphone',
     title: 'Imperativ (Befehle & Bitten)',
     level: 'A2',
     intro: 'Aufforderungen, Anleitungen, Rezepte, Wegbeschreibungen.',
@@ -930,7 +931,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'vergleiche',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'Vergleiche & Superlativ',
     level: 'A2',
     intro: 'größer als, so groß wie, am größten – und „sehr“ mit -issimo.',
@@ -974,7 +975,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'gerundio',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'stare + Gerundium (gerade tun)',
     level: 'A2',
     intro: 'Die Verlaufsform: Was passiert genau jetzt?',
@@ -1003,7 +1004,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'condizionale',
-    icon: '🙏',
+    icon: 'handshake',
     title: 'Condizionale (würde, hätte, könnte)',
     level: 'B1',
     intro: 'Höflich bitten, Wünsche äußern, Ratschläge geben.',
@@ -1043,7 +1044,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'congiuntivo',
-    icon: '💭',
+    icon: 'thought',
     title: 'Congiuntivo presente',
     level: 'B1',
     intro: 'Die Möglichkeitsform für Meinung, Wunsch, Gefühl und Zweifel.',
@@ -1091,7 +1092,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'ci-ne',
-    icon: '🧩',
+    icon: 'puzzle',
     title: 'Die Pronomen ci und ne',
     level: 'B1',
     intro: 'Zwei kleine Wörter, die ganze Satzteile ersetzen.',
@@ -1131,7 +1132,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'relativ',
-    icon: '🔗',
+    icon: 'link',
     title: 'Relativpronomen (che, cui, chi)',
     level: 'B1',
     intro: 'Sätze verbinden: der Mann, der … – die Stadt, in der …',
@@ -1170,7 +1171,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronomi-combinati',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Doppelte Pronomen (me lo, glielo)',
     level: 'B1',
     intro: 'Wem? und was? in einem Rutsch: Ich gebe es dir → Te lo do.',
@@ -1210,7 +1211,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'trapassato',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Trapassato prossimo (Plusquamperfekt)',
     level: 'B1',
     intro: 'Was schon vorher passiert war.',
@@ -1238,7 +1239,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'bedingungssaetze',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Bedingungssätze mit se',
     level: 'B1',
     intro: 'Wenn … dann: real, möglich oder nur gedacht.',
@@ -1276,7 +1277,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'si',
-    icon: '👥',
+    icon: 'users',
     title: 'si impersonale & Passiv',
     level: 'B1',
     intro: '„Man“ und „wird gemacht“ – zwei Wege, ohne handelnde Person zu sprechen.',

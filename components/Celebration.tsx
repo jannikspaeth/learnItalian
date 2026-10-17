@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Award, Flame, PartyPopper, Sparkles, Star, Trophy } from 'lucide-react';
 
-const EMOJIS = ['🎉', '✨', '🎊', '⭐', '🔥', '🏅'];
+const SHAPES = [PartyPopper, Sparkles, Star, Flame, Trophy, Award];
+const COLORS = ['text-red-600', 'text-amber-500', 'text-green-600', 'text-amber-400', 'text-red-700', 'text-green-700'];
 
-// A self-dismissing celebration toast with a lightweight emoji burst (no deps).
+// A self-dismissing celebration toast with a lightweight burst of icons (no deps).
 export default function Celebration({
   message,
   onDone,
@@ -33,13 +35,14 @@ export default function Celebration({
         const left = Math.random() * 100;
         const delay = Math.random() * 0.5;
         const dur = 1.6 + Math.random() * 0.9;
+        const Shape = SHAPES[i % SHAPES.length];
         return (
           <span
             key={i}
-            className="absolute text-xl select-none"
+            className={`absolute select-none ${COLORS[i % COLORS.length]}`}
             style={{ left: `${left}%`, top: 0, animation: `confettiFall ${dur}s ease-in ${delay}s forwards` }}
           >
-            {EMOJIS[i % EMOJIS.length]}
+            <Shape className="w-5 h-5" aria-hidden />
           </span>
         );
       })}

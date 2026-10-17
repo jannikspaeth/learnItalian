@@ -53,7 +53,7 @@ export const IT_WRITING: WritingPack = {
   letters: [
     {
       id: 'l-01',
-      icon: '🏡',
+      icon: 'home',
       title: 'E-Mail an die Gastfamilie',
       intro: 'Du wohnst nächste Woche bei einer Familie in Bologna und schreibst kurz vor der Ankunft.',
       text: `___ famiglia Rossi,
@@ -86,7 +86,7 @@ Jannik`,
     },
     {
       id: 'l-02',
-      icon: '📱',
+      icon: 'smartphone',
       title: 'Nachricht an einen Freund',
       intro: 'Ihr wolltet euch heute Abend treffen, aber du schaffst es nicht und willst verschieben.',
       text: `Ciao Luca,

@@ -21,6 +21,7 @@ import {
 import type { PhraseRecord } from '@/lib/types';
 import TypeCard from '@/components/practice/TypeCard';
 import SpeakButton from '@/components/SpeakButton';
+import Icon from '@/components/Icon';
 
 type Tab = 'practise' | 'all';
 
@@ -263,7 +264,7 @@ export default function RedemittelPage() {
                 const p = situationProgress(s, records);
                 return (
                   <div key={s.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-3">
-                    <span className="text-xl shrink-0">{s.icon}</span>
+                    <Icon name={s.icon} className="w-5 h-5 shrink-0 text-red-700" />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 text-sm">{t(s.label[0], s.label[1])}</p>
                       <div className="flex items-center gap-2 mt-1.5">
@@ -299,7 +300,7 @@ export default function RedemittelPage() {
                     className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-gray-50 transition-colors"
                   >
                     <span className="flex items-center gap-2.5 min-w-0">
-                      <span className="text-xl shrink-0">{s.icon}</span>
+                      <Icon name={s.icon} className="w-5 h-5 shrink-0 text-red-700" />
                       <span className="min-w-0">
                         <span className="block font-bold text-gray-900 text-base">{t(s.label[0], s.label[1])}</span>
                         <span className="block text-xs text-gray-400 mt-0.5 tabular-nums">

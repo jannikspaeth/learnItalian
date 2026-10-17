@@ -6,6 +6,7 @@
 // Word-order puzzle: the chips are the words of `answer`, shuffled. `alt` lists
 // other valid orders — each one has to use exactly the same words (checked by
 // scripts/check-writing.mjs), otherwise it could never be built from the chips.
+import type { IconName } from '../icon-names';
 export interface OrderItem {
   id: string;
   de: string;       // the German sentence, as the cue
@@ -31,7 +32,7 @@ export interface TransformItem {
 // order); the words of all gaps plus `extra` make up the word bank.
 export interface LetterTask {
   id: string;
-  icon: string;
+  icon: IconName;
   title: string;    // German
   intro: string;    // German: who writes to whom, and why
   text: string;

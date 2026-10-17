@@ -33,7 +33,7 @@ import { chosenTenses } from '@/lib/tenses';
 import { getConjugationExercise } from '@/lib/conjugation-client';
 import { TOPICS_BY_LANG } from '@/lib/grammar-by-lang';
 import { berlinToday, DAILY_GOAL } from '@/lib/race';
-import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw, X, PartyPopper } from 'lucide-react';
+import { ArrowRight, Flame, BookOpen, SpellCheck, BookMarked, PenLine, Headphones, Newspaper, RotateCcw, X, PartyPopper, TriangleAlert } from 'lucide-react';
 import { checkWordAnswer, checkClozeAnswer, checkPhraseAnswer } from '@/lib/answer-check';
 import { conjugationMatches } from '@/lib/conjugation-match';
 import { Confidence, VOCAB_KNOWN_LEVEL, VOCAB_INTERVALS, computeNewLevel, nextReviewDate } from '@/lib/srs';
@@ -66,6 +66,7 @@ import ChoiceCard from '@/components/practice/ChoiceCard';
 import SelfCard from '@/components/practice/SelfCard';
 import DictationCard from '@/components/practice/DictationCard';
 import SpeakButton from '@/components/SpeakButton';
+import Icon from '@/components/Icon';
 import { useT, useUiLang, tenseName } from '@/lib/ui-lang';
 
 type Mode = 'home' | 'round' | 'mistakes' | 'list';
@@ -607,7 +608,7 @@ export default function HeutePage() {
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">⚠ {error}</div>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"><TriangleAlert className="w-4 h-4 inline -mt-0.5 mr-1" />{error}</div>
         )}
 
         {active && !finished && steps[idx] && (
@@ -796,7 +797,9 @@ export default function HeutePage() {
             </div>
             {mistakes.map(m => (
               <div key={m.id} className="bg-white rounded-xl border border-gray-100 p-3 flex items-start gap-3">
-                <span className="text-lg shrink-0" title={t(kindInfo(m.kind).label, kindInfo(m.kind).labelDe)}>{kindInfo(m.kind).icon}</span>
+                <span className="shrink-0 text-gray-400" title={t(kindInfo(m.kind).label, kindInfo(m.kind).labelDe)}>
+                  <Icon name={kindInfo(m.kind).icon} className="w-4 h-4" />
+                </span>
                 <div className="min-w-0 flex-1 text-sm">
                   <p className="text-gray-700">
                     {m.kind === 'verb' && <span className="text-gray-400">{tenseName(m.hint ?? '', uiLang)} · </span>}
@@ -821,7 +824,7 @@ export default function HeutePage() {
                   title={t('Remove', 'Entfernen')}
                   className="shrink-0 w-7 h-7 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600 transition-colors"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             ))}

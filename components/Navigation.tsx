@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sun, GraduationCap, Flag, User } from 'lucide-react';
+import { Sun, GraduationCap, Flag, User, Globe } from 'lucide-react';
 import { useProfile } from '@/lib/use-profile';
 import { useStars } from '@/lib/use-stars';
-import { formatStars } from '@/lib/race';
+import Stars from '@/components/Stars';
 import { langInfo } from '@/lib/lang';
 import { useT } from '@/lib/ui-lang';
 import UiLangToggle from '@/components/UiLangToggle';
@@ -25,7 +25,6 @@ export default function Navigation() {
   const { profile, lang } = useProfile();
   const info = lang ? langInfo(lang) : null;
   const stars = useStars();
-  const myStars = profile ? formatStars(stars[profile.id] ?? 0) : '';
   const t = useT();
   const langName = info ? t(info.name, info.nameDe) : '…';
   const on = (href: string) => path?.startsWith(href) ?? false;
@@ -49,10 +48,10 @@ export default function Navigation() {
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-200 z-50">
         <div className="p-5 border-b border-gray-200">
           <Link href="/sprache" title={t('Switch language', 'Sprache wechseln')} className="flex items-center gap-2.5">
-            <span className="text-2xl">{info?.flag ?? '🌍'}</span>
+            <span className="text-2xl">{info?.flag ?? <Globe className="w-6 h-6 text-gray-400" />}</span>
             <div>
               <p className="font-display text-base text-gray-900 leading-none">
-                {profile ? profile.name + myStars : t('Language Learning', 'Sprachen lernen')}
+                {profile ? <>{profile.name}<Stars n={stars[profile.id] ?? 0} /></> : t('Language Learning', 'Sprachen lernen')}
               </p>
               <p className="text-xs text-gray-400 mt-1">{t('German', 'Deutsch')} → {langName}</p>
             </div>

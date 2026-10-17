@@ -5,6 +5,7 @@
 // rules and examples are German (the learner's L1). `lessonId` links to the
 // matching Grundlagen lesson in lib/grammar-lessons.ts.
 
+import type { IconName } from './icon-names';
 export type GrammarLevel = 'A1' | 'A2' | 'B1';
 export const GRAMMAR_LEVELS: { id: GrammarLevel; label: string }[] = [
   { id: 'A1', label: 'A1 · Einstieg' },
@@ -23,7 +24,7 @@ export interface GrammarItem {
 
 export interface GrammarTopic {
   id: string;
-  icon: string;
+  icon: IconName;
   title: string;
   level: GrammarLevel;
   lessonId?: string;
@@ -49,7 +50,7 @@ const INDEF = ['un', 'uno', 'una', "un'"];
 export const GRAMMAR_TOPICS: GrammarTopic[] = [
   {
     id: 'articoli-determinativi',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Bestimmte Artikel (il, lo, la …)',
     level: 'A1',
     lessonId: 'artikel',
@@ -84,7 +85,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'articoli-indeterminativi',
-    icon: '1️⃣',
+    icon: 'hash',
     title: 'Unbestimmte Artikel (un, uno, una, un\')',
     level: 'A1',
     lessonId: 'artikel',
@@ -117,7 +118,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'plurale',
-    icon: '👯',
+    icon: 'users',
     title: 'Mehrzahl der Nomen',
     level: 'A1',
     lessonId: 'artikel',
@@ -154,7 +155,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'essere-avere',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'essere oder avere',
     level: 'A1',
     lessonId: 'essere-avere',
@@ -189,7 +190,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'presente',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Präsens der regelmäßigen Verben',
     level: 'A1',
     lessonId: 'praesens',
@@ -223,7 +224,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'preposizioni-articolate',
-    icon: '📍',
+    icon: 'pin',
     title: 'Präpositionen mit Artikel (al, del, nella …)',
     level: 'A1',
     lessonId: 'praepositionen',
@@ -257,7 +258,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'possessivi',
-    icon: '🫵',
+    icon: 'pointer',
     title: 'Possessivpronomen (mio, tuo, suo …)',
     level: 'A1',
     lessonId: 'possessiv',
@@ -291,7 +292,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'domande',
-    icon: '❓',
+    icon: 'question',
     title: 'Fragewörter',
     level: 'A1',
     lessonId: 'fragen',
@@ -325,7 +326,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'negazione',
-    icon: '🚫',
+    icon: 'ban',
     title: 'Verneinung (non, mai, niente …)',
     level: 'A1',
     lessonId: 'fragen',
@@ -361,7 +362,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   // ── A1 (Fortsetzung) ─────────────────────────────────────────────────────
   {
     id: 'aggettivi',
-    icon: '✨',
+    icon: 'sparkles',
     title: 'Adjektive: Angleichung',
     level: 'A1',
     lessonId: 'adjektive',
@@ -397,7 +398,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'ce-ci-sono',
-    icon: '📦',
+    icon: 'box',
     title: "c'è / ci sono (es gibt)",
     level: 'A1',
     lessonId: 'es-gibt',
@@ -429,7 +430,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'piacere',
-    icon: '❤️',
+    icon: 'heart',
     title: 'mi piace / mi piacciono',
     level: 'A1',
     lessonId: 'piacere',
@@ -463,7 +464,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'riflessivi',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Reflexive Verben',
     level: 'A1',
     lessonId: 'reflexiv',
@@ -497,7 +498,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'verbi-irregolari',
-    icon: '⚡',
+    icon: 'zap',
     title: 'Unregelmäßige Verben im Präsens',
     level: 'A1',
     lessonId: 'unregelmaessig',
@@ -534,7 +535,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'dimostrativi',
-    icon: '👉',
+    icon: 'pointer',
     title: 'questo / quello',
     level: 'A1',
     lessonId: 'es-gibt',
@@ -569,7 +570,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   // ── A2 ───────────────────────────────────────────────────────────────────
   {
     id: 'passato-prossimo',
-    icon: '⏪',
+    icon: 'rewind',
     title: 'Passato prossimo (essere oder avere)',
     level: 'A2',
     lessonId: 'passato-prossimo',
@@ -605,7 +606,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'preposizioni-semplici',
-    icon: '🧭',
+    icon: 'compass',
     title: 'Präpositionen: a, in, da, di, per, tra',
     level: 'A2',
     lessonId: 'praepositionen',
@@ -641,7 +642,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperfetto',
-    icon: '🕰️',
+    icon: 'clock',
     title: 'Imperfetto',
     level: 'A2',
     lessonId: 'imperfetto',
@@ -675,7 +676,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperfetto-passato',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'Imperfetto oder passato prossimo?',
     level: 'A2',
     lessonId: 'imperfetto',
@@ -710,7 +711,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'futuro',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Futuro semplice',
     level: 'A2',
     lessonId: 'futuro',
@@ -745,7 +746,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronomi-diretti',
-    icon: '🎯',
+    icon: 'target',
     title: 'Direkte Objektpronomen (lo, la, li, le)',
     level: 'A2',
     lessonId: 'objektpronomen',
@@ -781,7 +782,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronomi-indiretti',
-    icon: '📨',
+    icon: 'mail',
     title: 'Indirekte Objektpronomen (gli, le …)',
     level: 'A2',
     lessonId: 'objektpronomen',
@@ -816,7 +817,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'comparativi',
-    icon: '📊',
+    icon: 'chart',
     title: 'Vergleich & Superlativ',
     level: 'A2',
     lessonId: 'vergleiche',
@@ -852,7 +853,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperativo',
-    icon: '📣',
+    icon: 'megaphone',
     title: 'Imperativ',
     level: 'A2',
     lessonId: 'imperativ',
@@ -888,7 +889,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'stare-gerundio',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'stare + Gerundium (gerade tun)',
     level: 'A2',
     lessonId: 'gerundio',
@@ -923,7 +924,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   // ── B1 ───────────────────────────────────────────────────────────────────
   {
     id: 'condizionale',
-    icon: '🤔',
+    icon: 'brain',
     title: 'Condizionale presente',
     level: 'B1',
     lessonId: 'condizionale',
@@ -958,7 +959,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'congiuntivo',
-    icon: '💭',
+    icon: 'thought',
     title: 'Congiuntivo presente',
     level: 'B1',
     lessonId: 'congiuntivo',
@@ -994,7 +995,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'congiuntivo-indicativo',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Congiuntivo oder Indikativ?',
     level: 'B1',
     lessonId: 'congiuntivo',
@@ -1028,7 +1029,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronomi-combinati',
-    icon: '🔗',
+    icon: 'link',
     title: 'Kombinierte Pronomen (me lo, glielo …)',
     level: 'B1',
     lessonId: 'pronomi-combinati',
@@ -1062,7 +1063,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'ci-ne',
-    icon: '📌',
+    icon: 'pin',
     title: 'Die Pronomen ci und ne',
     level: 'B1',
     lessonId: 'ci-ne',
@@ -1098,7 +1099,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'relativi',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Relativpronomen (che, cui, chi)',
     level: 'B1',
     lessonId: 'relativ',
@@ -1133,7 +1134,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'trapassato',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Trapassato prossimo (Plusquamperfekt)',
     level: 'B1',
     lessonId: 'trapassato',
@@ -1167,7 +1168,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'periodo-ipotetico',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Bedingungssätze mit se',
     level: 'B1',
     lessonId: 'bedingungssaetze',
@@ -1203,7 +1204,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'si-passivo',
-    icon: '🏛️',
+    icon: 'landmark',
     title: 'si impersonale & Passiv',
     level: 'B1',
     lessonId: 'si',

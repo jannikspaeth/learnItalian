@@ -3,9 +3,11 @@
 // (a single metric) so the UI can reveal the next tier only once the previous one
 // is reached. Numeric tiers expose progress toward their threshold.
 
+import type { IconName } from './icon-names';
+
 export interface Badge {
   id: string;
-  icon: string;
+  icon: IconName;
   label: string;
   desc: string;
   category: string;
@@ -30,14 +32,14 @@ export interface BadgeInput {
 
 type Def = [need: number, label: string, desc: string];
 
-function tiers(category: string, series: string, icon: string, have: number, defs: Def[]): Badge[] {
+function tiers(category: string, series: string, icon: IconName, have: number, defs: Def[]): Badge[] {
   return defs.map(([need, label, desc]) => ({
     category, series, icon, id: `${series}-${need}`, label, desc,
     unlocked: have >= need,
     progress: { have: Math.min(have, need), need },
   }));
 }
-function flag(category: string, id: string, icon: string, label: string, desc: string, unlocked: boolean): Badge {
+function flag(category: string, id: string, icon: IconName, label: string, desc: string, unlocked: boolean): Badge {
   return { category, series: id, id, icon, label, desc, unlocked };
 }
 
@@ -46,7 +48,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
   const C = 'Consistency', P = 'Precision';
   return [
     // ── Vocabulary: words known ──
-    ...tiers(V, 'known', '📚', i.wordsKnown, [
+    ...tiers(V, 'known', 'books', i.wordsKnown, [
       [1, 'First word', 'Learn your first word'],
       [10, 'Getting started', 'Know 10 words'],
       [25, 'Budding', 'Know 25 words'],
@@ -61,7 +63,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [5000, 'Native-like', 'Know 5,000 words'],
     ]),
     // ── Vocabulary: words encountered ──
-    ...tiers(V, 'explorer', '🧭', i.wordsStarted, [
+    ...tiers(V, 'explorer', 'compass', i.wordsStarted, [
       [50, 'Explorer', 'Encounter 50 words'],
       [150, 'Wanderer', 'Encounter 150 words'],
       [400, 'Trailblazer', 'Encounter 400 words'],
@@ -70,7 +72,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [3000, 'Globetrotter', 'Encounter 3,000 words'],
     ]),
     // ── Streak ──
-    ...tiers(ST, 'streak', '🔥', i.streak, [
+    ...tiers(ST, 'streak', 'flame', i.streak, [
       [3, 'Spark', 'Reach a 3-day streak'],
       [7, 'On a roll', 'Reach a 7-day streak'],
       [14, 'Fortnight', 'Reach a 14-day streak'],
@@ -84,7 +86,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [365, 'Year-round', 'Reach a 365-day streak'],
     ]),
     // ── Sentences ──
-    ...tiers(S, 'sent', '✍️', i.sentencesDone, [
+    ...tiers(S, 'sent', 'pen', i.sentencesDone, [
       [10, 'First lines', 'Translate 10 sentences'],
       [25, 'Translator', 'Translate 25 sentences'],
       [50, 'Phrasemaker', 'Translate 50 sentences'],
@@ -95,7 +97,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [1000, 'Novelist', 'Translate 1,000 sentences'],
     ]),
     // ── Verbs ──
-    ...tiers(VB, 'verbs', '🔤', i.verbsDone, [
+    ...tiers(VB, 'verbs', 'letters', i.verbsDone, [
       [5, 'Conjugator', 'Practise 5 verbs'],
       [10, 'Tense up', 'Practise 10 verbs'],
       [25, 'Verb master', 'Practise 25 verbs'],
@@ -105,8 +107,8 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [250, 'Verb virtuoso', 'Practise 250 verbs'],
     ]),
     // ── The Race ──
-    flag(R, 'record', '🏅', 'Record breaker', 'Reach the all-time daily top 5', i.inTop5),
-    ...tiers(R, 'bigday', '🚀', i.bestDay, [
+    flag(R, 'record', 'medal', 'Record breaker', 'Reach the all-time daily top 5', i.inTop5),
+    ...tiers(R, 'bigday', 'rocket', i.bestDay, [
       [20, 'Warm-up', 'Score 20 in one day'],
       [30, 'Pacer', 'Score 30 in one day'],
       [50, 'Sprint', 'Score 50 in one day'],
@@ -116,7 +118,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [200, 'Beast mode', 'Score 200 in one day'],
       [300, 'Superhuman', 'Score 300 in one day'],
     ]),
-    ...tiers(R, 'champion', '⭐', i.stars, [
+    ...tiers(R, 'champion', 'star', i.stars, [
       [1, 'Champion', 'Win a month'],
       [2, 'Back-to-back', 'Win 2 months'],
       [3, 'Triple crown', 'Win 3 months'],
@@ -126,7 +128,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [24, 'Hall of fame', 'Win 24 months'],
     ]),
     // ── Dedication: lifetime practice ──
-    ...tiers(D, 'life', '🎓', i.lifetimeCards, [
+    ...tiers(D, 'life', 'graduation', i.lifetimeCards, [
       [100, 'First steps', 'Practise 100 items'],
       [250, 'Warmed up', 'Practise 250 items'],
       [500, 'Committed', 'Practise 500 items'],
@@ -139,10 +141,10 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [100000, 'Living legend', 'Practise 100,000 items'],
     ]),
     // Cross-cutting: practise in every mode.
-    flag(D, 'allrounder', '🧠', 'All-rounder', 'Practise vocab, sentences and verbs',
+    flag(D, 'allrounder', 'brain', 'All-rounder', 'Practise vocab, sentences and verbs',
       i.wordsStarted > 0 && i.sentencesDone > 0 && i.verbsDone > 0),
     // ── Consistency: distinct days with activity ──
-    ...tiers(C, 'days', '📅', i.daysActive, [
+    ...tiers(C, 'days', 'calendar', i.daysActive, [
       [1, 'Day one', 'Practise on 1 day'],
       [5, 'Showing up', 'Practise on 5 days'],
       [10, 'Routine', 'Practise on 10 days'],
@@ -156,7 +158,7 @@ export function computeBadges(i: BadgeInput): Badge[] {
       [365, 'Full year', 'Practise on 365 days'],
     ]),
     // ── Precision: cumulative correct answers ──
-    ...tiers(P, 'correct', '🎯', i.correctAnswers, [
+    ...tiers(P, 'correct', 'target', i.correctAnswers, [
       [50, 'On target', 'Answer 50 correctly'],
       [150, 'Sharpshooter', 'Answer 150 correctly'],
       [500, 'Marksman', 'Answer 500 correctly'],

@@ -15,6 +15,7 @@ import {
   getProfiles,
 } from '@/lib/storage';
 import type { Lang } from '@/lib/lang';
+import { RefreshCw } from 'lucide-react';
 import { useT } from '@/lib/ui-lang';
 
 // Registers the service worker (public/sw.js), preloads everything the current
@@ -91,7 +92,10 @@ export default function OfflineSupport() {
         }`}
       >
         {online
-          ? t(`⏳ Syncing ${pending} answer${pending === 1 ? '' : 's'}…`, `⏳ Übertrage ${pending} Antwort${pending === 1 ? '' : 'en'} …`)
+          ? <span className="inline-flex items-center gap-1.5">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" aria-hidden />
+              {t(`Syncing ${pending} answer${pending === 1 ? '' : 's'}…`, `Übertrage ${pending} Antwort${pending === 1 ? '' : 'en'} …`)}
+            </span>
           : pending > 0
             ? t(`Offline · ${pending} answer${pending === 1 ? '' : 's'} to sync`, `Offline · ${pending} Antwort${pending === 1 ? '' : 'en'} ausstehend`)
             : t('Offline · progress syncs later', 'Offline · Fortschritt wird später übertragen')}

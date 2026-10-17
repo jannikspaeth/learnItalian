@@ -13,6 +13,7 @@
 // coma!), not the indicative-based "tu"-imperative of European Portuguese
 // (fala!, come!). The 'imperativo' topic below spells this out explicitly.
 
+import type { IconName } from '../icon-names';
 export type GrammarLevel = 'A1' | 'A2' | 'B1';
 
 export interface GrammarItem {
@@ -26,7 +27,7 @@ export interface GrammarItem {
 
 export interface GrammarTopic {
   id: string;
-  icon: string;
+  icon: IconName;
   title: string;
   level: GrammarLevel;
   lessonId?: string;
@@ -49,7 +50,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ A1 ══════════════════════════════
   {
     id: 'artigos',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Artigos (o, a, um, uma)',
     level: 'A1',
     lessonId: 'artikel',
@@ -78,7 +79,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'ser-estar-ter',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'Ser, Estar e Ter',
     level: 'A1',
     lessonId: 'ser-estar-ter',
@@ -108,7 +109,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'presente',
-    icon: '⏺️',
+    icon: 'dot',
     title: 'Presente do indicativo',
     level: 'A1',
     lessonId: 'praesens',
@@ -137,7 +138,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'possessivos',
-    icon: '👜',
+    icon: 'bag',
     title: 'Possessivos (meu, minha, seu …)',
     level: 'A1',
     lessonId: 'possessiv',
@@ -168,7 +169,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'perguntas-negacao',
-    icon: '❓',
+    icon: 'question',
     title: 'Perguntas e negação',
     level: 'A1',
     lessonId: 'fragen',
@@ -197,7 +198,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'adjetivos',
-    icon: '🎨',
+    icon: 'palette',
     title: 'Adjetivos',
     level: 'A1',
     lessonId: 'adjektive',
@@ -226,7 +227,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'preterito-perfeito',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'Pretérito perfeito simples',
     level: 'A1',
     lessonId: 'preterito-perfeito',
@@ -256,7 +257,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperfeito',
-    icon: '🕰️',
+    icon: 'clock',
     title: 'Pretérito imperfeito',
     level: 'A1',
     lessonId: 'imperfeito',
@@ -285,7 +286,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'futuro',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Futuro: ir + infinitivo e futuro simples',
     level: 'A1',
     lessonId: 'futuro',
@@ -314,7 +315,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperativo',
-    icon: '📢',
+    icon: 'megaphone',
     title: 'Imperativo',
     level: 'A1',
     lessonId: 'imperativ',
@@ -344,7 +345,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'objeto-pronomes',
-    icon: '🔗',
+    icon: 'link',
     title: 'Pronomes de objeto',
     level: 'A1',
     lessonId: 'objektpronomen',
@@ -377,7 +378,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ A2 ══════════════════════════════
   {
     id: 'comparativos',
-    icon: '📏',
+    icon: 'ruler',
     title: 'Comparativos e superlativos',
     level: 'A2',
     lessonId: 'comparativos',
@@ -406,7 +407,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'preposicoes',
-    icon: '🧭',
+    icon: 'compass',
     title: 'Preposições (a, de, em, com, para, por)',
     level: 'A2',
     lessonId: 'preposicoes',
@@ -435,7 +436,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'estar-gerundio',
-    icon: '🏃',
+    icon: 'steps',
     title: 'Estar + gerúndio',
     level: 'A2',
     lessonId: 'estar-gerundio',
@@ -464,7 +465,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'demonstrativos',
-    icon: '👉',
+    icon: 'pointer',
     title: 'Demonstrativos (este, esse, aquele)',
     level: 'A2',
     lessonId: 'demonstrativos',
@@ -492,7 +493,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'tempo-ha-desde',
-    icon: '⏱️',
+    icon: 'timer',
     title: 'Há, desde e durante',
     level: 'A2',
     lessonId: 'tempo-ha-desde',
@@ -523,7 +524,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ B1 ══════════════════════════════
   {
     id: 'condicional',
-    icon: '💬',
+    icon: 'chat',
     title: 'Futuro do pretérito (condicional)',
     level: 'B1',
     lessonId: 'condicional',
@@ -552,7 +553,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'mais-que-perfeito',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Mais-que-perfeito composto',
     level: 'B1',
     lessonId: 'mais-que-perfeito',
@@ -580,7 +581,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'voz-passiva',
-    icon: '🔄',
+    icon: 'refresh',
     title: 'Voz passiva',
     level: 'B1',
     lessonId: 'voz-passiva',
@@ -608,7 +609,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'discurso-indireto',
-    icon: '🗣️',
+    icon: 'speech',
     title: 'Discurso indireto',
     level: 'B1',
     lessonId: 'discurso-indireto',
@@ -636,7 +637,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'oracoes-condicionais',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Orações condicionais com se',
     level: 'B1',
     lessonId: 'oracoes-condicionais',
@@ -666,7 +667,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'por-para',
-    icon: '↔️',
+    icon: 'swap',
     title: 'Por e para',
     level: 'B1',
     lessonId: 'por-para',
@@ -694,7 +695,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronomes-relativos',
-    icon: '🪢',
+    icon: 'knot',
     title: 'Pronomes relativos',
     level: 'B1',
     lessonId: 'pronomes-relativos',
@@ -721,7 +722,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'subjuntivo-presente',
-    icon: '💭',
+    icon: 'thought',
     title: 'Subjuntivo presente',
     level: 'B1',
     lessonId: 'subjuntivo',
@@ -753,7 +754,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'subjuntivo-indicativo',
-    icon: '🤔',
+    icon: 'brain',
     title: 'Subjuntivo ou indicativo?',
     level: 'B1',
     lessonId: 'subjuntivo',
@@ -783,7 +784,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'subjuntivo-imperfeito',
-    icon: '💫',
+    icon: 'sparkles',
     title: 'Imperfeito do subjuntivo',
     level: 'B1',
     lessonId: 'subjuntivo-imperfeito',
@@ -812,7 +813,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'futuro-subjuntivo',
-    icon: '⏭️',
+    icon: 'forward',
     title: 'Futuro do subjuntivo',
     level: 'B1',
     lessonId: 'futuro-subjuntivo',
@@ -845,7 +846,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'infinitivo-pessoal',
-    icon: '👤',
+    icon: 'user',
     title: 'Infinitivo pessoal',
     level: 'B1',
     lessonId: 'infinitivo-pessoal',
@@ -876,7 +877,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronomes-combinados',
-    icon: '🧩',
+    icon: 'puzzle',
     title: 'Pronomes combinados',
     level: 'B1',
     lessonId: 'pronomes-combinados',
@@ -906,7 +907,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'colocacao-pronominal',
-    icon: '🎯',
+    icon: 'target',
     title: 'Colocação pronominal (BR vs. PT)',
     level: 'B1',
     lessonId: 'colocacao-pronominal',
@@ -939,7 +940,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronomes-indefinidos',
-    icon: '❔',
+    icon: 'question',
     title: 'Pronomes indefinidos',
     level: 'B1',
     lessonId: 'pronomes-indefinidos',
@@ -970,7 +971,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'adverbios',
-    icon: '⚡',
+    icon: 'zap',
     title: 'Advérbios em -mente',
     level: 'B1',
     lessonId: 'adverbios',
@@ -1001,7 +1002,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'verbos-pronominais',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Verbos pronominais',
     level: 'B1',
     lessonId: 'verbos-pronominais',
@@ -1030,7 +1031,7 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'quantidade',
-    icon: '📊',
+    icon: 'chart',
     title: 'Muito, pouco, bastante, demais',
     level: 'B1',
     lessonId: 'quantidade',

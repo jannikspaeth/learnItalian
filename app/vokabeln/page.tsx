@@ -38,7 +38,9 @@ import ChallengeStrip from '@/components/ChallengeStrip';
 import Celebration from '@/components/Celebration';
 import SpeakButton from '@/components/SpeakButton';
 import FeedbackBar from '@/components/practice/FeedbackBar';
-import { X, Flame, PartyPopper, BookOpen, Volume2 } from 'lucide-react';
+import { X, Flame, PartyPopper, BookOpen, Volume2, ChevronRight, ChevronUp, ChevronDown, TriangleAlert } from 'lucide-react';
+import Icon from '@/components/Icon';
+import type { IconName } from '@/lib/icon-names';
 import { speak } from '@/lib/speech';
 import { useAutoplay } from '@/lib/use-autoplay';
 import { useT, useUiLang, T } from '@/lib/ui-lang';
@@ -207,7 +209,7 @@ export default function VokabelnPage() {
     const s = await getStats();
     if (s && streakSeen.current !== null) {
       const hit = STREAK_MILESTONES.find(m => streakSeen.current! < m && s.streak >= m);
-      if (hit) celebrate(t(`${hit}-day streak! 🔥`, `${hit} Tage in Folge! 🔥`));
+      if (hit) celebrate(t(`${hit}-day streak!`, `${hit} Tage in Folge!`));
     }
     if (s) streakSeen.current = s.streak;
     setStats(s);
@@ -459,17 +461,17 @@ export default function VokabelnPage() {
       const newCombo = combo + 1;
       setCombo(newCombo);
       const cm = COMBO_MILESTONES.find(m => combo < m && newCombo >= m);
-      if (cm) celebrate(t(`${cm} in a row! 🔥`, `${cm} richtig in Folge! 🔥`));
+      if (cm) celebrate(t(`${cm} in a row!`, `${cm} richtig in Folge!`));
     } else {
       setCombo(0);
     }
     const newToday = todayCount + 1;
-    if (todayCount < DAILY_GOAL && newToday >= DAILY_GOAL) celebrate(t('Daily goal reached! 🎉', 'Tagesziel erreicht! 🎉'));
+    if (todayCount < DAILY_GOAL && newToday >= DAILY_GOAL) celebrate(t('Daily goal reached!', 'Tagesziel erreicht!'));
     const prevBest = bestPriorDay(stats?.daily, berlinToday());
-    if (prevBest > 0 && newToday === prevBest + 1) celebrate(t('New personal best! 🎉', 'Neuer persönlicher Rekord! 🎉'));
+    if (prevBest > 0 && newToday === prevBest + 1) celebrate(t('New personal best!', 'Neuer persönlicher Rekord!'));
     if (newLevel === VOCAB_KNOWN_LEVEL && item.currentLevel < VOCAB_KNOWN_LEVEL) {
       const newKnown = bekanntWords.length + 1;
-      if (KNOWN_MILESTONES.includes(newKnown)) celebrate(t(`${newKnown} words known! 📚`, `${newKnown} Wörter gekonnt! 📚`));
+      if (KNOWN_MILESTONES.includes(newKnown)) celebrate(t(`${newKnown} words known!`, `${newKnown} Wörter gekonnt!`));
     }
 
     if (isLast) setPhase('done');
@@ -538,7 +540,7 @@ export default function VokabelnPage() {
   const today = berlinToday();
   const tomorrow = berlinToday(new Date(Date.now() + 86400000));
 
-  type WordSection = { key: string; label: string; badgeClass: string; entries: VocabEntry[] };
+  type WordSection = { key: string; label: string; icon?: IconName; badgeClass: string; entries: VocabEntry[] };
   let wordSections: WordSection[] = [];
   if (group === 'phase') {
     wordSections = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -583,7 +585,8 @@ export default function VokabelnPage() {
         const info = topicInfo(id);
         return {
           key: `topic:${id}`,
-          label: info ? `${info.icon} ${info.label}` : `✏️ ${t('Own words', 'Eigene Wörter')}`,
+          label: info ? info.label : t('Own words', 'Eigene Wörter'),
+          icon: info ? info.icon : ('pencil' as IconName),
           badgeClass: 'bg-gray-100 text-gray-600',
           entries: byTopic.get(id)!,
         };
@@ -637,7 +640,7 @@ export default function VokabelnPage() {
             title={t('Move up a phase', 'Eine Phase hoch')}
             className="w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100 text-gray-500 hover:bg-green-100 hover:text-green-700 disabled:opacity-30 disabled:hover:bg-gray-100 disabled:hover:text-gray-500 transition-colors"
           >
-            ▲
+            <ChevronUp className="w-4 h-4" />
           </button>
           <button
             onClick={() => setWordLevel(entry, level - 1)}
@@ -645,7 +648,7 @@ export default function VokabelnPage() {
             title={t('Move down a phase', 'Eine Phase runter')}
             className="w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100 text-gray-500 hover:bg-amber-100 hover:text-amber-700 disabled:opacity-30 disabled:hover:bg-gray-100 disabled:hover:text-gray-500 transition-colors"
           >
-            ▼
+            <ChevronDown className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -776,7 +779,7 @@ export default function VokabelnPage() {
 
         {loadError && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 flex items-center justify-between gap-3">
-            <span>⚠ {t('Couldn’t load your words. Learning is paused so nothing gets overwritten.', 'Deine Wörter konnten nicht geladen werden. Lernen ist pausiert, damit nichts überschrieben wird.')}</span>
+            <span><TriangleAlert className="w-4 h-4 inline -mt-0.5 mr-1" />{t('Couldn’t load your words. Learning is paused so nothing gets overwritten.', 'Deine Wörter konnten nicht geladen werden. Lernen ist pausiert, damit nichts überschrieben wird.')}</span>
             <button
               onClick={() => { refresh(); }}
               className="shrink-0 text-xs font-semibold underline"
@@ -788,7 +791,7 @@ export default function VokabelnPage() {
 
         {saveError && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 flex items-center justify-between gap-3">
-            <span>⚠ {t('Some changes couldn’t be saved. Check your connection.', 'Einige Änderungen konnten nicht gespeichert werden. Prüf deine Verbindung.')}</span>
+            <span><TriangleAlert className="w-4 h-4 inline -mt-0.5 mr-1" />{t('Some changes couldn’t be saved. Check your connection.', 'Einige Änderungen konnten nicht gespeichert werden. Prüf deine Verbindung.')}</span>
             <button
               onClick={() => { setSaveError(false); refresh(); }}
               className="shrink-0 text-xs font-semibold underline"
@@ -1018,8 +1021,9 @@ export default function VokabelnPage() {
                             onClick={() => toggleExpanded(section.key)}
                             className="w-full flex items-center gap-2 px-1 py-1 text-left"
                           >
-                            <span className="text-gray-400 text-xs w-3">{expanded ? '▾' : '▸'}</span>
+                            <ChevronRight className={`w-3.5 h-3.5 text-gray-400 shrink-0 transition-transform ${expanded ? 'rotate-90' : ''}`} />
                             <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${section.badgeClass}`}>
+                              {section.icon && <Icon name={section.icon} className="w-4 h-4 inline mr-1.5 -mt-0.5 text-gray-400" />}
                               {section.label}
                             </span>
                             <span className="text-xs text-gray-400 tabular-nums">{section.entries.length}</span>

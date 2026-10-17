@@ -25,7 +25,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ A1 ══════════════════════════════
   {
     id: 'articulos-definidos',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Bestimmte Artikel (el, la, los, las)',
     level: 'A1',
     lessonId: 'artikel',
@@ -56,7 +56,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'articulos-indefinidos',
-    icon: '🅰️',
+    icon: 'article',
     title: 'Unbestimmte Artikel (un, una, unos, unas)',
     level: 'A1',
     lessonId: 'artikel',
@@ -85,7 +85,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'plural',
-    icon: '👥',
+    icon: 'users',
     title: 'Mehrzahl der Nomen',
     level: 'A1',
     lessonId: 'artikel',
@@ -116,7 +116,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'ser-estar',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'ser oder estar?',
     level: 'A1',
     lessonId: 'ser-estar',
@@ -146,7 +146,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'presente-regular',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Präsens der regelmäßigen Verben',
     level: 'A1',
     lessonId: 'praesens',
@@ -176,7 +176,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'presente-irregular',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Unregelmäßige Verben im Präsens',
     level: 'A1',
     lessonId: 'praesens',
@@ -207,7 +207,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'hay-estar',
-    icon: '📍',
+    icon: 'pin',
     title: 'hay oder está/están?',
     level: 'A1',
     lessonId: 'es-gibt',
@@ -237,7 +237,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'gustar',
-    icon: '❤️',
+    icon: 'heart',
     title: 'gustar (me gusta / me gustan)',
     level: 'A1',
     lessonId: 'piacere',
@@ -268,7 +268,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'posesivos',
-    icon: '🫵',
+    icon: 'pointer',
     title: 'Possessivbegleiter (mi, tu, su …)',
     level: 'A1',
     lessonId: 'possessiv',
@@ -299,7 +299,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'interrogativos',
-    icon: '❓',
+    icon: 'question',
     title: 'Fragewörter (qué, quién, dónde …)',
     level: 'A1',
     lessonId: 'fragen',
@@ -329,7 +329,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'negacion',
-    icon: '🚫',
+    icon: 'ban',
     title: 'Verneinung (no, nada, nadie, nunca …)',
     level: 'A1',
     lessonId: 'fragen',
@@ -359,7 +359,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'adjetivos',
-    icon: '🎨',
+    icon: 'palette',
     title: 'Adjektive angleichen',
     level: 'A1',
     lessonId: 'adjektive',
@@ -389,7 +389,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'preposiciones',
-    icon: '🧭',
+    icon: 'compass',
     title: 'Präpositionen (a, en, de, con …)',
     level: 'A1',
     lessonId: 'praepositionen',
@@ -421,7 +421,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ A2 ══════════════════════════════
   {
     id: 'demostrativos',
-    icon: '👉',
+    icon: 'pointer',
     title: 'Demonstrativa (este, ese, aquel)',
     level: 'A2',
     lessonId: 'es-gibt',
@@ -451,7 +451,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'reflexivos',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Reflexive Verben (levantarse …)',
     level: 'A2',
     lessonId: 'reflexiv',
@@ -482,7 +482,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'preterito-perfecto',
-    icon: '✅',
+    icon: 'check',
     title: 'Pretérito perfecto (he hablado)',
     level: 'A2',
     lessonId: 'preterito-perfecto',
@@ -512,7 +512,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'preterito-indefinido',
-    icon: '⏪',
+    icon: 'rewind',
     title: 'Pretérito indefinido (hablé, comí)',
     level: 'A2',
     lessonId: 'preterito-indefinido',
@@ -542,7 +542,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperfecto',
-    icon: '🕰️',
+    icon: 'clock',
     title: 'Pretérito imperfecto (hablaba, comía)',
     level: 'A2',
     lessonId: 'imperfecto',
@@ -572,7 +572,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'futuro',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Zukunft (ir a + Infinitiv, futuro simple)',
     level: 'A2',
     lessonId: 'futuro',
@@ -601,7 +601,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronombres-directos',
-    icon: '🎯',
+    icon: 'target',
     title: 'Direkte Objektpronomen (lo, la, los, las)',
     level: 'A2',
     lessonId: 'objektpronomen',
@@ -631,7 +631,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronombres-indirectos',
-    icon: '🎁',
+    icon: 'gift',
     title: 'Indirekte Objektpronomen (le, les …)',
     level: 'A2',
     lessonId: 'objektpronomen',
@@ -661,7 +661,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'comparativos',
-    icon: '📊',
+    icon: 'chart',
     title: 'Vergleiche (más … que, tan … como)',
     level: 'A2',
     lessonId: 'vergleiche',
@@ -692,7 +692,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperativo',
-    icon: '📢',
+    icon: 'megaphone',
     title: 'Imperativ (¡habla!, ¡hable!, ¡hablad!)',
     level: 'A2',
     lessonId: 'imperativ',
@@ -722,7 +722,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'estar-gerundio',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'Verlaufsform (estar + gerundio)',
     level: 'A2',
     lessonId: 'gerundio',
@@ -754,7 +754,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ B1 ══════════════════════════════
   {
     id: 'indefinido-imperfecto',
-    icon: '🎬',
+    icon: 'film',
     title: 'Indefinido oder Imperfecto?',
     level: 'B1',
     lessonId: 'imperfecto',
@@ -785,7 +785,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'por-para',
-    icon: '↔️',
+    icon: 'swap',
     title: 'por oder para?',
     level: 'B1',
     lessonId: 'por-para',
@@ -815,7 +815,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'condicional',
-    icon: '🤔',
+    icon: 'brain',
     title: 'Konditional (hablaría)',
     level: 'B1',
     lessonId: 'condicional',
@@ -845,7 +845,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'subjuntivo',
-    icon: '🌈',
+    icon: 'rainbow',
     title: 'Subjuntivo presente (que hable)',
     level: 'B1',
     lessonId: 'subjuntivo',
@@ -876,7 +876,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'subjuntivo-indicativo',
-    icon: '🔍',
+    icon: 'search',
     title: 'Subjuntivo oder Indikativ?',
     level: 'B1',
     lessonId: 'subjuntivo',
@@ -906,7 +906,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronombres-combinados',
-    icon: '🧩',
+    icon: 'puzzle',
     title: 'Doppelte Pronomen (me lo, se lo)',
     level: 'B1',
     lessonId: 'pronombres-combinados',
@@ -936,7 +936,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'relativos',
-    icon: '🔗',
+    icon: 'link',
     title: 'Relativpronomen (que, quien, donde …)',
     level: 'B1',
     lessonId: 'relativ',
@@ -966,7 +966,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'si-condicional',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Bedingungssätze (si …)',
     level: 'B1',
     lessonId: 'bedingungssaetze',
@@ -996,7 +996,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pluscuamperfecto',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Plusquamperfekt (había hablado)',
     level: 'B1',
     lessonId: 'pluscuamperfecto',
@@ -1026,7 +1026,7 @@ export const ES_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'se-impersonal',
-    icon: '👤',
+    icon: 'user',
     title: 'Unpersönliches se (se habla, se venden)',
     level: 'B1',
     lessonId: 'si',

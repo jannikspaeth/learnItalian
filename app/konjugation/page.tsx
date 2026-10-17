@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getConjugationRecords, recordExercise, recordMistakes } from '@/lib/storage';
 import { ConjugationRecord, ConjugationExercise } from '@/lib/types';
-import { X, PartyPopper, SpellCheck } from 'lucide-react';
+import { X, PartyPopper, SpellCheck, ChevronDown, TriangleAlert, Check } from 'lucide-react';
 import Conjugation from '@/components/exercises/Conjugation';
 import { TENSES_BY_LANG, defaultTenses, TENSE_STORAGE_KEY, TENSE_VALIDATORS } from '@/lib/tenses';
 import { useLocalSetting } from '@/lib/use-local-setting';
@@ -554,11 +554,11 @@ export default function KonjugationPage() {
                         <span className="font-bold text-gray-900 text-lg">{record.verb}</span>
                         {record.mastered ? (
                           <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-medium">
-                            ✓ {t('Mastered', 'Gemeistert')}
+                            <Check className="w-3.5 h-3.5 inline -mt-0.5 mr-0.5" />{t('Mastered', 'Gemeistert')}
                           </span>
                         ) : totalMistakes > 0 ? (
                           <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-md font-medium">
-                            ⚠ {totalMistakes} {totalMistakes === 1 ? t('error', 'Fehler') : t('errors', 'Fehler')}
+                            <TriangleAlert className="w-3.5 h-3.5 inline -mt-0.5 mr-0.5" />{totalMistakes} {totalMistakes === 1 ? t('error', 'Fehler') : t('errors', 'Fehler')}
                           </span>
                         ) : null}
                       </div>
@@ -592,7 +592,12 @@ export default function KonjugationPage() {
                     onClick={() => toggleExpand(record.id)}
                     className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    {isExpanded ? t('Hide tenses ▲', 'Zeitformen ausblenden ▲') : t(`Show ${record.sections.length} tenses ▼`, `${record.sections.length} Zeitformen zeigen ▼`)}
+                    <span className="inline-flex items-center gap-1">
+                      {isExpanded
+                        ? t('Hide tenses', 'Zeitformen ausblenden')
+                        : t(`Show ${record.sections.length} tenses`, `${record.sections.length} Zeitformen zeigen`)}
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </span>
                   </button>
 
                   {isExpanded && (

@@ -6,8 +6,8 @@ import type { Lang } from '@/lib/lang';
 import { Volume2, Turtle } from 'lucide-react';
 import { useT } from '@/lib/ui-lang';
 
-// 🔊 read-aloud button. Renders nothing where the browser can't speak. `slow`
-// reads at a slower pace (🐢) — handy for dictation and long sentences.
+// Read-aloud button. Renders nothing where the browser can't speak. `slow`
+// reads at a slower pace (turtle icon) — handy for dictation and long sentences.
 export default function SpeakButton({
   text,
   lang,

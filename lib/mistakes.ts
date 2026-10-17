@@ -1,3 +1,4 @@
+import type { IconName } from './icon-names';
 import type { MistakeItem, MistakeKind } from './types';
 
 // "My mistakes": everything answered wrong in any exercise lands here (per user and
@@ -10,16 +11,16 @@ export const TRAINING_SIZE = 15;
 
 export type NewMistake = Omit<MistakeItem, 'wrong' | 'right' | 'added'>;
 
-export const MISTAKE_KINDS: { id: MistakeKind; icon: string; label: string; labelDe: string }[] = [
-  { id: 'vocab', icon: '📖', label: 'Words', labelDe: 'Wörter' },
-  { id: 'verb', icon: '🔤', label: 'Verb forms', labelDe: 'Verbformen' },
-  { id: 'grammar', icon: '📘', label: 'Grammar', labelDe: 'Grammatik' },
-  { id: 'sentence', icon: '✍️', label: 'Sentences', labelDe: 'Sätze' },
-  { id: 'dictation', icon: '🎧', label: 'Dictation', labelDe: 'Diktat' },
-  { id: 'article', icon: '🔸', label: 'Articles', labelDe: 'Artikel' },
-  { id: 'number', icon: '🔢', label: 'Numbers', labelDe: 'Zahlen' },
-  { id: 'phrase', icon: '💬', label: 'Phrases', labelDe: 'Wendungen' },
-  { id: 'writing', icon: '✏️', label: 'Writing', labelDe: 'Schreiben' },
+export const MISTAKE_KINDS: { id: MistakeKind; icon: IconName; label: string; labelDe: string }[] = [
+  { id: 'vocab', icon: 'book', label: 'Words', labelDe: 'Wörter' },
+  { id: 'verb', icon: 'letters', label: 'Verb forms', labelDe: 'Verbformen' },
+  { id: 'grammar', icon: 'bookmark', label: 'Grammar', labelDe: 'Grammatik' },
+  { id: 'sentence', icon: 'pen', label: 'Sentences', labelDe: 'Sätze' },
+  { id: 'dictation', icon: 'headphones', label: 'Dictation', labelDe: 'Diktat' },
+  { id: 'article', icon: 'article', label: 'Articles', labelDe: 'Artikel' },
+  { id: 'number', icon: 'hash', label: 'Numbers', labelDe: 'Zahlen' },
+  { id: 'phrase', icon: 'chat', label: 'Phrases', labelDe: 'Wendungen' },
+  { id: 'writing', icon: 'pencil', label: 'Writing', labelDe: 'Schreiben' },
 ];
 
 export function kindInfo(kind: MistakeKind) {

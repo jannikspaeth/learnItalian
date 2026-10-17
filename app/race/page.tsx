@@ -5,7 +5,7 @@ import { getRace } from '@/lib/storage';
 import { useProfile } from '@/lib/use-profile';
 import { useT, useUiLang } from '@/lib/ui-lang';
 import { langInfo } from '@/lib/lang';
-import { formatStars } from '@/lib/race';
+import Stars from '@/components/Stars';
 import { RaceResponse, RaceHistory } from '@/lib/types';
 import { Crown, Flame, Flag, TrendingUp, Medal, Clock, Star } from 'lucide-react';
 
@@ -226,8 +226,8 @@ export default function RacePage() {
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
             {t(
-              'Most points this calendar month wins a ⭐ — then it resets on the 1st. Most learning each day scores 5 · 4 · 3 · 2 · 1; flashcards, verbs, grammar and sentences count.',
-              'Wer in diesem Kalendermonat die meisten Punkte hat, gewinnt einen ⭐ – am 1. geht es von vorn los. Wer am Tag am meisten lernt, bekommt 5 · 4 · 3 · 2 · 1 Punkte; Karten, Verben, Grammatik und Sätze zählen.',
+              'Most points this calendar month wins a star — then it resets on the 1st. Most learning each day scores 5 · 4 · 3 · 2 · 1; flashcards, verbs, grammar and sentences count.',
+              'Wer in diesem Kalendermonat die meisten Punkte hat, gewinnt einen Stern – am 1. geht es von vorn los. Wer am Tag am meisten lernt, bekommt 5 · 4 · 3 · 2 · 1 Punkte; Karten, Verben, Grammatik und Sätze zählen.',
             )}
           </p>
         </div>
@@ -255,7 +255,7 @@ export default function RacePage() {
                   <div className="flex items-center justify-between gap-3 mb-1">
                     <span className="text-sm font-semibold text-gray-800 flex items-center gap-1.5 min-w-0">
                       {leader && <Crown className="w-4 h-4 text-amber-600 shrink-0" aria-label={t('Leader', 'Spitze')} />}
-                      <span className="truncate">{r.name + formatStars(r.stars)}</span>
+                      <span className="truncate">{r.name}<Stars n={r.stars} /></span>
                       {r.streak > 0 && (
                         <span
                           className="inline-flex items-center gap-0.5 rounded-full bg-red-50 px-1.5 py-0.5 text-[11px] font-bold leading-none text-red-700 tabular-nums shrink-0"

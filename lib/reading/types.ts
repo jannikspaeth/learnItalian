@@ -1,6 +1,7 @@
 // Reading texts (/lesen): short graded stories with tap-to-translate and a few
 // comprehension questions. One file of texts per language (lib/reading/<lang>.ts).
 
+import type { IconName } from '../icon-names';
 export type ReadingLevel = 'A1' | 'A2' | 'B1';
 
 export interface ReadingQuestion {
@@ -16,7 +17,7 @@ export type Gloss = string | [de: string, lemma: string];
 export interface ReadingText {
   id: string;
   level: ReadingLevel;
-  icon: string;
+  icon: IconName;
   title: string;          // in the target language
   titleDe: string;
   paragraphs: string[];   // the text, in the target language

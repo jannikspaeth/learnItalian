@@ -3,6 +3,7 @@
 // (the learner's L1) and rendered on /grammar as collapsible cards. Keep each
 // lesson tight: a one-line intro, a few sections, and concrete es→de examples.
 
+import type { IconName } from '../icon-names';
 export interface GrammarExample {
   target: string; // sentence in the target language
   de: string;
@@ -16,7 +17,7 @@ export interface GrammarSection {
 
 export interface GrammarLesson {
   id: string;
-  icon: string;
+  icon: IconName;
   title: string;
   level?: 'A1' | 'A2' | 'B1'; // lessons without a level are listed as one group
   intro: string;
@@ -26,7 +27,7 @@ export interface GrammarLesson {
 export const GRAMMAR_LESSONS: GrammarLesson[] = [
   {
     id: 'aussprache',
-    icon: '🗣️',
+    icon: 'speech',
     title: 'Aussprache & Alphabet',
     level: 'A1',
     intro: 'Gute Nachricht: Spanisch wird fast so gelesen, wie es geschrieben wird.',
@@ -67,7 +68,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronomen',
-    icon: '👤',
+    icon: 'user',
     title: 'Personalpronomen (ich, du, er …)',
     level: 'A1',
     intro: 'Diese kleinen Wörter brauchst du, um über Personen zu sprechen.',
@@ -95,7 +96,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'artikel',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Nomen & Artikel (el / la)',
     level: 'A1',
     intro: 'Jedes Nomen ist männlich oder weiblich – lerne den Artikel immer mit.',
@@ -132,7 +133,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'ser-estar',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'Ser vs. Estar (zweimal „sein")',
     level: 'A1',
     intro: 'Spanisch hat zwei Wörter für „sein". Welches du nimmst, hängt von der Bedeutung ab.',
@@ -163,7 +164,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'praesens',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Regelmäßige Verben im Präsens',
     level: 'A1',
     intro: 'Die meisten Verben enden auf -ar, -er oder -ir. Du tauschst einfach die Endung.',
@@ -202,7 +203,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'zahlen',
-    icon: '🔢',
+    icon: 'hash',
     title: 'Zahlen & nützliche Sätze',
     level: 'A1',
     intro: 'Die ersten Zahlen und ein paar Sätze, mit denen du sofort loslegen kannst.',
@@ -226,7 +227,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'es-gibt',
-    icon: '👉',
+    icon: 'pointer',
     title: 'Hay, dieses & jenes',
     level: 'A1',
     intro: 'Wie du sagst, dass es etwas gibt – und wie du auf Dinge zeigst.',
@@ -269,7 +270,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'possessiv',
-    icon: '🫵',
+    icon: 'pointer',
     title: 'Mi, tu, su …',
     level: 'A1',
     intro: 'Mein, dein, sein – im Spanischen einfacher, als du denkst.',
@@ -312,7 +313,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'fragen',
-    icon: '❓',
+    icon: 'question',
     title: 'Fragen & Verneinung',
     level: 'A1',
     intro: 'Fragen stellen, Nein sagen – und warum Spanisch doppelt verneint.',
@@ -355,7 +356,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'adjektive',
-    icon: '🎨',
+    icon: 'palette',
     title: 'Adjektive',
     level: 'A1',
     intro: 'Adjektive passen sich an – und stehen meistens hinter dem Nomen.',
@@ -398,7 +399,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'praepositionen',
-    icon: '🧭',
+    icon: 'compass',
     title: 'Präpositionen (a, de, en, con …)',
     level: 'A1',
     intro: 'Die kleinen Wörter, die Ort, Richtung und Zugehörigkeit ausdrücken.',
@@ -442,7 +443,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'piacere',
-    icon: '❤️',
+    icon: 'heart',
     title: 'Gustar: das Verb, das anders funktioniert',
     level: 'A1',
     intro: 'Auf Spanisch magst du nichts – es gefällt dir.',
@@ -484,7 +485,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'reflexiv',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Reflexive Verben',
     level: 'A1',
     intro: 'Verben mit „sich" – die gibt es auch im Spanischen, oft sogar häufiger.',
@@ -525,7 +526,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'preterito-perfecto',
-    icon: '✅',
+    icon: 'check',
     title: 'Pretérito perfecto (Perfekt)',
     level: 'A2',
     intro: 'Die Vergangenheit, die noch mit der Gegenwart zu tun hat.',
@@ -567,7 +568,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'preterito-indefinido',
-    icon: '📅',
+    icon: 'calendar',
     title: 'Pretérito indefinido',
     level: 'A2',
     intro: 'Die Erzählzeit für abgeschlossene Ereignisse.',
@@ -610,7 +611,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imperfecto',
-    icon: '🕰️',
+    icon: 'clock',
     title: 'Imperfecto – und welche Vergangenheit wann?',
     level: 'A2',
     intro: 'Die Vergangenheit für Gewohnheiten und Hintergründe – und wie sie sich von den anderen beiden abgrenzt.',
@@ -653,7 +654,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'futuro',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Futuro simple & ir a + Infinitiv',
     level: 'A2',
     intro: 'Zwei Wege, über die Zukunft zu sprechen – einer davon ist kinderleicht.',
@@ -695,7 +696,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'objektpronomen',
-    icon: '🎯',
+    icon: 'target',
     title: 'Objektpronomen (lo, la, le …)',
     level: 'A2',
     intro: 'Ihn, sie, es, ihm, ihr – kurze Wörter, die Wiederholungen sparen.',
@@ -736,7 +737,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imperativ',
-    icon: '📢',
+    icon: 'megaphone',
     title: 'Imperativ',
     level: 'A2',
     intro: 'Bitten, Anweisungen und Tipps – die Befehlsform.',
@@ -778,7 +779,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'vergleiche',
-    icon: '📊',
+    icon: 'chart',
     title: 'Vergleiche & Superlativ',
     level: 'A2',
     intro: 'Größer, genauso groß, am größten.',
@@ -820,7 +821,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'gerundio',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'Estar + Gerundium (gerade tun)',
     level: 'A2',
     intro: 'Was gerade in diesem Moment passiert.',
@@ -860,7 +861,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'por-para',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Por vs. Para',
     level: 'B1',
     intro: 'Beides heißt oft „für" – aber der Blickwinkel ist ein anderer.',
@@ -906,7 +907,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'condicional',
-    icon: '🤔',
+    icon: 'brain',
     title: 'Condicional (würde, hätte, könnte)',
     level: 'B1',
     intro: 'Die Form für Höflichkeit, Ratschläge und das, was wäre.',
@@ -948,7 +949,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'subjuntivo',
-    icon: '💭',
+    icon: 'thought',
     title: 'Subjuntivo presente',
     level: 'B1',
     intro: 'Die Möglichkeitsform für Wunsch, Gefühl, Zweifel – und alles, was (noch) nicht Tatsache ist.',
@@ -998,7 +999,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronombres-combinados',
-    icon: '🔗',
+    icon: 'link',
     title: 'Doppelte Objektpronomen (me lo, se lo)',
     level: 'B1',
     intro: 'Wenn „es" und „ihm" zusammentreffen.',
@@ -1039,7 +1040,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'relativ',
-    icon: '🧩',
+    icon: 'puzzle',
     title: 'Relativpronomen (que, quien, donde)',
     level: 'B1',
     intro: 'Wie du Sätze mit „der, die, das, wo, was" verbindest.',
@@ -1081,7 +1082,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'bedingungssaetze',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Bedingungssätze mit si',
     level: 'B1',
     intro: 'Wenn … dann – real, unwahrscheinlich oder schon vorbei.',
@@ -1123,7 +1124,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pluscuamperfecto',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Pluscuamperfecto (Plusquamperfekt)',
     level: 'B1',
     intro: 'Die Vorvergangenheit – was vor etwas anderem Vergangenem schon passiert war.',
@@ -1163,7 +1164,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'si',
-    icon: '🏛️',
+    icon: 'landmark',
     title: 'Se impersonal & Passiv',
     level: 'B1',
     intro: 'Wie man „man" sagt – und wie das Passiv im Spanischen funktioniert.',

@@ -11,11 +11,13 @@ import { NUMBERS_BY_LANG, ROUND_SIZE, NumberItem, NumberKind, numberRound } from
 import type { BlitzRecord } from '@/lib/types';
 import NumberCard from '@/components/practice/NumberCard';
 import SpeakButton from '@/components/SpeakButton';
+import Icon from '@/components/Icon';
+import type { IconName } from '@/lib/icon-names';
 
-const KINDS: { id: NumberKind; label: [string, string]; icon: string }[] = [
-  { id: 'number', label: ['Numbers', 'Zahlen'], icon: '🔢' },
-  { id: 'time', label: ['Clock times', 'Uhrzeit'], icon: '🕐' },
-  { id: 'date', label: ['Dates', 'Datum'], icon: '📅' },
+const KINDS: { id: NumberKind; label: [string, string]; icon: IconName }[] = [
+  { id: 'number', label: ['Numbers', 'Zahlen'], icon: 'hash' },
+  { id: 'time', label: ['Clock times', 'Uhrzeit'], icon: 'clock' },
+  { id: 'date', label: ['Dates', 'Datum'], icon: 'calendar' },
 ];
 
 export default function ZahlenPage() {
@@ -198,7 +200,10 @@ export default function ZahlenPage() {
             <section key={k.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-display text-lg text-gray-900">{k.icon} {t(k.label[0], k.label[1])}</p>
+                  <p className="font-display text-lg text-gray-900 flex items-center gap-2">
+                    <Icon name={k.icon} className="w-5 h-5 text-red-700" />
+                    {t(k.label[0], k.label[1])}
+                  </p>
                   <p className="text-sm text-gray-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
                     <span className="tabular-nums font-medium text-gray-700">{ex.digits}</span>
                     <span className="text-gray-300">=</span>

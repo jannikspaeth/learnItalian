@@ -7,7 +7,7 @@ import type { GrammarLesson } from '../grammar-lessons';
 export const GRAMMAR_LESSONS: GrammarLesson[] = [
   {
     id: 'aussprache',
-    icon: '🗣️',
+    icon: 'speech',
     title: 'Aussprache & Alphabet',
     level: 'A1',
     intro: 'Im Französischen schreibt man mehr, als man spricht – ein paar Regeln helfen enorm.',
@@ -62,7 +62,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronomen',
-    icon: '👤',
+    icon: 'user',
     title: 'Personalpronomen (ich, du, er …)',
     level: 'A1',
     intro: 'Im Französischen steht das Pronomen immer vor dem Verb – anders als im Italienischen.',
@@ -99,7 +99,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'artikel',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Nomen & Artikel (le / la)',
     level: 'A1',
     intro: 'Jedes Nomen ist männlich oder weiblich – lerne den Artikel immer mit.',
@@ -140,7 +140,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'etre-avoir',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'être & avoir',
     level: 'A1',
     intro: 'Die zwei wichtigsten Verben – sie bilden auch das Perfekt.',
@@ -175,7 +175,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'praesens',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Präsens der Verben',
     level: 'A1',
     intro: 'Die meisten Verben enden auf -er und sind regelmäßig.',
@@ -213,7 +213,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'zahlen',
-    icon: '🔢',
+    icon: 'hash',
     title: 'Zahlen',
     level: 'A1',
     intro: 'Bis 69 ganz regelmäßig – danach wird gerechnet.',
@@ -247,7 +247,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'praepositionen',
-    icon: '📍',
+    icon: 'pin',
     title: 'Präpositionen (contractées & einfache)',
     level: 'A1',
     intro: 'Kleine Wörter, große Wirkung – und à und de verschmelzen mit dem Artikel.',
@@ -290,7 +290,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'demonstrativpronomen',
-    icon: '👆',
+    icon: 'pointer',
     title: 'Demonstrativpronomen (ce, cet, cette, ces)',
     level: 'A1',
     intro: 'Dieser, diese, dieses – vier Formen, und man ist dabei.',
@@ -332,7 +332,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'possessiv',
-    icon: '🫵',
+    icon: 'pointer',
     title: 'Possessivpronomen (mon, ma, mes …)',
     level: 'A1',
     intro: 'Mein, dein, sein – entscheidend ist das Besessene, nicht der Besitzer.',
@@ -374,7 +374,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'fragen',
-    icon: '❓',
+    icon: 'question',
     title: 'Fragen & Verneinung',
     level: 'A1',
     intro: 'Drei Wege zu fragen – und zwei Wörter, die das Verb in die Zange nehmen.',
@@ -419,7 +419,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'adjektive',
-    icon: '🎨',
+    icon: 'palette',
     title: 'Adjektive',
     level: 'A1',
     intro: 'Adjektive passen sich an – und stehen meistens hinter dem Nomen.',
@@ -460,7 +460,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'reflexiv',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Reflexive (pronominale) Verben',
     level: 'A1',
     intro: 'Viele Alltagsverben bringen ihr eigenes Pronomen mit – oft auch da, wo das Deutsche keins hat.',
@@ -502,7 +502,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'passe-compose',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Passé composé',
     level: 'A2',
     intro: 'Die Vergangenheit für Erlebtes und Erledigtes – gebildet mit avoir oder être.',
@@ -549,7 +549,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imparfait',
-    icon: '🕰️',
+    icon: 'clock',
     title: 'Imparfait – und welche Vergangenheit wann?',
     level: 'A2',
     intro: 'Die zweite Vergangenheit: für Gewohnheiten, Beschreibungen und alles im Hintergrund.',
@@ -592,7 +592,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'futur',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Futur simple',
     level: 'A2',
     intro: 'Die Zukunft in einem Wort – für Vorhersagen, Versprechen und fernere Pläne.',
@@ -635,7 +635,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'futur-proche',
-    icon: '🚀',
+    icon: 'rocket',
     title: 'Futur proche (aller + Infinitiv)',
     level: 'A2',
     intro: 'Die Zukunft, die man im Alltag am meisten hört – und die man sofort kann.',
@@ -677,7 +677,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'objektpronomen',
-    icon: '🎯',
+    icon: 'target',
     title: 'Objektpronomen (le, la, lui, leur …)',
     level: 'A2',
     intro: 'Ihn, sie, ihm, ihnen – und fast immer vor dem Verb.',
@@ -722,7 +722,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imperativ',
-    icon: '📢',
+    icon: 'megaphone',
     title: 'Impératif',
     level: 'A2',
     intro: 'Bitten, Tipps und Befehle – aus dem Präsens, nur ohne Pronomen.',
@@ -766,7 +766,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'vergleiche',
-    icon: '📏',
+    icon: 'ruler',
     title: 'Komparativ & Superlativ',
     level: 'A2',
     intro: 'Größer, kleiner, am besten – alles mit plus, moins und aussi.',
@@ -807,7 +807,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'depuis-pendant',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'Depuis, pendant, il y a (Zeitangaben)',
     level: 'B1',
     intro: 'Seit, während, vor – drei Zeitangaben mit jeweils eigenen Regeln für die Zeitform.',
@@ -860,7 +860,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'conditionnel',
-    icon: '🤔',
+    icon: 'brain',
     title: 'Conditionnel (würde, hätte, könnte)',
     level: 'B1',
     intro: 'Für Höflichkeit, Wünsche, Ratschläge und Gedankenspiele.',
@@ -905,7 +905,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'subjonctif',
-    icon: '💭',
+    icon: 'thought',
     title: 'Subjonctif présent',
     level: 'B1',
     intro: 'Die Möglichkeitsform für Wille, Notwendigkeit, Gefühl und Zweifel – fast immer nach que.',
@@ -962,7 +962,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'y-en',
-    icon: '🧩',
+    icon: 'puzzle',
     title: 'Die Pronomen y und en',
     level: 'B1',
     intro: 'Zwei kleine Wörter ohne deutsches Gegenstück – im Alltag hört man sie ständig.',
@@ -1006,7 +1006,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'relativ',
-    icon: '🔗',
+    icon: 'link',
     title: 'Relativpronomen (qui, que, où, dont)',
     level: 'B1',
     intro: 'Der, die, das, wo, dessen – vier kleine Wörter verbinden Sätze.',
@@ -1058,7 +1058,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronoms-doubles',
-    icon: '🧱',
+    icon: 'blocks',
     title: 'Doppelte Objektpronomen',
     level: 'B1',
     intro: 'Zwei Pronomen vor einem Verb – in einer festen Reihenfolge.',
@@ -1111,7 +1111,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'bedingungssaetze',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Bedingungssätze mit si',
     level: 'B1',
     intro: 'Wenn … dann – zwei Grundtypen und eine goldene Regel.',
@@ -1153,7 +1153,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'plus-que-parfait',
-    icon: '⏪',
+    icon: 'rewind',
     title: 'Plus-que-parfait (Plusquamperfekt)',
     level: 'B1',
     intro: 'Die Vorvergangenheit: was schon vorher passiert war.',

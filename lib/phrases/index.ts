@@ -1,3 +1,4 @@
+import type { IconName } from '../icon-names';
 import type { PhraseRecord } from '../types';
 import { computeNewLevel, isDue, nextReviewDate } from '../srs';
 import { SITUATIONS } from './canon';
@@ -20,7 +21,7 @@ export interface Phrase {
 
 export interface Situation {
   id: string;
-  icon: string;
+  icon: IconName;
   label: [string, string];
   phrases: Phrase[];
 }

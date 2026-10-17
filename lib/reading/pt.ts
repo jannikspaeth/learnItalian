@@ -10,7 +10,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a1-familia',
     level: 'A1',
-    icon: '👨‍👩‍👧',
+    icon: 'users',
     title: 'A minha família',
     titleDe: 'Meine Familie',
     paragraphs: [
@@ -38,7 +38,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a1-cafe',
     level: 'A1',
-    icon: '☕',
+    icon: 'coffee',
     title: 'Na pastelaria',
     titleDe: 'In der Konditorei',
     paragraphs: [
@@ -67,7 +67,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a1-dia',
     level: 'A1',
-    icon: '⏰',
+    icon: 'alarm',
     title: 'Um dia normal',
     titleDe: 'Ein ganz normaler Tag',
     paragraphs: [
@@ -97,7 +97,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a2-regiao',
     level: 'A2',
-    icon: '🍇',
+    icon: 'grape',
     title: 'Uma semana no Douro',
     titleDe: 'Eine Woche am Douro',
     paragraphs: [
@@ -130,7 +130,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a2-infancia',
     level: 'A2',
-    icon: '🧒',
+    icon: 'baby',
     title: 'Quando eu era pequeno',
     titleDe: 'Als ich klein war',
     paragraphs: [
@@ -161,7 +161,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a2-medico',
     level: 'A2',
-    icon: '🩺',
+    icon: 'stethoscope',
     title: 'No centro de saúde',
     titleDe: 'Beim Arzt',
     paragraphs: [
@@ -194,7 +194,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a1-mercado',
     level: 'A1',
-    icon: '🍊',
+    icon: 'citrus',
     title: 'No mercado',
     titleDe: 'Auf dem Markt',
     paragraphs: [
@@ -223,7 +223,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a1-fim-de-semana',
     level: 'A1',
-    icon: '🏖️',
+    icon: 'beach',
     title: 'Planos para sábado',
     titleDe: 'Pläne für Samstag',
     paragraphs: [
@@ -252,7 +252,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a1-apartamento',
     level: 'A1',
-    icon: '🏠',
+    icon: 'home',
     title: 'A casa nova',
     titleDe: 'Die neue Wohnung',
     paragraphs: [
@@ -283,7 +283,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a2-comboio',
     level: 'A2',
-    icon: '🚆',
+    icon: 'train',
     title: 'O comboio atrasado',
     titleDe: 'Der verspätete Zug',
     paragraphs: [
@@ -313,7 +313,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a2-receita',
     level: 'A2',
-    icon: '🥣',
+    icon: 'pot',
     title: 'O caldo verde da avó',
     titleDe: 'Omas Caldo verde',
     paragraphs: [
@@ -345,7 +345,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-a2-trabalho',
     level: 'A2',
-    icon: '👨‍🍳',
+    icon: 'chef',
     title: 'Uma vida nova',
     titleDe: 'Ein neues Leben',
     paragraphs: [
@@ -374,7 +374,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-b1-coimbra',
     level: 'B1',
-    icon: '🎓',
+    icon: 'graduation',
     title: 'Estudar em Coimbra',
     titleDe: 'Studieren in Coimbra',
     paragraphs: [
@@ -407,7 +407,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-b1-loteria',
     level: 'B1',
-    icon: '🍀',
+    icon: 'clover',
     title: 'Se ganhasse no Euromilhões…',
     titleDe: 'Wenn ich im Euromillions-Lotto gewinnen würde …',
     paragraphs: [
@@ -440,7 +440,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-b1-fado',
     level: 'B1',
-    icon: '🎸',
+    icon: 'guitar',
     title: 'Uma noite de fado',
     titleDe: 'Ein Fado-Abend',
     paragraphs: [
@@ -475,7 +475,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-b1-turismo',
     level: 'B1',
-    icon: '🧳',
+    icon: 'luggage',
     title: 'Turistas a mais?',
     titleDe: 'Zu viele Touristen?',
     paragraphs: [
@@ -511,7 +511,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-b1-carta',
     level: 'B1',
-    icon: '✉️',
+    icon: 'mail',
     title: 'Uma carta de Braga',
     titleDe: 'Ein Brief aus Braga',
     paragraphs: [
@@ -547,7 +547,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'pt-b1-saudade',
     level: 'B1',
-    icon: '🌅',
+    icon: 'sunrise',
     title: 'O que é a saudade?',
     titleDe: 'Was ist Saudade?',
     paragraphs: [

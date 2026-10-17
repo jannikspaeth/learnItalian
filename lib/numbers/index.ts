@@ -75,7 +75,7 @@ function numberDistractors(n: number): number[] {
   const out = [n + 1, n - 1, n + 10, n - 10];
   const s = String(n);
   if (s.length >= 2) {
-    // 42 ↔ 24, and the classic 16 ↔ 60
+    // 42 vs 24, and the classic 16 vs 60
     out.push(Number(s.slice(0, -2) + s.slice(-1) + s.slice(-2, -1)));
   }
   if (n >= 100) out.push(n + 100, n - 100);

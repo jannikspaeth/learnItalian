@@ -1,5 +1,8 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
+import Icon from '@/components/Icon';
+import type { IconName } from '@/lib/icon-names';
 import { useState } from 'react';
 import { TOPICS, topicInfo } from '@/lib/vocab-topics';
 import { useT } from '@/lib/ui-lang';
@@ -29,7 +32,7 @@ export default function TopicPicker({
     setOpen(false);
   }
 
-  function row(id: string, icon: string, label: string) {
+  function row(id: string, icon: IconName, label: string) {
     const p = progress[id] ?? { seen: 0, total: 0 };
     const pct = p.total > 0 ? Math.round((p.seen / p.total) * 100) : 0;
     const active = value === id;
@@ -66,14 +69,16 @@ export default function TopicPicker({
         <span className="flex items-center gap-2 min-w-0">
           <span className="text-gray-400 shrink-0">{t('Topic', 'Thema')}</span>
           <span className="font-medium text-gray-800 truncate">
-            {current ? `${current.icon} ${current.label}` : t('All topics', 'Alle Themen')}
+            {current
+              ? <span className="inline-flex items-center gap-1.5"><Icon name={current.icon} className="w-4 h-4" />{current.label}</span>
+              : t('All topics', 'Alle Themen')}
           </span>
         </span>
-        <span className="text-gray-400 shrink-0">{open ? '▲' : '▼'}</span>
+        <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          {row('all', '📚', t('All topics', 'Alle Themen'))}
+          {row('all', 'books', t('All topics', 'Alle Themen'))}
           {TOPICS.map(t => row(t.id, t.icon, t.label))}
         </div>
       )}

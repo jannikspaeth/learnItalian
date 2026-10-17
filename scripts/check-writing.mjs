@@ -18,11 +18,13 @@ let problems = 0;
 const fail = (msg) => { problems++; console.log('  ✗ ' + msg); };
 
 try {
+  // --rootDir pins the layout: whatever the files import, the output lands in
+  // <out>/lib/writing/… (without it tsc drops the shared prefix and moves them).
   execFileSync('npx', ['tsc', ...LANGS.map(l => `lib/writing/${l}.ts`), 'lib/writing/canon.ts',
     '--module', 'commonjs', '--target', 'es2020', '--moduleResolution', 'node',
-    '--skipLibCheck', '--outDir', out], { stdio: 'inherit' });
+    '--rootDir', '.', '--skipLibCheck', '--outDir', out], { stdio: 'inherit' });
 
-  const { WRITING_TASKS } = await import(pathToFileURL(join(out, 'canon.js')));
+  const { WRITING_TASKS } = await import(pathToFileURL(join(out, 'lib/writing/canon.js')));
   const taskIds = WRITING_TASKS.map(t => t.id);
 
   // Punctuation doesn't travel with the chips, so compare words only.
@@ -30,7 +32,7 @@ try {
     s.toLowerCase().replace(/[.,;:!?¿¡]/g, ' ').trim().split(/\s+/).sort().join(' ');
 
   for (const lang of LANGS) {
-    const mod = await import(pathToFileURL(join(out, `${lang}.js`)));
+    const mod = await import(pathToFileURL(join(out, `lib/writing/${lang}.js`)));
     const pack = mod[`${lang.toUpperCase()}_WRITING`];
     if (!pack) { fail(`${lang}: no ${lang.toUpperCase()}_WRITING export`); continue; }
 

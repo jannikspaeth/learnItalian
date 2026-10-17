@@ -3,7 +3,7 @@ import { dbConfigured, getRaceState, setRaceState, getAllRaceStats } from '@/lib
 import { berlinToday, berlinMonth, monthlyTotals, settleStars } from '@/lib/race';
 import { isLang } from '@/lib/lang';
 
-// Lightweight endpoint for app-wide ⭐ display (nav header, profile switcher) so those
+// Lightweight endpoint for app-wide star display (nav header, profile switcher) so those
 // surfaces don't need the full race board. Self-heals month winners like /api/race.
 // Stars are per language (?lang=it|es), like the race itself.
 export async function GET(req: NextRequest) {

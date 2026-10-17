@@ -9,7 +9,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a1-famiglia',
     level: 'A1',
-    icon: '👨‍👩‍👧',
+    icon: 'users',
     title: 'La mia famiglia',
     titleDe: 'Meine Familie',
     paragraphs: [
@@ -33,7 +33,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a1-bar',
     level: 'A1',
-    icon: '☕',
+    icon: 'coffee',
     title: 'Al bar',
     titleDe: 'In der Bar',
     paragraphs: [
@@ -57,7 +57,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a1-giornata',
     level: 'A1',
-    icon: '⏰',
+    icon: 'alarm',
     title: 'Una giornata normale',
     titleDe: 'Ein ganz normaler Tag',
     paragraphs: [
@@ -81,7 +81,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a1-casa',
     level: 'A1',
-    icon: '🏡',
+    icon: 'home',
     title: 'La nuova casa',
     titleDe: 'Die neue Wohnung',
     paragraphs: [
@@ -105,7 +105,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a1-mercato',
     level: 'A1',
-    icon: '🍅',
+    icon: 'apple',
     title: 'Al mercato',
     titleDe: 'Auf dem Markt',
     paragraphs: [
@@ -129,7 +129,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a1-weekend',
     level: 'A1',
-    icon: '🎬',
+    icon: 'film',
     title: 'Che cosa facciamo sabato?',
     titleDe: 'Was machen wir am Samstag?',
     paragraphs: [
@@ -157,7 +157,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a2-sicilia',
     level: 'A2',
-    icon: '🏝️',
+    icon: 'palm',
     title: 'Una settimana in Sicilia',
     titleDe: 'Eine Woche auf Sizilien',
     paragraphs: [
@@ -194,7 +194,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a2-infanzia',
     level: 'A2',
-    icon: '🧒',
+    icon: 'baby',
     title: 'Quando ero piccola',
     titleDe: 'Als ich klein war',
     paragraphs: [
@@ -227,7 +227,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a2-treno',
     level: 'A2',
-    icon: '🚆',
+    icon: 'train',
     title: 'Il treno in ritardo',
     titleDe: 'Der verspätete Zug',
     paragraphs: [
@@ -261,7 +261,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a2-ricetta',
     level: 'A2',
-    icon: '🍝',
+    icon: 'utensils',
     title: 'La pasta al pomodoro della nonna',
     titleDe: 'Omas Nudeln mit Tomatensoße',
     paragraphs: [
@@ -305,7 +305,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a2-medico',
     level: 'A2',
-    icon: '🩺',
+    icon: 'stethoscope',
     title: 'Dal medico',
     titleDe: 'Beim Arzt',
     paragraphs: [
@@ -345,7 +345,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-a2-lavoro',
     level: 'A2',
-    icon: '💼',
+    icon: 'briefcase',
     title: 'Un nuovo inizio',
     titleDe: 'Ein Neuanfang',
     paragraphs: [
@@ -387,7 +387,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-b1-bologna',
     level: 'B1',
-    icon: '🎓',
+    icon: 'graduation',
     title: 'Studiare a Bologna',
     titleDe: 'Studieren in Bologna',
     paragraphs: [
@@ -445,7 +445,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-b1-slow-food',
     level: 'B1',
-    icon: '🐌',
+    icon: 'snail',
     title: 'Slow Food: mangiare con calma',
     titleDe: 'Slow Food: in Ruhe essen',
     paragraphs: [
@@ -513,7 +513,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-b1-lotteria',
     level: 'B1',
-    icon: '🍀',
+    icon: 'clover',
     title: 'Se vincessi alla lotteria…',
     titleDe: 'Wenn ich im Lotto gewinnen würde …',
     paragraphs: [
@@ -562,7 +562,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-b1-venezia',
     level: 'B1',
-    icon: '🛶',
+    icon: 'boat',
     title: 'Venezia e i turisti',
     titleDe: 'Venedig und die Touristen',
     paragraphs: [
@@ -623,7 +623,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-b1-lettera',
     level: 'B1',
-    icon: '✉️',
+    icon: 'mail',
     title: 'Una lettera da Napoli',
     titleDe: 'Ein Brief aus Neapel',
     paragraphs: [
@@ -685,7 +685,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'it-b1-caffe',
     level: 'B1',
-    icon: '☕',
+    icon: 'coffee',
     title: 'Le regole non scritte del caffè',
     titleDe: 'Die ungeschriebenen Regeln des Kaffees',
     paragraphs: [

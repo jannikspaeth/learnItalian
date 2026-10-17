@@ -27,7 +27,7 @@ export default function TypeCard({
   answer: string;            // the correct answer, shown after checking
   check: (value: string) => { correct: boolean; accentHint?: string };
   speakText?: string;        // target-language text to read aloud
-  speakPrompt?: boolean;     // the prompt itself is target language: offer 🔊 right away
+  speakPrompt?: boolean;     // the prompt itself is target language: offer the speaker right away
   lang: Lang;
   placeholder?: string;
   onResult: (correct: boolean, userAnswer: string) => void;

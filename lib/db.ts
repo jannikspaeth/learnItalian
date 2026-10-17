@@ -26,7 +26,7 @@ export function dbConfigured(): boolean {
   );
 }
 
-// ─── row ↔ VocabEntry mapping ──────────────────────────────────────────────────
+// ─── row to VocabEntry mapping ──────────────────────────────────────────────────
 
 interface VocabRow {
   id: string;

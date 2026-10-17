@@ -4,6 +4,7 @@
 // every language file maps the same ids to its own wording — so the five
 // languages can't drift apart (lib/phrases/index.ts checks the ids line up).
 
+import type { IconName } from '../icon-names';
 export interface PhraseSpec {
   id: string;
   de: string;
@@ -12,7 +13,7 @@ export interface PhraseSpec {
 
 export interface SituationSpec {
   id: string;
-  icon: string;
+  icon: IconName;
   label: [string, string]; // [English, German] — UI chrome
   phrases: PhraseSpec[];
 }
@@ -20,7 +21,7 @@ export interface SituationSpec {
 export const SITUATIONS: SituationSpec[] = [
   {
     id: 'begruessung',
-    icon: '👋',
+    icon: 'hand',
     label: ['Greetings', 'Begrüßung & Abschied'],
     phrases: [
       { id: 'greet-hello', de: 'Hallo!' },
@@ -37,7 +38,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'hoeflichkeit',
-    icon: '🙏',
+    icon: 'handshake',
     label: ['Politeness', 'Höflichkeit & Nachfragen'],
     phrases: [
       { id: 'pol-please', de: 'Bitte.' },
@@ -54,7 +55,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'smalltalk',
-    icon: '💬',
+    icon: 'chat',
     label: ['Small talk', 'Small Talk'],
     phrases: [
       { id: 'small-job', de: 'Was machst du beruflich?' },
@@ -71,7 +72,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'restaurant',
-    icon: '🍽️',
+    icon: 'utensils',
     label: ['Restaurant', 'Restaurant & Café'],
     phrases: [
       { id: 'rest-table', de: 'Einen Tisch für zwei, bitte.' },
@@ -88,7 +89,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'einkaufen',
-    icon: '🛒',
+    icon: 'cart',
     label: ['Shopping', 'Einkaufen & Bezahlen'],
     phrases: [
       { id: 'shop-howmuch', de: 'Wie viel kostet das?' },
@@ -105,7 +106,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'unterwegs',
-    icon: '🚆',
+    icon: 'train',
     label: ['Getting around', 'Unterwegs & Verkehr'],
     phrases: [
       { id: 'way-station', de: 'Wo ist der Bahnhof?' },
@@ -122,7 +123,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'uebernachten',
-    icon: '🏨',
+    icon: 'hotel',
     label: ['Hotel', 'Hotel & Unterkunft'],
     phrases: [
       { id: 'hotel-reservation', de: 'Ich habe eine Reservierung.' },
@@ -139,7 +140,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'gesundheit',
-    icon: '🩺',
+    icon: 'stethoscope',
     label: ['Doctor', 'Arzt & Apotheke'],
     phrases: [
       { id: 'med-notwell', de: 'Mir geht es nicht gut.' },
@@ -156,7 +157,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'telefon',
-    icon: '📞',
+    icon: 'phone',
     label: ['Phone', 'Telefon & Termine'],
     phrases: [
       { id: 'phone-hello', de: 'Hallo, hier spricht Jannik.' },
@@ -173,7 +174,7 @@ export const SITUATIONS: SituationSpec[] = [
   },
   {
     id: 'notfall',
-    icon: '🆘',
+    icon: 'sos',
     label: ['Emergencies', 'Probleme & Notfall'],
     phrases: [
       { id: 'emg-help', de: 'Hilfe!' },

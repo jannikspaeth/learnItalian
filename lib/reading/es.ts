@@ -8,7 +8,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a1-familia',
     level: 'A1',
-    icon: '👨‍👩‍👧',
+    icon: 'users',
     title: 'Mi familia',
     titleDe: 'Meine Familie',
     paragraphs: [
@@ -32,7 +32,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a1-cafeteria',
     level: 'A1',
-    icon: '☕',
+    icon: 'coffee',
     title: 'En la cafetería',
     titleDe: 'Im Café',
     paragraphs: [
@@ -56,7 +56,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a1-dia',
     level: 'A1',
-    icon: '⏰',
+    icon: 'alarm',
     title: 'Un día normal',
     titleDe: 'Ein ganz normaler Tag',
     paragraphs: [
@@ -82,7 +82,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a2-andalucia',
     level: 'A2',
-    icon: '🏰',
+    icon: 'castle',
     title: 'Una semana en Andalucía',
     titleDe: 'Eine Woche in Andalusien',
     paragraphs: [
@@ -108,7 +108,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a2-infancia',
     level: 'A2',
-    icon: '🧒',
+    icon: 'baby',
     title: 'Cuando era pequeño',
     titleDe: 'Als ich klein war',
     paragraphs: [
@@ -134,7 +134,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a2-medico',
     level: 'A2',
-    icon: '🩺',
+    icon: 'stethoscope',
     title: 'En el médico',
     titleDe: 'Beim Arzt',
     paragraphs: [
@@ -160,7 +160,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-b1-salamanca',
     level: 'B1',
-    icon: '🎓',
+    icon: 'graduation',
     title: 'Estudiar en Salamanca',
     titleDe: 'Studieren in Salamanca',
     paragraphs: [
@@ -186,7 +186,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-b1-loteria',
     level: 'B1',
-    icon: '🍀',
+    icon: 'clover',
     title: 'Si me tocara la lotería…',
     titleDe: 'Wenn ich im Lotto gewinnen würde …',
     paragraphs: [
@@ -212,7 +212,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-b1-siesta',
     level: 'B1',
-    icon: '🌞',
+    icon: 'sun',
     title: 'Los horarios españoles',
     titleDe: 'Die spanischen Uhrzeiten',
     paragraphs: [
@@ -238,7 +238,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a1-mercado',
     level: 'A1',
-    icon: '🍅',
+    icon: 'apple',
     title: 'En el mercado',
     titleDe: 'Auf dem Markt',
     paragraphs: [
@@ -262,7 +262,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a1-finde',
     level: 'A1',
-    icon: '📱',
+    icon: 'smartphone',
     title: '¿Qué hacemos el sábado?',
     titleDe: 'Was machen wir am Samstag?',
     paragraphs: [
@@ -286,7 +286,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a1-piso',
     level: 'A1',
-    icon: '🏠',
+    icon: 'home',
     title: 'Mi piso nuevo',
     titleDe: 'Meine neue Wohnung',
     paragraphs: [
@@ -310,7 +310,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a2-tren',
     level: 'A2',
-    icon: '🚆',
+    icon: 'train',
     title: 'El tren que no llegaba',
     titleDe: 'Der Zug, der nicht kam',
     paragraphs: [
@@ -334,7 +334,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a2-receta',
     level: 'A2',
-    icon: '🍳',
+    icon: 'chef',
     title: 'La tortilla de mi abuela',
     titleDe: 'Die Tortilla meiner Oma',
     paragraphs: [
@@ -358,7 +358,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-a2-trabajo',
     level: 'A2',
-    icon: '💼',
+    icon: 'briefcase',
     title: 'Mi primer día',
     titleDe: 'Mein erster Tag',
     paragraphs: [
@@ -382,7 +382,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-b1-turismo',
     level: 'B1',
-    icon: '🧳',
+    icon: 'luggage',
     title: '¿Demasiados turistas?',
     titleDe: 'Zu viele Touristen?',
     paragraphs: [
@@ -406,7 +406,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-b1-carta',
     level: 'B1',
-    icon: '✉️',
+    icon: 'mail',
     title: 'Una carta desde Bilbao',
     titleDe: 'Ein Brief aus Bilbao',
     paragraphs: [
@@ -430,7 +430,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'es-b1-sobremesa',
     level: 'B1',
-    icon: '☕',
+    icon: 'coffee',
     title: 'El arte de la sobremesa',
     titleDe: 'Die Kunst der Sobremesa',
     paragraphs: [

@@ -8,7 +8,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a1-famille',
     level: 'A1',
-    icon: '👨‍👩‍👧',
+    icon: 'users',
     title: 'Ma famille',
     titleDe: 'Meine Familie',
     paragraphs: [
@@ -32,7 +32,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a1-cafe',
     level: 'A1',
-    icon: '🥐',
+    icon: 'croissant',
     title: 'Au café',
     titleDe: 'Im Café',
     paragraphs: [
@@ -56,7 +56,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a1-journee',
     level: 'A1',
-    icon: '⏰',
+    icon: 'alarm',
     title: 'Une journée normale',
     titleDe: 'Ein ganz normaler Tag',
     paragraphs: [
@@ -82,7 +82,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a2-bretagne',
     level: 'A2',
-    icon: '⛵',
+    icon: 'boat',
     title: 'Une semaine en Bretagne',
     titleDe: 'Eine Woche in der Bretagne',
     paragraphs: [
@@ -108,7 +108,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a2-enfance',
     level: 'A2',
-    icon: '🧒',
+    icon: 'baby',
     title: 'Quand j’étais petite',
     titleDe: 'Als ich klein war',
     paragraphs: [
@@ -134,7 +134,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a2-medecin',
     level: 'A2',
-    icon: '🩺',
+    icon: 'stethoscope',
     title: 'Chez le médecin',
     titleDe: 'Beim Arzt',
     paragraphs: [
@@ -160,7 +160,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-b1-colocation',
     level: 'B1',
-    icon: '🏠',
+    icon: 'home',
     title: 'La vie en colocation',
     titleDe: 'Leben in einer WG',
     paragraphs: [
@@ -186,7 +186,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-b1-loto',
     level: 'B1',
-    icon: '🍀',
+    icon: 'clover',
     title: 'Si je gagnais au loto…',
     titleDe: 'Wenn ich im Lotto gewinnen würde …',
     paragraphs: [
@@ -212,7 +212,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-b1-boulangerie',
     level: 'B1',
-    icon: '🥖',
+    icon: 'croissant',
     title: 'La baguette, un trésor national',
     titleDe: 'Das Baguette, ein nationaler Schatz',
     paragraphs: [
@@ -239,7 +239,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a1-marche',
     level: 'A1',
-    icon: '🍅',
+    icon: 'apple',
     title: 'Au marché',
     titleDe: 'Auf dem Markt',
     paragraphs: [
@@ -263,7 +263,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a1-weekend',
     level: 'A1',
-    icon: '📅',
+    icon: 'calendar',
     title: 'Qu’est-ce qu’on fait samedi ?',
     titleDe: 'Was machen wir am Samstag?',
     paragraphs: [
@@ -287,7 +287,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a1-appartement',
     level: 'A1',
-    icon: '🏠',
+    icon: 'home',
     title: 'Mon nouvel appartement',
     titleDe: 'Meine neue Wohnung',
     paragraphs: [
@@ -313,7 +313,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a2-train',
     level: 'A2',
-    icon: '🚆',
+    icon: 'train',
     title: 'Le train en retard',
     titleDe: 'Der verspätete Zug',
     paragraphs: [
@@ -337,7 +337,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a2-recette',
     level: 'A2',
-    icon: '🥞',
+    icon: 'chef',
     title: 'Les crêpes de ma grand-mère',
     titleDe: 'Die Crêpes meiner Großmutter',
     paragraphs: [
@@ -361,7 +361,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-a2-travail',
     level: 'A2',
-    icon: '💼',
+    icon: 'briefcase',
     title: 'Mon premier jour',
     titleDe: 'Mein erster Tag',
     paragraphs: [
@@ -387,7 +387,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-b1-tourisme',
     level: 'B1',
-    icon: '🧳',
+    icon: 'luggage',
     title: 'Trop de touristes ?',
     titleDe: 'Zu viele Touristen?',
     paragraphs: [
@@ -411,7 +411,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-b1-lettre',
     level: 'B1',
-    icon: '✉️',
+    icon: 'mail',
     title: 'Une lettre de Strasbourg',
     titleDe: 'Ein Brief aus Straßburg',
     paragraphs: [
@@ -435,7 +435,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'fr-b1-bises',
     level: 'B1',
-    icon: '😘',
+    icon: 'heart',
     title: 'La bise : une règle que personne n’explique',
     titleDe: 'Die Bise: eine Regel, die niemand erklärt',
     paragraphs: [

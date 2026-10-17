@@ -9,7 +9,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   // ══════════════════════════════ A1 ══════════════════════════════
   {
     id: 'artikel',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Artikel & Plural (o, a, um, uma)',
     level: 'A1',
     intro: 'Zwei Geschlechter, vier bestimmte Artikel – und Artikel, die mit Präpositionen verschmelzen.',
@@ -45,7 +45,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'ser-estar-ter',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'Ser, Estar & Ter (sein & haben)',
     level: 'A1',
     intro: 'Das Deutsche hat ein „sein“, das Portugiesische zwei – dazu ter für „haben“.',
@@ -80,7 +80,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'praesens',
-    icon: '⏺️',
+    icon: 'dot',
     title: 'Präsens (presente do indicativo)',
     level: 'A1',
     intro: 'Drei Verbgruppen auf -ar, -er und -ir – mit fast gleichen Endungen.',
@@ -116,7 +116,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'possessiv',
-    icon: '👜',
+    icon: 'bag',
     title: 'Possessivpronomen (meu, teu, seu …)',
     level: 'A1',
     intro: 'Das Possessiv passt sich dem Besitz an – nicht dem Besitzer.',
@@ -150,7 +150,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'fragen',
-    icon: '❓',
+    icon: 'question',
     title: 'Fragen & Verneinung',
     level: 'A1',
     intro: 'Fragewörter, Fragen ohne Umstellung und das kleine Wort não.',
@@ -186,7 +186,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'adjektive',
-    icon: '🎨',
+    icon: 'palette',
     title: 'Adjektive',
     level: 'A1',
     intro: 'Adjektive richten sich nach dem Nomen – und stehen meistens dahinter.',
@@ -223,7 +223,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   // ══════════════════════════════ A2 ══════════════════════════════
   {
     id: 'preterito-perfeito',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Pretérito perfeito simples (Vergangenheit)',
     level: 'A2',
     intro: 'Die Erzählzeit des Portugiesischen – ein Wort, wo das Deutsche „habe gemacht“ sagt.',
@@ -257,7 +257,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imperfeito',
-    icon: '🕰️',
+    icon: 'clock',
     title: 'Pretérito imperfeito',
     level: 'A2',
     intro: 'Die Vergangenheit für Gewohnheiten, Beschreibungen und den Hintergrund.',
@@ -291,7 +291,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'futuro',
-    icon: '⏭️',
+    icon: 'forward',
     title: 'Futur (futuro simples & ir + Infinitiv)',
     level: 'A2',
     intro: 'Über die Zukunft spricht man auf drei Arten – im Alltag meistens mit ir.',
@@ -325,7 +325,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'imperativ',
-    icon: '📣',
+    icon: 'megaphone',
     title: 'Imperativ (Befehlsform)',
     level: 'A2',
     intro: 'Bitten und Aufforderungen an tu und vocês.',
@@ -360,7 +360,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'objektpronomen',
-    icon: '🎯',
+    icon: 'target',
     title: 'Objektpronomen (o, a, lhe …)',
     level: 'A2',
     intro: 'Kleine Wörter für „ihn, sie, ihm, ihnen“ – damit man nichts doppelt sagen muss.',
@@ -393,7 +393,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'comparativos',
-    icon: '📏',
+    icon: 'ruler',
     title: 'Vergleiche (mais, menos, tão … como)',
     level: 'A2',
     intro: 'Größer, kleiner, genauso groß – und der/die/das Größte.',
@@ -429,7 +429,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'preposicoes',
-    icon: '🧭',
+    icon: 'compass',
     title: 'Präpositionen (a, de, em, com, para, por)',
     level: 'A2',
     intro: 'Die kleinen Wörter für Ort, Richtung, Herkunft und Begleitung.',
@@ -465,7 +465,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'estar-a-infinitivo',
-    icon: '🔄',
+    icon: 'refresh',
     title: 'Verlaufsform (estar a + Infinitiv)',
     level: 'A2',
     intro: 'Was gerade passiert – so, wie man es in Portugal sagt.',
@@ -499,7 +499,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'demonstrativos',
-    icon: '👉',
+    icon: 'pointer',
     title: 'Demonstrativpronomen (este, esse, aquele)',
     level: 'A2',
     intro: 'Drei Entfernungen statt zwei: hier bei mir, da bei dir, dort drüben.',
@@ -535,7 +535,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'tempo-ha-desde',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'Zeitangaben (há, desde, durante)',
     level: 'A2',
     intro: '„Vor“, „seit“ und „während“ – drei kleine Wörter, die Deutsche oft verwechseln.',
@@ -571,7 +571,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   // ══════════════════════════════ B1 ══════════════════════════════
   {
     id: 'condicional',
-    icon: '🤔',
+    icon: 'brain',
     title: 'Konditional (condicional)',
     level: 'B1',
     intro: 'Die „würde“-Form: für höfliche Bitten, Wünsche und Gedankenspiele.',
@@ -613,7 +613,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'mais-que-perfeito',
-    icon: '⏪',
+    icon: 'rewind',
     title: 'Plusquamperfekt (mais-que-perfeito)',
     level: 'B1',
     intro: '„Ich hatte schon gegessen“ – was vor einem anderen Ereignis in der Vergangenheit geschah.',
@@ -647,7 +647,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'voz-passiva',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Passiv (voz passiva)',
     level: 'B1',
     intro: 'Nicht wer etwas tut, sondern was mit etwas geschieht.',
@@ -682,7 +682,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'discurso-indireto',
-    icon: '🗨️',
+    icon: 'speech',
     title: 'Indirekte Rede (discurso indireto)',
     level: 'B1',
     intro: 'Erzählen, was jemand gesagt hat – mit einer Zeitstufe zurück.',
@@ -723,7 +723,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'oracoes-condicionais',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Bedingungssätze (orações condicionais)',
     level: 'B1',
     intro: '„Wenn …, dann …“ – real oder nur gedacht.',
@@ -765,7 +765,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'por-para',
-    icon: '↔️',
+    icon: 'swap',
     title: 'Por oder para?',
     level: 'B1',
     intro: 'Zwei Präpositionen, die beide manchmal „für“ heißen – aber nie dasselbe.',
@@ -803,7 +803,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronomes-relativos',
-    icon: '🔗',
+    icon: 'link',
     title: 'Relativpronomen (que, quem, cujo, onde)',
     level: 'B1',
     intro: 'Sätze verbinden: der, die, das, dessen, wo.',
@@ -845,7 +845,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'conjuntivo',
-    icon: '💭',
+    icon: 'thought',
     title: 'Conjuntivo presente',
     level: 'B1',
     intro: 'Die Möglichkeitsform für Wunsch, Gefühl, Zweifel und Bewertung.',
@@ -892,7 +892,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'conjuntivo-imperfeito',
-    icon: '🌫️',
+    icon: 'fog',
     title: 'Imperfeito do conjuntivo',
     level: 'B1',
     intro: '„Wenn ich … wäre“ – und der conjuntivo in der Vergangenheit.',
@@ -935,7 +935,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'futuro-conjuntivo',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Futuro do conjuntivo',
     level: 'B1',
     intro: 'Eine Zeitform, die Spanisch und Italienisch im Alltag verloren haben – im Portugiesischen ist sie quicklebendig.',
@@ -980,7 +980,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'infinitivo-pessoal',
-    icon: '👤',
+    icon: 'user',
     title: 'Infinitivo pessoal',
     level: 'B1',
     intro: 'Ein Infinitiv mit Personalendungen – eine Besonderheit des Portugiesischen.',
@@ -1023,7 +1023,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronomes-combinados',
-    icon: '🧩',
+    icon: 'puzzle',
     title: 'Pronomes combinados (mo, to, lho)',
     level: 'B1',
     intro: '„Gib es mir“ – wenn zwei Objektpronomen aufeinandertreffen.',
@@ -1058,7 +1058,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'colocacao-pronominal',
-    icon: '📍',
+    icon: 'pin',
     title: 'Stellung der Pronomen',
     level: 'B1',
     intro: 'Vor, nach oder sogar mitten im Verb – im europäischen Portugiesisch gibt es klare Regeln.',
@@ -1096,7 +1096,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'pronomes-indefinidos',
-    icon: '❔',
+    icon: 'question',
     title: 'Indefinitpronomen',
     level: 'B1',
     intro: 'Jemand, niemand, etwas, nichts, jeder, alle, andere.',
@@ -1133,7 +1133,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'adverbios',
-    icon: '🏃',
+    icon: 'steps',
     title: 'Adverbien auf -mente',
     level: 'B1',
     intro: 'Wie etwas geschieht: schnell, leicht, zum Glück.',
@@ -1168,7 +1168,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'verbos-pronominais',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Reflexive Verben',
     level: 'B1',
     intro: 'Sich nennen, aufstehen, erinnern, beschweren.',
@@ -1203,7 +1203,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   },
   {
     id: 'quantidade',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'Mengenwörter',
     level: 'B1',
     intro: 'muito, pouco, bastante, demasiado – mal angeglichen, mal unveränderlich.',

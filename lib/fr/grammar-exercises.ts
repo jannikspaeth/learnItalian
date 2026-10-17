@@ -25,7 +25,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ A1 ══════════════════════════════
   {
     id: 'articles-definis',
-    icon: '🔤',
+    icon: 'letters',
     title: 'Bestimmte Artikel (le, la, l\', les)',
     level: 'A1',
     lessonId: 'artikel',
@@ -55,7 +55,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'articles-indefinis',
-    icon: '🅰️',
+    icon: 'article',
     title: 'Unbestimmte Artikel (un, une, des)',
     level: 'A1',
     lessonId: 'artikel',
@@ -82,7 +82,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'partitifs',
-    icon: '🥖',
+    icon: 'croissant',
     title: 'Teilungsartikel (du, de la, de l\')',
     level: 'A1',
     lessonId: 'artikel',
@@ -112,7 +112,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pluriel',
-    icon: '👥',
+    icon: 'users',
     title: 'Mehrzahl der Nomen',
     level: 'A1',
     lessonId: 'artikel',
@@ -142,7 +142,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'etre-avoir',
-    icon: '⚖️',
+    icon: 'scale',
     title: 'être & avoir',
     level: 'A1',
     lessonId: 'etre-avoir',
@@ -171,7 +171,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'present-er',
-    icon: '🔁',
+    icon: 'repeat',
     title: 'Präsens der Verben auf -er',
     level: 'A1',
     lessonId: 'praesens',
@@ -200,7 +200,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'present-irreguliers',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Unregelmäßige Verben im Präsens',
     level: 'A1',
     lessonId: 'praesens',
@@ -230,7 +230,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'articles-contractes',
-    icon: '📍',
+    icon: 'pin',
     title: 'à und de mit Artikel (au, du, aux …)',
     level: 'A1',
     lessonId: 'praepositionen',
@@ -259,7 +259,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'possessifs',
-    icon: '🫵',
+    icon: 'pointer',
     title: 'Possessivbegleiter (mon, ma, mes …)',
     level: 'A1',
     lessonId: 'possessiv',
@@ -288,7 +288,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'questions',
-    icon: '❓',
+    icon: 'question',
     title: 'Fragewörter (où, quand, comment …)',
     level: 'A1',
     lessonId: 'fragen',
@@ -317,7 +317,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'negation',
-    icon: '🚫',
+    icon: 'ban',
     title: 'Verneinung (ne … pas, ne … jamais …)',
     level: 'A1',
     lessonId: 'fragen',
@@ -347,7 +347,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'adjectifs',
-    icon: '🎨',
+    icon: 'palette',
     title: 'Adjektive angleichen',
     level: 'A1',
     lessonId: 'adjektive',
@@ -377,7 +377,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'prepositions-lieux',
-    icon: '🌍',
+    icon: 'globe',
     title: 'Städte und Länder (à, en, au, aux)',
     level: 'A1',
     lessonId: 'praepositionen',
@@ -408,7 +408,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ A2 ══════════════════════════════
   {
     id: 'demonstratifs',
-    icon: '👉',
+    icon: 'pointer',
     title: 'Demonstrativbegleiter (ce, cet, cette, ces)',
     level: 'A2',
     lessonId: 'demonstrativpronomen',
@@ -437,7 +437,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronominaux',
-    icon: '🪞',
+    icon: 'mirror',
     title: 'Reflexive Verben (se lever …)',
     level: 'A2',
     lessonId: 'reflexiv',
@@ -466,7 +466,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'passe-compose-avoir',
-    icon: '✅',
+    icon: 'check',
     title: 'Passé composé mit avoir',
     level: 'A2',
     lessonId: 'passe-compose',
@@ -495,7 +495,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'passe-compose-etre',
-    icon: '🚪',
+    icon: 'door',
     title: 'Passé composé mit être',
     level: 'A2',
     lessonId: 'passe-compose',
@@ -525,7 +525,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imparfait',
-    icon: '🕰️',
+    icon: 'clock',
     title: 'Imparfait (je parlais)',
     level: 'A2',
     lessonId: 'imparfait',
@@ -554,7 +554,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'futur',
-    icon: '🔮',
+    icon: 'wand',
     title: 'Futur simple',
     level: 'A2',
     lessonId: 'futur',
@@ -584,7 +584,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronoms-cod',
-    icon: '🎯',
+    icon: 'target',
     title: 'Direkte Objektpronomen (le, la, les)',
     level: 'A2',
     lessonId: 'objektpronomen',
@@ -613,7 +613,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronoms-coi',
-    icon: '🎁',
+    icon: 'gift',
     title: 'Indirekte Objektpronomen (lui, leur)',
     level: 'A2',
     lessonId: 'objektpronomen',
@@ -642,7 +642,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'comparatifs',
-    icon: '📊',
+    icon: 'chart',
     title: 'Vergleiche (plus … que, aussi … que)',
     level: 'A2',
     lessonId: 'vergleiche',
@@ -672,7 +672,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'imperatif',
-    icon: '📢',
+    icon: 'megaphone',
     title: 'Imperativ (parle ! parlez !)',
     level: 'A2',
     lessonId: 'imperativ',
@@ -702,7 +702,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'futur-proche',
-    icon: '⏳',
+    icon: 'hourglass',
     title: 'Nahe Zukunft, jüngste Vergangenheit, Verlauf',
     level: 'A2',
     lessonId: 'futur-proche',
@@ -734,7 +734,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   // ══════════════════════════════ B1 ══════════════════════════════
   {
     id: 'imparfait-passe-compose',
-    icon: '🎬',
+    icon: 'film',
     title: 'Imparfait oder Passé composé?',
     level: 'B1',
     lessonId: 'imparfait',
@@ -764,7 +764,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'conditionnel',
-    icon: '🤔',
+    icon: 'brain',
     title: 'Konditional (je voudrais)',
     level: 'B1',
     lessonId: 'conditionnel',
@@ -793,7 +793,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'subjonctif',
-    icon: '🌈',
+    icon: 'rainbow',
     title: 'Subjonctif présent (que je parle)',
     level: 'B1',
     lessonId: 'subjonctif',
@@ -823,7 +823,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'subjonctif-indicatif',
-    icon: '🔍',
+    icon: 'search',
     title: 'Subjonctif oder Indikativ?',
     level: 'B1',
     lessonId: 'subjonctif',
@@ -853,7 +853,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'y-en',
-    icon: '🧩',
+    icon: 'puzzle',
     title: 'Die Pronomen y und en',
     level: 'B1',
     lessonId: 'y-en',
@@ -883,7 +883,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'relatifs',
-    icon: '🔗',
+    icon: 'link',
     title: 'Relativpronomen (qui, que, où, dont)',
     level: 'B1',
     lessonId: 'relativ',
@@ -912,7 +912,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'si-conditionnel',
-    icon: '🔀',
+    icon: 'shuffle',
     title: 'Bedingungssätze (si …)',
     level: 'B1',
     lessonId: 'bedingungssaetze',
@@ -942,7 +942,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'plus-que-parfait',
-    icon: '⏮️',
+    icon: 'back',
     title: 'Plusquamperfekt (j\'avais parlé)',
     level: 'B1',
     lessonId: 'plus-que-parfait',
@@ -971,7 +971,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'pronoms-doubles',
-    icon: '🪢',
+    icon: 'knot',
     title: 'Doppelte Pronomen (je te le donne)',
     level: 'B1',
     lessonId: 'pronoms-doubles',
@@ -1000,7 +1000,7 @@ export const FR_GRAMMAR_TOPICS: GrammarTopic[] = [
   },
   {
     id: 'depuis-pendant',
-    icon: '⌛',
+    icon: 'hourglass',
     title: 'depuis, pendant oder il y a?',
     level: 'B1',
     lessonId: 'depuis-pendant',

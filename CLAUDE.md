@@ -88,7 +88,7 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
   `articles`, `numbers`, `phrases`, `writing`; `/api/data/extras`, `updateExtras()` in `lib/storage.ts` queues
   read-modify-writes). Deleted with the profile.
 
-### ⚠️ Manual SQL migrations (no migrations dir — tables are created by hand)
+### Manual SQL migrations (no migrations dir — tables are created by hand)
 Full setup for a fresh Supabase project (column names match `lib/db.ts`):
 ```sql
 create table if not exists vocab (
@@ -210,7 +210,11 @@ alter table grammar     enable row level security;
 ## Look ("warm italiano")
 
 Cream ground, terracotta accent, olive for correct answers, DM Sans body + Fraunces serif for titles (`h1`,
-`.font-display`), icons from `lucide-react` (no emoji as UI icons; content emojis such as topic/badge icons and celebration toasts stay). The theme lives in `app/globals.css` `@theme`: the
+`.font-display`), icons from `lucide-react` — **no emoji anywhere in the UI**; the language flags are the only
+exception. Content files (grammar topics and lessons, reading texts, vocabulary topics, phrase
+situations, writing tasks, badges, mistake kinds) store an icon *name* from `lib/icon-names.ts`;
+`components/Icon.tsx` maps each name to a lucide icon and `satisfies Record<IconName, LucideIcon>`
+makes the build fail when one is missing. The theme lives in `app/globals.css` `@theme`: the
 Tailwind `gray`/`red`/`green`/`white` palettes are re-tuned there, so keep using those class names
 (`red-700` = accent, `green-*` = correct, `gray-*` = warm neutrals). Practice rounds on Today run in focus mode
 (`body[data-focus]` hides the tab bar) and show the verdict in `components/practice/FeedbackBar.tsx`.

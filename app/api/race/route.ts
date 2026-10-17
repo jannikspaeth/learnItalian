@@ -22,7 +22,7 @@ import { levelFor } from '@/lib/profiles';
 const KEEP_DAILY_DAYS = 30;
 
 // GET reads the standings and self-heals: it snapshots today's live counts, records
-// finished-day highscores, and awards a ⭐ to the winner of any finished month. All
+// finished-day highscores, and awards a star to the winner of any finished month. All
 // side-effects are idempotent (guarded by settledDates / settledMonths), so repeating
 // this on a GET is safe. Points are scoped to the current calendar month.
 // Each language (?lang=it|es) has its own race: its own row, stats and racers.
@@ -179,7 +179,7 @@ export async function GET(req: NextRequest) {
       if (d < cutoff && settled.has(d)) delete state.dailyCounts[d];
     }
 
-    // Monthly points from the per-user daily history; award ⭐ for finished months.
+    // Monthly points from the per-user daily history; award a star for finished months.
     const totals = monthlyTotals(dailyMaps, today);
     settleStars(state, totals, currentMonth);
 

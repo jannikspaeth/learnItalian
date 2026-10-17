@@ -11,7 +11,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a1-familia',
     level: 'A1',
-    icon: '👨‍👩‍👦',
+    icon: 'users',
     title: 'A minha família',
     titleDe: 'Meine Familie',
     paragraphs: [
@@ -41,7 +41,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a1-cafe',
     level: 'A1',
-    icon: '☕',
+    icon: 'coffee',
     title: 'Na padaria',
     titleDe: 'In der Bäckerei',
     paragraphs: [
@@ -70,7 +70,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a1-dia',
     level: 'A1',
-    icon: '⏰',
+    icon: 'alarm',
     title: 'Um dia normal',
     titleDe: 'Ein ganz normaler Tag',
     paragraphs: [
@@ -99,7 +99,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a1-mercado',
     level: 'A1',
-    icon: '🥬',
+    icon: 'carrot',
     title: 'Na feira',
     titleDe: 'Auf dem Wochenmarkt',
     paragraphs: [
@@ -129,7 +129,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a1-fim-de-semana',
     level: 'A1',
-    icon: '📅',
+    icon: 'calendar',
     title: 'Planos para o sábado',
     titleDe: 'Pläne für Samstag',
     paragraphs: [
@@ -159,7 +159,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a1-apartamento',
     level: 'A1',
-    icon: '🏠',
+    icon: 'home',
     title: 'O apartamento novo',
     titleDe: 'Die neue Wohnung',
     paragraphs: [
@@ -189,7 +189,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a2-regiao',
     level: 'A2',
-    icon: '🏖️',
+    icon: 'beach',
     title: 'Uma semana em Porto Seguro',
     titleDe: 'Eine Woche in Porto Seguro',
     paragraphs: [
@@ -221,7 +221,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a2-infancia',
     level: 'A2',
-    icon: '🧒',
+    icon: 'baby',
     title: 'Lembranças de infância',
     titleDe: 'Kindheitserinnerungen',
     paragraphs: [
@@ -253,7 +253,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a2-medico',
     level: 'A2',
-    icon: '🩺',
+    icon: 'stethoscope',
     title: 'Uma consulta médica',
     titleDe: 'Ein Arztbesuch',
     paragraphs: [
@@ -284,7 +284,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a2-trem',
     level: 'A2',
-    icon: '🚆',
+    icon: 'train',
     title: 'O trem atrasado',
     titleDe: 'Der verspätete Zug',
     paragraphs: [
@@ -316,7 +316,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a2-receita',
     level: 'A2',
-    icon: '🍲',
+    icon: 'pot',
     title: 'A feijoada da minha avó',
     titleDe: 'Die Feijoada meiner Oma',
     paragraphs: [
@@ -349,7 +349,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-a2-trabalho',
     level: 'A2',
-    icon: '💼',
+    icon: 'briefcase',
     title: 'O primeiro dia de trabalho',
     titleDe: 'Der erste Arbeitstag',
     paragraphs: [
@@ -388,7 +388,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-b1-universidade',
     level: 'B1',
-    icon: '🎓',
+    icon: 'graduation',
     title: 'Primeiro semestre na federal',
     titleDe: 'Erstes Semester an der Bundesuniversität',
     paragraphs: [
@@ -428,7 +428,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-b1-loteria',
     level: 'B1',
-    icon: '🍀',
+    icon: 'clover',
     title: 'Se eu ganhasse na Mega-Sena…',
     titleDe: 'Wenn ich in der Mega-Sena gewinnen würde …',
     paragraphs: [
@@ -463,7 +463,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-b1-musica',
     level: 'B1',
-    icon: '🥁',
+    icon: 'drum',
     title: 'Uma roda de samba na Lapa',
     titleDe: 'Eine Samba-Runde in Lapa',
     paragraphs: [
@@ -501,7 +501,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-b1-turismo',
     level: 'B1',
-    icon: '🏖️',
+    icon: 'beach',
     title: 'Jericoacoara: paraíso ou armadilha turística?',
     titleDe: 'Jericoacoara: Paradies oder Touristenfalle?',
     paragraphs: [
@@ -540,7 +540,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-b1-carta',
     level: 'B1',
-    icon: '✉️',
+    icon: 'mail',
     title: 'Uma carta de Florianópolis',
     titleDe: 'Ein Brief aus Florianópolis',
     paragraphs: [
@@ -574,7 +574,7 @@ export const READING_TEXTS: ReadingText[] = [
   {
     id: 'br-b1-jeitinho',
     level: 'B1',
-    icon: '🤷',
+    icon: 'question',
     title: 'O jeitinho brasileiro',
     titleDe: 'Der brasilianische „jeitinho“',
     paragraphs: [

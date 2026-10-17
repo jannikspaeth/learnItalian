@@ -17,6 +17,7 @@ import {
   shuffle,
 } from '@/lib/writing';
 import SpeakButton from '@/components/SpeakButton';
+import Icon from '@/components/Icon';
 import FeedbackBar from './FeedbackBar';
 
 // ── Word order: tap the chips into the right order ───────────────────────────
@@ -233,8 +234,9 @@ export function LetterCard({
   return (
     <div className="space-y-4">
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-          {letter.icon} {letter.title}
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+          <Icon name={letter.icon} className="w-4 h-4" />
+          {letter.title}
         </p>
         <p className="text-sm text-gray-500">{letter.intro}</p>
         <p className="text-gray-900 leading-9 whitespace-pre-wrap">

@@ -410,7 +410,7 @@ export async function getRace(): Promise<RaceResponse> {
   return getJson<RaceResponse>(`/api/race?lang=${currentLang()}`, emptyRace);
 }
 
-// Accumulated months-won (⭐) per user, for app-wide display. Tolerant read.
+// Accumulated months won (stars) per user, for app-wide display. Tolerant read.
 export async function getStars(): Promise<{ stars: Record<string, number>; month: string }> {
   return getJson<{ stars: Record<string, number>; month: string }>(`/api/race/stars?lang=${currentLang()}`, {
     stars: {},

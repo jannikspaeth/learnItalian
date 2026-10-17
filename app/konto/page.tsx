@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ChevronRight, Globe, Users } from 'lucide-react';
 import { useLearner } from '@/lib/use-profile';
 import { useStars } from '@/lib/use-stars';
-import { formatStars } from '@/lib/race';
+import Stars from '@/components/Stars';
 import { levelFor } from '@/lib/profiles';
 import { langInfo } from '@/lib/lang';
 import { useT } from '@/lib/ui-lang';
@@ -41,7 +41,7 @@ export default function KontoPage() {
           <div className="min-w-0">
             <h1 className="text-3xl text-gray-900 truncate">
               {profile.name}
-              {formatStars(stars[profile.id] ?? 0)}
+              <Stars n={stars[profile.id] ?? 0} />
             </h1>
             <p className="text-sm text-gray-500">
               {info.flag} {t(info.name, info.nameDe)}
