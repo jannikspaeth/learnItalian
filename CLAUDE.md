@@ -85,7 +85,7 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
 - `race` — one global row **per language**: `id='global'` (Italian), `id='global-es'`, `id='global-fr'`, holding
   `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. Also the `id='profiles'` row (see above) and
   one **extras** row per user+language, `id='extras:<user_id>'` (`UserExtras`: `mistakes`, `reading`, `rounds`,
-  `articles`, `numbers`, `phrases`; `/api/data/extras`, `updateExtras()` in `lib/storage.ts` queues
+  `articles`, `numbers`, `phrases`, `writing`; `/api/data/extras`, `updateExtras()` in `lib/storage.ts` queues
   read-modify-writes). Deleted with the profile.
 
 ### ⚠️ Manual SQL migrations (no migrations dir — tables are created by hand)
@@ -135,7 +135,7 @@ alter table grammar     enable row level security;
 - `/heute` — **Today** (home page, `/` redirects here): a mixed daily round (`lib/daily-round.ts`: 10 words due-first
   then new, 5 single verb forms, 5 grammar items, 2 sentences, 1 dictation) and **My mistakes** training. Every
   exercise records wrong answers via `recordMistakes()` (`lib/mistakes.ts`, builders per kind with stable ids —
-  `vocab`, `verb`, `grammar`, `sentence`, `dictation`, `article`, `number`, `phrase`);
+  `vocab`, `verb`, `grammar`, `sentence`, `dictation`, `article`, `number`, `phrase`, `writing`);
   an item leaves the list after 2 correct answers in a row. Practice cards are shared in `components/practice/`.
 - **Audio**: `lib/speech.ts` (browser `speechSynthesis`, voice per language, `speakableText` strips notes/variants)
   + `components/SpeakButton.tsx` on flashcards, word list, sentences, verb tables, grammar and lessons; per-device
@@ -146,6 +146,18 @@ alter table grammar     enable row level security;
   comprehension questions (`recordExercise('reading')`, 2 race points per question; progress in extras). Every
   word of every text must resolve — when adding a text, run a lookup over all tokens and fill its `glossary`.
 
+- `/schreiben` — **Writing**, four modes (`lib/writing/`, one pack per language, `usePack('writing', lang)`):
+  **Satzbau** (20 word-order puzzles per language — the chips are the words of the answer, built by
+  `chipsOf()`, which keeps `¿`/`?` out and lower-cases the first word so it doesn't give away the start),
+  **Umformen** (20 rewrites with exactly one right answer: into the past, as a question, with a pronoun,
+  politely), **Briefe** (2 short letters with 8 gaps and a word bank) and **Frei schreiben** (6 tasks,
+  German side shared in `lib/writing/canon.ts`, per-language phrases + model answer; the learner compares
+  and grades themselves — the app says plainly that it can't correct a free text). Grading reuses
+  `checkPhraseAnswer`; note it keeps the hyphen significant, which is what makes the EP enclisis drill
+  (`Compro-o.` vs `Não o compro.`) work. Progress in `extras.writing`.
+  **Run `node scripts/check-writing.mjs` after editing the content** — it checks that every alternative
+  word order uses the same words as its answer (otherwise it can never be laid), that each letter's `___`
+  markers match its gaps, and that all five languages answer every free writing task.
 - `/redemittel` — **Phrases**: 100 set phrases for 10 everyday situations (greetings, politeness, small
   talk, restaurant, shopping, getting around, hotel, doctor, phone, emergencies). The German side and the
   ids live once in `lib/phrases/canon.ts`; each language maps the same ids to its own wording
@@ -209,7 +221,8 @@ Global standings everyone sees; **one separate race per language** (`/api/race?l
 profiles with a level or activity in that language).
 - **Daily activity** per user = every vocab flashcard (+1) + every number/time/date (+1) + every conjugated
   form (**half credit**, `round(total/2)`) + every grammar item or tapped article (half credit) + every
-  translated/dictated sentence (+2) + every reading question (+2) + every set phrase (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
+  translated/dictated sentence (+2) + every reading question (+2) + every set phrase or written
+  sentence (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
   keyed by **Europe/Berlin date**.
 - Each finished day awards **5/4/3/2/1** to the top daily scorers; **ties split the tiers evenly**;
   0 activity earns nothing. Logic is pure in `lib/race.ts` (`awardPoints`, `berlinDayStart`/`berlinToday`).

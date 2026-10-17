@@ -155,8 +155,9 @@ async function recordExerciseNow(
     daily[dayKey] = (daily[dayKey] ?? 0) + total;
   } else if (type === 'conjugation' || type === 'grammar' || type === 'article') {
     daily[dayKey] = (daily[dayKey] ?? 0) + Math.round(total / 2); // half credit per item
-  } else if (type === 'sentence' || type === 'reading' || type === 'phrase') {
-    // 2 points per translated/dictated sentence, reading question or set phrase
+  } else if (type === 'sentence' || type === 'reading' || type === 'phrase' || type === 'writing') {
+    // 2 points per translated/dictated sentence, reading question, set phrase or
+    // sentence written from scratch
     daily[dayKey] = (daily[dayKey] ?? 0) + total * 2;
   }
 
@@ -336,6 +337,7 @@ function normalizeExtras(d: Partial<UserExtras> | null | undefined): UserExtras 
     articles: d?.articles,
     numbers: d?.numbers,
     phrases: d?.phrases ?? {},
+    writing: { items: d?.writing?.items ?? {}, texts: d?.writing?.texts ?? {} },
   };
 }
 

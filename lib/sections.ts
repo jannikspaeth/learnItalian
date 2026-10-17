@@ -1,4 +1,4 @@
-import { BookOpen, SpellCheck, BookMarked, PenLine, Newspaper, Trophy, CircleHelp, Zap, Hash, MessagesSquare } from 'lucide-react';
+import { BookOpen, SpellCheck, BookMarked, PenLine, Newspaper, Trophy, CircleHelp, Zap, Hash, MessagesSquare, NotebookPen } from 'lucide-react';
 
 // The app's sections, shared by the navigation, the "Practise" hub and the
 // profile page. Labels are [English, German].
@@ -39,6 +39,12 @@ export const PRACTICE = [
     label: ['Phrases', 'Redemittel'],
     hint: ['What to say in real situations', 'Was man in echten Situationen sagt'],
     Icon: MessagesSquare,
+  },
+  {
+    href: '/schreiben',
+    label: ['Writing', 'Schreiben'],
+    hint: ['Build, rewrite and write sentences', 'Sätze bauen, umformen und schreiben'],
+    Icon: NotebookPen,
   },
   {
     href: '/artikel',

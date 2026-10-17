@@ -6,7 +6,8 @@ export type ExerciseType =
   | 'reading'
   | 'article'   // article/gender blitz
   | 'numbers'   // numbers, clock times and dates
-  | 'phrase';   // set phrases for everyday situations
+  | 'phrase'    // set phrases for everyday situations
+  | 'writing';  // word order, rewriting, letters, free texts
 
 // SRS state for translating an example sentence, keyed by the normalized Italian
 // word the sentence belongs to. Stored as one JSONB row per user (table `sentences`).
@@ -175,7 +176,8 @@ export type MistakeKind =
   | 'dictation'
   | 'article'
   | 'number'
-  | 'phrase';
+  | 'phrase'
+  | 'writing';
 
 export interface MistakeItem {
   id: string;             // kind + stable key; getting the same thing wrong again bumps it
@@ -218,6 +220,13 @@ export interface PhraseRecord {
   reviewCount: number;
 }
 
+// Writing (/schreiben): how often each sentence was built or rewritten
+// correctly, and which free texts have been written.
+export interface WritingProgress {
+  items: Record<string, number>;
+  texts: Record<string, { times: number; last: string; rating: 'good' | 'partly' | 'again' }>;
+}
+
 export interface UserExtras {
   mistakes: MistakeItem[];
   reading: Record<string, ReadingRecord>; // by text id
@@ -225,4 +234,5 @@ export interface UserExtras {
   articles?: BlitzRecord;                 // article blitz (absent until played once)
   numbers?: BlitzRecord;                  // numbers, times and dates
   phrases?: Record<string, PhraseRecord>; // by phrase id
+  writing?: WritingProgress;
 }

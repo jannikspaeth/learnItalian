@@ -19,6 +19,7 @@ export const MISTAKE_KINDS: { id: MistakeKind; icon: string; label: string; labe
   { id: 'article', icon: '🔸', label: 'Articles', labelDe: 'Artikel' },
   { id: 'number', icon: '🔢', label: 'Numbers', labelDe: 'Zahlen' },
   { id: 'phrase', icon: '💬', label: 'Phrases', labelDe: 'Wendungen' },
+  { id: 'writing', icon: '✏️', label: 'Writing', labelDe: 'Schreiben' },
 ];
 
 export function kindInfo(kind: MistakeKind) {
@@ -228,6 +229,29 @@ export function phraseMistake(o: {
     alternatives: o.alternatives,
     hint: o.situation,
     speak: o.target,
+    userAnswer: o.userAnswer,
+  };
+}
+
+
+export function writingMistake(o: {
+  id: string;         // item id within the language (lib/writing)
+  prompt: string;     // the German sentence, or the instruction plus the sentence
+  answer: string;
+  alternatives?: string[];
+  hint: string;       // the German rule
+  options?: string[]; // a letter gap offers the word bank
+  userAnswer?: string;
+}): NewMistake {
+  return {
+    id: `writing:${o.id}`,
+    kind: 'writing',
+    prompt: o.prompt,
+    answer: o.answer,
+    alternatives: o.alternatives,
+    options: o.options,
+    hint: o.hint,
+    speak: o.answer,
     userAnswer: o.userAnswer,
   };
 }

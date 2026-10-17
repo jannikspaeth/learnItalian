@@ -228,6 +228,21 @@ export default function HelpPage() {
           </P>
         </Section>
 
+        <Section icon="✏️" title={<Tx en="Writing" de="Schreiben" />}>
+          <P>
+            <Tx
+              en={<><strong>Word order</strong>: the German sentence is given and the words are jumbled – tap them into place. <strong>Rewrite</strong>: one sentence, one instruction (into the past, as a question, with a pronoun, politely). Both have exactly one right answer, so the app marks them and wrong ones go to <strong>My mistakes</strong>.</>}
+              de={<><strong>Satzbau</strong>: Der deutsche Satz steht da, die Wörter sind durcheinander – tippe sie an die richtige Stelle. <strong>Umformen</strong>: ein Satz, eine Anweisung (in die Vergangenheit, als Frage, mit Pronomen, höflich). Beides hat genau eine richtige Lösung, die App korrigiert – Falsches landet in <strong>Meine Fehler</strong>.</>}
+            />
+          </P>
+          <P>
+            <Tx
+              en={<><strong>Letters</strong>: a short e-mail or message with gaps and a word bank; afterwards you get the whole letter in German. <strong>Free writing</strong>: six tasks with phrases to build with – you write, then compare with a model answer and judge yourself. That last one the app cannot correct, so it is honest about it.</>}
+              de={<><strong>Briefe</strong>: eine kurze E-Mail oder Nachricht mit Lücken und Wortbank; danach siehst du den ganzen Brief auf Deutsch. <strong>Frei schreiben</strong>: sechs Aufgaben mit Bausteinen – du schreibst, vergleichst mit einer Musterlösung und bewertest dich selbst. Das kann die App nicht korrigieren, und sie tut auch nicht so.</>}
+            />
+          </P>
+        </Section>
+
         <Section icon="💬" title={<Tx en="Phrases" de="Redemittel" />}>
           <P>
             <Tx

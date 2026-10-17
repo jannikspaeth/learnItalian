@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { Lang } from './lang';
 import type { ReadingText } from './reading/types';
 import type { PhrasePack } from './phrases';
+import type { WritingPack } from './writing';
 
 // Per-language learning content, loaded on demand (dynamic import) so each
 // learner only downloads the catalogs of the language they practise.
@@ -34,7 +35,7 @@ export interface ReadingPack {
   texts: ReadingText[];
 }
 
-export type { PhrasePack };
+export type { PhrasePack, WritingPack };
 
 const loaders = {
   vocab: {
@@ -72,6 +73,13 @@ const loaders = {
     pt: () => import('./packs/pt-phrases').then(m => m.default),
     br: () => import('./packs/br-phrases').then(m => m.default),
   },
+  writing: {
+    it: () => import('./packs/it-writing').then(m => m.default),
+    es: () => import('./packs/es-writing').then(m => m.default),
+    fr: () => import('./packs/fr-writing').then(m => m.default),
+    pt: () => import('./packs/pt-writing').then(m => m.default),
+    br: () => import('./packs/br-writing').then(m => m.default),
+  },
 };
 
 type Kind = keyof typeof loaders;
@@ -83,7 +91,9 @@ type PackOf<K extends Kind> = K extends 'vocab'
       ? FormsPack
       : K extends 'reading'
         ? ReadingPack
-        : PhrasePack;
+        : K extends 'phrases'
+          ? PhrasePack
+          : WritingPack;
 
 const cache = new Map<string, unknown>();
 

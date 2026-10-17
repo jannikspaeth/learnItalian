@@ -109,7 +109,7 @@ export function foldPhrase(s: string): string {
     s
       .toLowerCase()
       .replace(APOSTROPHES, '')
-      .replace(/[.,;:!?¡¿"„“”«»…–—-]/g, ' ')
+      .replace(/[.,;:!?¡¿"„“”«»…–—]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim(),
   );

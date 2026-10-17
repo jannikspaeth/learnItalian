@@ -80,6 +80,7 @@ const MISTAKE_TYPE: Record<MistakeKind, ExerciseType> = {
   article: 'article',
   number: 'numbers',
   phrase: 'phrase',
+  writing: 'writing',
 };
 function exerciseType(step: RoundStep): ExerciseType {
   switch (step.kind) {
@@ -538,6 +539,32 @@ export default function HeutePage() {
           />
         );
       }
+      case 'writing':
+        return m.options && m.options.length > 1 ? (
+          <ChoiceCard
+            key={key}
+            label={t('Fill the gap', 'Lücke füllen')}
+            before={m.prompt.split('___')[0]}
+            after={m.prompt.split('___')[1] ?? ''}
+            answer={m.answer}
+            options={m.options}
+            hint={m.hint}
+            lang={lang}
+            onResult={handleResult}
+          />
+        ) : (
+          <TypeCard
+            key={key}
+            label={t('Write the sentence', 'Satz schreiben')}
+            prompt={m.prompt}
+            sub={last}
+            answer={m.answer}
+            check={v => ({ correct: checkPhraseAnswer(v, m.answer, m.alternatives) })}
+            speakText={m.speak}
+            lang={lang}
+            onResult={handleResult}
+          />
+        );
       case 'phrase':
         return (
           <TypeCard
@@ -698,8 +725,8 @@ export default function HeutePage() {
                   </h2>
                   <p className="text-sm text-gray-500 mt-0.5">
                     {t(
-                      `Everything you got wrong – words, verbs, grammar, sentences, dictation, articles, numbers, phrases. Get it right ${MISTAKE_CLEAR_AFTER}× in a row and it disappears.`,
-                      `Alles, was du falsch hattest – Wörter, Verben, Grammatik, Sätze, Diktat, Artikel, Zahlen, Redemittel. Hast du es ${MISTAKE_CLEAR_AFTER}× hintereinander richtig, verschwindet es.`,
+                      `Everything you got wrong – words, verbs, grammar, sentences, dictation, articles, numbers, phrases, writing. Get it right ${MISTAKE_CLEAR_AFTER}× in a row and it disappears.`,
+                      `Alles, was du falsch hattest – Wörter, Verben, Grammatik, Sätze, Diktat, Artikel, Zahlen, Redemittel, Schreiben. Hast du es ${MISTAKE_CLEAR_AFTER}× hintereinander richtig, verschwindet es.`,
                     )}
                   </p>
                 </div>
