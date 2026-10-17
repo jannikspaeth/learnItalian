@@ -262,7 +262,8 @@ export async function setGrammar(userId: string, records: GrammarRecord[]): Prom
   if (error) throw new Error(error.message);
 }
 
-// ─── extras (mistakes, reading progress, daily rounds; one jsonb row per user) ───
+// ─── extras (mistakes, reading, daily rounds, phrases, blitz and writing
+// progress; one jsonb row per user) ───
 // Stored in the `race` table (id text + data jsonb) under `extras:<user_id>`, so
 // no new table/migration is needed.
 
@@ -275,8 +276,12 @@ export async function getExtras(userId: string): Promise<UserExtras> {
     .eq('id', extrasRowId(userId))
     .maybeSingle();
   if (error) throw new Error(error.message);
-  const d = data?.data as Partial<UserExtras> | undefined;
-  return { mistakes: d?.mistakes ?? [], reading: d?.reading ?? {}, rounds: d?.rounds ?? {} };
+  const d = (data?.data ?? {}) as Partial<UserExtras>;
+  // The blob belongs to the client: hand back every key it stored and only fill
+  // in the ones the app always expects. Listing the keys here instead used to
+  // drop everything added later (phrases, article blitz, numbers, writing) —
+  // and since saving is a read-modify-write, the next save wrote the loss back.
+  return { ...d, mistakes: d.mistakes ?? [], reading: d.reading ?? {}, rounds: d.rounds ?? {} };
 }
 
 export async function setExtras(userId: string, extras: UserExtras): Promise<void> {

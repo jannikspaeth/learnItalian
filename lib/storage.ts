@@ -329,13 +329,14 @@ export async function upsertGrammarAttempt(
 
 // ─── extras: mistakes, reading progress, daily rounds ───────────────────────────────
 
+// Keep every key the row holds (see getExtras in lib/db.ts) and default the
+// ones the app reads without checking.
 function normalizeExtras(d: Partial<UserExtras> | null | undefined): UserExtras {
   return {
+    ...(d ?? {}),
     mistakes: d?.mistakes ?? [],
     reading: d?.reading ?? {},
     rounds: d?.rounds ?? {},
-    articles: d?.articles,
-    numbers: d?.numbers,
     phrases: d?.phrases ?? {},
     writing: { items: d?.writing?.items ?? {}, texts: d?.writing?.texts ?? {} },
   };

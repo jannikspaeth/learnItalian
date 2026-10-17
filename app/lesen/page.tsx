@@ -441,7 +441,7 @@ function Reader({
             </div>
             {addable && myWords && (
               alreadyMine ? (
-                <p className="text-xs text-green-700">✓ {t(`„${addable.word}“ is in your words`, `„${addable.word}“ ist in deinen Wörtern`)}</p>
+                <p className="text-xs text-green-700 flex items-center gap-1"><Check className="w-3.5 h-3.5" />{t(`„${addable.word}“ is in your words`, `„${addable.word}“ ist in deinen Wörtern`)}</p>
               ) : (
                 <button
                   onClick={addWord}

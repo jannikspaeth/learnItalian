@@ -407,7 +407,7 @@ export default function SchreibenPage() {
                   <span className="block text-sm text-gray-500">{l.intro}</span>
                   <span className="block text-xs text-gray-400 mt-0.5">
                     {l.gaps.length} {t('gaps', 'Lücken')}
-                    {(progress.items[l.id] ?? 0) > 0 && ` · ✓ ${progress.items[l.id]}×`}
+                    {(progress.items[l.id] ?? 0) > 0 && ` · ${t('solved', 'gelöst')} ${progress.items[l.id]}×`}
                   </span>
                 </span>
               </button>

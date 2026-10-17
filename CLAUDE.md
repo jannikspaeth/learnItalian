@@ -86,7 +86,9 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
   `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. Also the `id='profiles'` row (see above) and
   one **extras** row per user+language, `id='extras:<user_id>'` (`UserExtras`: `mistakes`, `reading`, `rounds`,
   `articles`, `numbers`, `phrases`, `writing`; `/api/data/extras`, `updateExtras()` in `lib/storage.ts` queues
-  read-modify-writes). Deleted with the profile.
+  read-modify-writes). Deleted with the profile. **Never rebuild this blob from a fixed list of keys when
+  reading it** — saving is a read-modify-write, so a dropped key is written back as lost (that bug ate the
+  phrase, blitz and writing progress once). `node scripts/check-extras.mjs` guards the round trip.
 
 ### Manual SQL migrations (no migrations dir — tables are created by hand)
 Full setup for a fresh Supabase project (column names match `lib/db.ts`):

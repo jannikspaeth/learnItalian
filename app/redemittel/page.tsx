@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { X, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { useLearner } from '@/lib/use-profile';
 import { usePack } from '@/lib/content';
 import { langInfo } from '@/lib/lang';
@@ -10,6 +10,7 @@ import { getExtras, recordExercise, recordMistakes, updateExtras } from '@/lib/s
 import { phraseMistake } from '@/lib/mistakes';
 import { checkPhraseAnswer } from '@/lib/answer-check';
 import {
+  PHRASE_KNOWN_LEVEL,
   PHRASE_ROUND_SIZE,
   Phrase,
   advancePhrase,
@@ -51,6 +52,10 @@ export default function RedemittelPage() {
   const situations = useMemo(() => pack?.situations ?? [], [pack]);
   const phrases = useMemo(() => allPhrases(situations), [situations]);
   const known = records ? phrases.filter(p => phraseIsKnown(records[p.id])).length : 0;
+  // Practised at least once. A phrase only counts as "safe" after four correct
+  // answers spread over three weeks, so without this the overview would stay at
+  // zero for days and look as if nothing had been saved.
+  const started = records ? phrases.filter(p => records[p.id]).length : 0;
 
   const playing = round !== null && !finished;
   useEffect(() => {
@@ -164,8 +169,8 @@ export default function RedemittelPage() {
               <p className="text-xs text-gray-400 mt-0.5">{t('right', 'richtig')}</p>
             </div>
             <div>
-              <p className="font-display text-3xl text-red-700 tabular-nums">{known}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{t('safe', 'sicher')}</p>
+              <p className="font-display text-3xl text-red-700 tabular-nums">{started}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{t('practised', 'geübt')}</p>
             </div>
             <div>
               <p className="font-display text-3xl text-gray-900 tabular-nums">{phrases.length}</p>
@@ -216,8 +221,8 @@ export default function RedemittelPage() {
           <p className="text-gray-400 text-sm mt-0.5">
             {records && phrases.length > 0
               ? t(
-                  `${known} of ${phrases.length} safe · what you actually say in ${info.name}`,
-                  `${known} von ${phrases.length} sicher · was man auf ${info.nameDe} wirklich sagt`,
+                  `${started} of ${phrases.length} practised · ${known} safe`,
+                  `${started} von ${phrases.length} geübt · ${known} sicher`,
                 )
               : t('Ready-made sentences for real situations', 'Fertige Sätze für echte Situationen')}
           </p>
@@ -268,13 +273,13 @@ export default function RedemittelPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 text-sm">{t(s.label[0], s.label[1])}</p>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${p.known === p.total ? 'bg-green-500' : 'bg-amber-400'}`}
-                            style={{ width: `${(p.known / p.total) * 100}%` }}
-                          />
+                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden flex">
+                          <div className="h-full bg-green-500" style={{ width: `${(p.known / p.total) * 100}%` }} />
+                          <div className="h-full bg-amber-400" style={{ width: `${((p.started - p.known) / p.total) * 100}%` }} />
                         </div>
-                        <span className="text-xs text-gray-400 tabular-nums shrink-0">{p.known}/{p.total}</span>
+                        <span className="text-xs text-gray-400 tabular-nums shrink-0">
+                          {p.started}/{p.total}
+                        </span>
                       </div>
                     </div>
                     <button
@@ -304,7 +309,7 @@ export default function RedemittelPage() {
                       <span className="min-w-0">
                         <span className="block font-bold text-gray-900 text-base">{t(s.label[0], s.label[1])}</span>
                         <span className="block text-xs text-gray-400 mt-0.5 tabular-nums">
-                          {p.known}/{p.total} {t('safe', 'sicher')}
+                          {p.started}/{p.total} {t('practised', 'geübt')} · {p.known} {t('safe', 'sicher')}
                         </span>
                       </span>
                     </span>
@@ -318,9 +323,15 @@ export default function RedemittelPage() {
                         <div key={ph.id} className="flex items-start gap-2">
                           <SpeakButton text={ph.target} lang={lang} className="mt-0.5" />
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold text-gray-900">
+                            <p className="text-sm font-semibold text-gray-900 flex items-center gap-1.5 flex-wrap">
                               {ph.target}
-                              {phraseIsKnown(records[ph.id]) && <span className="text-green-600 ml-1.5">✓</span>}
+                              {phraseIsKnown(records[ph.id])
+                                ? <Check className="w-4 h-4 text-green-600 shrink-0" />
+                                : records[ph.id] && (
+                                    <span className="text-[10px] font-semibold text-amber-700 bg-amber-100 rounded px-1 py-0.5 tabular-nums">
+                                      {records[ph.id].level}/{PHRASE_KNOWN_LEVEL}
+                                    </span>
+                                  )}
                             </p>
                             <p className="text-sm text-gray-500">{ph.de}</p>
                           </div>
