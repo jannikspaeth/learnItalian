@@ -40,7 +40,7 @@ export type TenseId = PtTenseId;
 export const TENSES = PT_TENSES;
 export const TENSE_IDS = new Set<string>(TENSES.map(t => t.id));
 
-interface VerbSpec {
+export interface VerbSpec {
   i: string;         // infinitive
   de: string;
   ei1?: true;        // e→i stem change in the eu-form only (preferir → prefiro)
@@ -164,10 +164,49 @@ const IRREGULAR: Record<string, Irregular> = {
   sair: {
     pres: ['saio', 'sais', 'sai', 'saímos', 'saem', 'saem'],
     pret: ['saí', 'saíste', 'saiu', 'saímos', 'saíram', 'saíram'],
+    impf: ['saía', 'saías', 'saía', 'saíamos', 'saíam', 'saíam'],
   },
   cair: {
     pres: ['caio', 'cais', 'cai', 'caímos', 'caem', 'caem'],
     pret: ['caí', 'caíste', 'caiu', 'caímos', 'caíram', 'caíram'],
+    impf: ['caía', 'caías', 'caía', 'caíamos', 'caíam', 'caíam'],
+  },
+  perder: {
+    pres: ['perco', 'perdes', 'perde', 'perdemos', 'perdem', 'perdem'],
+    pret: ['perdi', 'perdeste', 'perdeu', 'perdemos', 'perderam', 'perderam'],
+  },
+  // o→u in the eu-form, but u→o in the tu/ele/eles forms.
+  subir: {
+    pres: ['subo', 'sobes', 'sobe', 'subimos', 'sobem', 'sobem'],
+    pret: ['subi', 'subiste', 'subiu', 'subimos', 'subiram', 'subiram'],
+  },
+  fugir: {
+    pres: ['fujo', 'foges', 'foge', 'fugimos', 'fogem', 'fogem'],
+    pret: ['fugi', 'fugiste', 'fugiu', 'fugimos', 'fugiram', 'fugiram'],
+  },
+  descobrir: {
+    pres: ['descubro', 'descobres', 'descobre', 'descobrimos', 'descobrem', 'descobrem'],
+    pret: ['descobri', 'descobriste', 'descobriu', 'descobrimos', 'descobriram', 'descobriram'],
+  },
+  construir: {
+    pres: ['construo', 'constróis', 'constrói', 'construímos', 'constroem', 'constroem'],
+    pret: ['construí', 'construíste', 'construiu', 'construímos', 'construíram', 'construíram'],
+    impf: ['construía', 'construías', 'construía', 'construíamos', 'construíam', 'construíam'],
+  },
+  destruir: {
+    pres: ['destruo', 'destróis', 'destrói', 'destruímos', 'destroem', 'destroem'],
+    pret: ['destruí', 'destruíste', 'destruiu', 'destruímos', 'destruíram', 'destruíram'],
+    impf: ['destruía', 'destruías', 'destruía', 'destruíamos', 'destruíam', 'destruíam'],
+  },
+  reunir: {
+    pres: ['reúno', 'reúnes', 'reúne', 'reunimos', 'reúnem', 'reúnem'],
+    pret: ['reuni', 'reuniste', 'reuniu', 'reunimos', 'reuniram', 'reuniram'],
+    conj: ['reúna', 'reúnas', 'reúna', 'reunamos', 'reúnam', 'reúnam'],
+  },
+  saudar: {
+    pres: ['saúdo', 'saúdas', 'saúda', 'saudamos', 'saúdam', 'saúdam'],
+    pret: ['saudei', 'saudaste', 'saudou', 'saudámos', 'saudaram', 'saudaram'],
+    conj: ['saúde', 'saúdes', 'saúde', 'saudemos', 'saúdem', 'saúdem'],
   },
   crer: {
     pres: ['creio', 'crês', 'crê', 'cremos', 'creem', 'creem'],
@@ -262,6 +301,30 @@ function resolve(spec: VerbSpec, inf: string): Resolved {
   const cls = classOf(inf);
   const stem = inf.slice(0, -2);
 
+  // -ear (passear, nomear): stressed "e" becomes "ei" — passeio, passeias, passeamos.
+  if (inf.endsWith('ear')) {
+    const s = stem;
+    return {
+      pres: [s + 'io', s + 'ias', s + 'ia', s + 'amos', s + 'iam', s + 'iam'],
+      pret: [s + 'ei', s + 'aste', s + 'ou', s + 'ámos', s + 'aram', s + 'aram'],
+      futStem: inf,
+      conj: [s + 'ie', s + 'ies', s + 'ie', s + 'emos', s + 'iem', s + 'iem'],
+    };
+  }
+
+  // -uir (incluir, concluir, possuir): -is/-i in the presente, written accent on
+  // the stressed í wherever it stands in hiatus (incluímos, incluí, incluía).
+  if (inf.endsWith('uir')) {
+    const s = stem;
+    return {
+      pres: [s + 'o', s + 'is', s + 'i', s + 'ímos', s + 'em', s + 'em'],
+      pret: [s + 'í', s + 'íste', s + 'iu', s + 'ímos', s + 'íram', s + 'íram'],
+      impf: [s + 'ía', s + 'ías', s + 'ía', s + 'íamos', s + 'íam', s + 'íam'],
+      futStem: inf,
+      conj: [s + 'a', s + 'as', s + 'a', s + 'amos', s + 'am', s + 'am'],
+    };
+  }
+
   // Presente.
   let pres: Six;
   if (cls === 'ar') {
@@ -273,6 +336,7 @@ function resolve(spec: VerbSpec, inf: string): Resolved {
     euStem = beforeOA(euStem);
     const endings = cls === 'er' ? ['o', 'es', 'e', 'emos', 'em', 'em'] : ['o', 'es', 'e', 'imos', 'em', 'em'];
     pres = [euStem + endings[0], stem + endings[1], stem + endings[2], stem + endings[3], stem + endings[4], stem + endings[5]] as Six;
+    if (inf.endsWith('uzir')) pres[2] = stem; // produz, traduz — no final -e
   }
 
   // Pretérito perfeito simples.
@@ -620,6 +684,7 @@ const VERB_SPECS: VerbSpec[] = [
 ];
 
 export const VERB_CATALOG: CatalogVerb[] = VERB_SPECS.map(build);
+export const buildVerb = build;
 
 const TENSE_NAMES: Record<TenseId, string> = {
   presente: 'Present (Presente)',

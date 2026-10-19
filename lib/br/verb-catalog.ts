@@ -1,6 +1,6 @@
 import { ConjugationExercise } from '../types';
-import { PT_TENSES, PtTenseId } from '../tenses';
-import { VERB_CATALOG as PT_VERB_CATALOG, CatalogVerb as PtCatalogVerb } from '../pt/verb-catalog';
+import { BR_TENSES, PtTenseId } from '../tenses';
+import { VERB_CATALOG as PT_VERB_CATALOG, CatalogVerb as PtCatalogVerb, VerbSpec, buildVerb } from '../pt/verb-catalog';
 
 // ─── Brazilian Portuguese verb catalog ───────────────────────────────────────────
 // Reuses the European Portuguese rule engine (lib/pt/verb-catalog.ts) rather than
@@ -35,7 +35,7 @@ const CONJ_PRONOUNS = ['que eu', 'que você', 'que ele / ela', 'que nós', 'que 
 const IMPV_PRONOUNS = ['(você)', '(nós)', '(vocês)'];
 
 export type TenseId = PtTenseId;
-export const TENSES = PT_TENSES;
+export const TENSES = BR_TENSES;
 export const TENSE_IDS = new Set<string>(TENSES.map(t => t.id));
 
 // "você" takes the ele/ela (3rd person) form everywhere.
@@ -43,32 +43,51 @@ function remap(six: Six): Six {
   return [six[0], six[2], six[2], six[3], six[4], six[5]];
 }
 
+// European-only verbs, replaced by the word Brazilians actually use.
+const SWAPS: Record<string, VerbSpec> = {
+  apanhar: { i: 'pegar', de: 'nehmen (Bus) / holen / greifen', notes: 'Pretérito: peguei' },
+  planear: { i: 'planejar', de: 'planen' },
+  poupar: { i: 'economizar', de: 'sparen' },
+};
+
+// The EP notes list the "tu" ending; Brazilian rows use você (= ele/ela).
+const NOTES: Record<string, string> = {
+  falar: 'Regelmäßig auf -ar: -o, -a, -a, -amos, -am, -am',
+  comer: 'Regelmäßig auf -er: -o, -e, -e, -emos, -em, -em',
+  partir: 'Regelmäßig auf -ir: -o, -e, -e, -imos, -em, -em',
+};
+
 function toBr(v: PtCatalogVerb): CatalogVerb {
   const conjuntivo = remap(v.conjuntivo);
+  const preterito = remap(v.preterito_perfeito);
+  // Brazil writes the -ar pretérito "nós" without the accent: falamos, not falámos.
+  preterito[3] = preterito[3].replace(/ámos$/, 'amos');
   return {
     infinitive: v.infinitive,
     de: v.de,
     presente: remap(v.presente),
-    preterito_perfeito: remap(v.preterito_perfeito),
+    preterito_perfeito: preterito,
     imperfeito: remap(v.imperfeito),
     futuro: remap(v.futuro),
     condicional: remap(v.condicional),
     conjuntivo,
     imperativo: v.imperativo ? [conjuntivo[2], conjuntivo[3], conjuntivo[4]] : undefined,
-    notes: v.notes,
+    notes: NOTES[v.infinitive] ?? v.notes,
   };
 }
 
-export const VERB_CATALOG: CatalogVerb[] = PT_VERB_CATALOG.map(toBr);
+export const VERB_CATALOG: CatalogVerb[] = PT_VERB_CATALOG.map(v =>
+  toBr(SWAPS[v.infinitive] ? buildVerb(SWAPS[v.infinitive]) : v)
+);
 
 const TENSE_NAMES: Record<TenseId, string> = {
   presente: 'Present (Presente)',
-  preterito_perfeito: 'Perfect (Pretérito perfeito simples)',
+  preterito_perfeito: 'Perfect (Pretérito perfeito)',
   imperfeito: 'Imperfect (Pretérito imperfeito)',
-  futuro: 'Future (Futuro simples)',
+  futuro: 'Future (Futuro do presente)',
   imperativo: 'Imperative (Imperativo)',
-  condicional: 'Conditional (Condicional)',
-  conjuntivo: 'Subjunctive (Conjuntivo presente)',
+  condicional: 'Conditional (Futuro do pretérito)',
+  conjuntivo: 'Subjunctive (Presente do subjuntivo)',
 };
 
 function tenseSection(verb: CatalogVerb, t: TenseId) {

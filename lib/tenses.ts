@@ -89,8 +89,19 @@ export const PT_TENSES: TenseInfo<PtTenseId>[] = [
 ];
 
 // Brazilian Portuguese drills the same 7 tenses as European Portuguese (the
-// rule engine shares its core with lib/pt/verb-catalog.ts — see lib/br/verb-catalog.ts).
-export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES, fr: FR_TENSES, pt: PT_TENSES, br: PT_TENSES };
+// rule engine shares its core with lib/pt/verb-catalog.ts — see lib/br/verb-catalog.ts),
+// under the names Brazilian grammar uses for them.
+export const BR_TENSES: TenseInfo<PtTenseId>[] = [
+  { id: 'presente', label: 'Presente', level: 'A1' },
+  { id: 'preterito_perfeito', label: 'Pretérito perfeito', level: 'A2' },
+  { id: 'imperfeito', label: 'Pretérito imperfeito', level: 'A2' },
+  { id: 'futuro', label: 'Futuro do presente', level: 'A2' },
+  { id: 'imperativo', label: 'Imperativo', level: 'A2' },
+  { id: 'condicional', label: 'Futuro do pretérito', level: 'B1' },
+  { id: 'conjuntivo', label: 'Presente do subjuntivo', level: 'B1' },
+];
+
+export const TENSES_BY_LANG: Record<Lang, TenseInfo[]> = { it: IT_TENSES, es: ES_TENSES, fr: FR_TENSES, pt: PT_TENSES, br: BR_TENSES };
 
 // Default tenses for a learner who hasn't picked any: beginners start with the
 // present only, everyone else with the core tenses of their language.
