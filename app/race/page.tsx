@@ -2,9 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getRace } from '@/lib/storage';
-import { useProfile } from '@/lib/use-profile';
 import { useT, useUiLang } from '@/lib/ui-lang';
-import { langInfo } from '@/lib/lang';
 import Stars from '@/components/Stars';
 import { RaceResponse, RaceHistory } from '@/lib/types';
 import { Crown, Flame, Flag, TrendingUp, Medal, Clock, Star } from 'lucide-react';
@@ -169,8 +167,6 @@ export default function RacePage() {
   const t = useT();
   const [uiLang] = useUiLang();
   const loc = uiLang === 'de' ? 'de-DE' : 'en-GB';
-  // Each language has its own race; the board shows the one being learned.
-  const { lang } = useProfile();
   const [race, setRace] = useState<RaceResponse | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -222,7 +218,6 @@ export default function RacePage() {
         <div>
           <h1 className="text-3xl text-gray-900 flex items-center gap-2">
             {t('The Race', 'Das Rennen')}
-            {lang && <span title={t(`${langInfo(lang).name} race`, `Rennen auf ${langInfo(lang).nameDe}`)}>{langInfo(lang).flag}</span>}
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">
             {t(

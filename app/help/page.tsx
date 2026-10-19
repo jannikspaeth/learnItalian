@@ -310,8 +310,8 @@ export default function HelpPage() {
         <Section icon='globe' title={<Tx en="Languages" de="Sprachen" />}>
           <P>
             <Tx
-              en={<>After choosing your profile you pick a language: 🇮🇹 Italian, 🇪🇸 Spanish, 🇫🇷 French, 🇵🇹 Portuguese or 🇧🇷 Brazilian Portuguese. Each language has its own level (Beginner A1 or Intermediate B1), its own progress and its own race. Tap <strong>Switch Language</strong> in the sidebar (or the flag under Profile on mobile) to change it or your level.</>}
-              de={<>Nach dem Profil wählst du die Sprache: 🇮🇹 Italienisch, 🇪🇸 Spanisch, 🇫🇷 Französisch, 🇵🇹 Portugiesisch oder 🇧🇷 brasilianisches Portugiesisch. Jede Sprache hat ihr eigenes Niveau (Anfänger A1 oder Fortgeschritten B1), ihren eigenen Fortschritt und ihr eigenes Rennen. Mit <strong>Sprache wechseln</strong> in der Seitenleiste (oder der Flagge unter Profil) änderst du Sprache oder Niveau.</>}
+              en={<>After choosing your profile you pick a language: 🇮🇹 Italian, 🇪🇸 Spanish, 🇫🇷 French, 🇵🇹 Portuguese or 🇧🇷 Brazilian Portuguese. Each language has its own level (Beginner A1 or Intermediate B1) and its own progress; the race adds up points from every language together. Tap <strong>Switch Language</strong> in the sidebar (or the flag under Profile on mobile) to change it or your level.</>}
+              de={<>Nach dem Profil wählst du die Sprache: 🇮🇹 Italienisch, 🇪🇸 Spanisch, 🇫🇷 Französisch, 🇵🇹 Portugiesisch oder 🇧🇷 brasilianisches Portugiesisch. Jede Sprache hat ihr eigenes Niveau (Anfänger A1 oder Fortgeschritten B1) und ihren eigenen Fortschritt; im Rennen zählen die Punkte aus allen Sprachen zusammen. Mit <strong>Sprache wechseln</strong> in der Seitenleiste (oder der Flagge unter Profil) änderst du Sprache oder Niveau.</>}
             />
           </P>
         </Section>

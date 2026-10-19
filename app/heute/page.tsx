@@ -840,6 +840,7 @@ function greeting(lang: Lang): string {
   const evening = new Date().getHours() >= 18;
   if (lang === 'es') return evening ? 'Buenas tardes' : 'Buenos días';
   if (lang === 'fr') return evening ? 'Bonsoir' : 'Bonjour';
+  if (lang === 'pt' || lang === 'br') return evening ? 'Boa noite' : 'Bom dia';
   return evening ? 'Buonasera' : 'Buongiorno';
 }
 

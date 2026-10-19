@@ -55,6 +55,12 @@ export function levelFor(p: Profile | null, lang: Lang): Level | undefined {
   return p?.levels?.[lang];
 }
 
+// Set up in at least one language — used by the (language-agnostic) race to
+// decide who counts as a racer.
+export function hasAnyLevel(p: Profile): boolean {
+  return !!p.levels && Object.keys(p.levels).length > 0;
+}
+
 // True beginner (A1) in this language: gets the starter vocab path, present-tense-
 // only verbs by default, and the Grundlagen lessons. Everyone else is treated as B1.
 export function isBeginner(p: Profile | null, lang: Lang): boolean {

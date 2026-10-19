@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, SentenceProgress, GrammarRecord, UserExtras } from './types';
+import { VocabEntry, ProgressStats, ConjugationRecord, RaceState, RaceHighscore, SentenceProgress, GrammarRecord, UserExtras } from './types';
 import { normWord } from './norm';
 import { Profile, LevelOverrides, Level, mergeProfiles } from './profiles';
 import { Lang, LANGUAGES, dataUserId, parseDataUserId } from './lang';
@@ -172,10 +172,11 @@ export async function getDailyActionCounts(date: string): Promise<Record<string,
   return counts;
 }
 
-// Every user's race-relevant stats for one language in one read, keyed by profile
-// id: daily activity powers the chart, while streak + last activity let the
-// standings show each active learning streak.
-export async function getAllRaceStats(lang: Lang): Promise<
+// Every user's race-relevant stats across every language in one read, keyed by
+// profile id: daily activity (summed across languages) powers the chart, while
+// the best streak and most recent activity of any language let the standings
+// show one combined active-learning streak per person.
+export async function getAllRaceStats(): Promise<
   Record<string, { daily: Record<string, number>; streak: number; lastActivity: string }>
 > {
   const { data, error } = await db()
@@ -194,13 +195,13 @@ export async function getAllRaceStats(lang: Lang): Promise<
       streak: number;
       last_activity: string | null;
     }[]) ?? []) {
-    const { profileId, lang: rowLang } = parseDataUserId(row.user_id);
-    if (rowLang !== lang || dataUserId(profileId, lang) !== row.user_id) continue;
-    out[profileId] = {
-      daily: row.daily ?? {},
-      streak: row.streak ?? 0,
-      lastActivity: row.last_activity ?? '',
-    };
+    const { profileId } = parseDataUserId(row.user_id);
+    const entry = out[profileId] ?? (out[profileId] = { daily: {}, streak: 0, lastActivity: '' });
+    for (const [date, count] of Object.entries(row.daily ?? {})) {
+      entry.daily[date] = (entry.daily[date] ?? 0) + count;
+    }
+    if ((row.streak ?? 0) > entry.streak) entry.streak = row.streak ?? 0;
+    if ((row.last_activity ?? '') > entry.lastActivity) entry.lastActivity = row.last_activity ?? '';
   }
   return out;
 }
@@ -291,15 +292,20 @@ export async function setExtras(userId: string, extras: UserExtras): Promise<voi
   if (error) throw new Error(error.message);
 }
 
-// ─── race (one global jsonb row per language: id='global' for Italian, 'global-es'…) ─
+// ─── race (one single global jsonb row, merging every language: id='global-all') ─
+// Used to be one row per language ('global' for Italian, 'global-es', 'global-fr',
+// 'global-pt', 'global-br'). Those rows are kept untouched as a historical backup;
+// `migrateLegacyRaceState` folds their stars and daily records into the merged row
+// the first time it's read, so nobody's standings are lost in the switch.
 
 const LANGS = LANGUAGES.map(l => l.id);
 const raceRowId = (lang: Lang) => (lang === 'it' ? 'global' : `global-${lang}`);
+const RACE_ROW_ID = 'global-all';
 // Note: `settledMonths` is intentionally left undefined here — the race route treats
 // "undefined" as "first run on the monthly model" and seeds it (no retroactive stars).
 const EMPTY_RACE: RaceState = { dailyCounts: {}, settledDates: [], highscores: [], stars: {} };
 
-export async function getRaceState(lang: Lang): Promise<RaceState> {
+async function getLegacyRaceState(lang: Lang): Promise<RaceState> {
   const { data, error } = await db()
     .from('race')
     .select('data')
@@ -313,14 +319,61 @@ export async function getRaceState(lang: Lang): Promise<RaceState> {
     settledDates: s.settledDates ?? [],
     highscores: s.highscores ?? [],
     stars: s.stars ?? {},
-    settledMonths: s.settledMonths, // pass through; undefined ⇒ migrate/seed
+    settledMonths: s.settledMonths,
   };
 }
 
-export async function setRaceState(state: RaceState, lang: Lang): Promise<void> {
+// One-time migration from the old per-language races into the merged row: stars
+// (months won) are additive, so they're simply summed per profile; daily records
+// are unioned (keeping the higher count on a date+profile clash) and trimmed back
+// to the top 5. `dailyCounts`/`settledDates` start empty — they're only a
+// short-lived cache the race route rebuilds each day from `stats.daily` — and
+// `settledMonths` stays undefined so the merged model seeds already-finished
+// months without re-awarding stars that were already carried over above.
+async function migrateLegacyRaceState(): Promise<RaceState> {
+  const legacyStates = await Promise.all(LANGS.map(getLegacyRaceState));
+
+  const stars: Record<string, number> = {};
+  const byKey = new Map<string, RaceHighscore>();
+  for (const s of legacyStates) {
+    for (const [id, n] of Object.entries(s.stars)) stars[id] = (stars[id] ?? 0) + n;
+    for (const h of s.highscores) {
+      const key = `${h.date}|${h.userId}`;
+      const existing = byKey.get(key);
+      if (!existing || h.count > existing.count) byKey.set(key, h);
+    }
+  }
+  const highscores = [...byKey.values()]
+    .sort((a, b) => b.count - a.count || a.date.localeCompare(b.date))
+    .slice(0, 5);
+
+  const merged: RaceState = { dailyCounts: {}, settledDates: [], highscores, stars };
+  await setRaceState(merged);
+  return merged;
+}
+
+export async function getRaceState(): Promise<RaceState> {
+  const { data, error } = await db()
+    .from('race')
+    .select('data')
+    .eq('id', RACE_ROW_ID)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const s = data?.data as Partial<RaceState> | undefined;
+  if (!s) return migrateLegacyRaceState();
+  return {
+    dailyCounts: s.dailyCounts ?? {},
+    settledDates: s.settledDates ?? [],
+    highscores: s.highscores ?? [],
+    stars: s.stars ?? {},
+    settledMonths: s.settledMonths, // pass through; undefined ⇒ seed (no retroactive stars)
+  };
+}
+
+export async function setRaceState(state: RaceState): Promise<void> {
   const { error } = await db()
     .from('race')
-    .upsert({ id: raceRowId(lang), data: state }, { onConflict: 'id' });
+    .upsert({ id: RACE_ROW_ID, data: state }, { onConflict: 'id' });
   if (error) throw new Error(error.message);
 }
 
@@ -384,12 +437,12 @@ export async function deleteProfile(profileId: string, isBuiltIn: boolean): Prom
     const { error } = await db().from('race').delete().in('id', userIds.map(extrasRowId));
     if (error) throw new Error(error.message);
   }
-  for (const lang of LANGS) {
-    const state = await getRaceState(lang);
+  {
+    const state = await getRaceState();
     state.highscores = state.highscores.filter(h => h.userId !== profileId);
     delete state.stars[profileId];
     for (const day of Object.values(state.dailyCounts)) delete day[profileId];
-    await setRaceState(state, lang);
+    await setRaceState(state);
   }
   const row = await getProfilesRow();
   row.profiles = row.profiles.filter(p => p.id !== profileId);

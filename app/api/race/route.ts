@@ -15,8 +15,7 @@ import {
   settleStars,
 } from '@/lib/race';
 import { RaceResponse, RaceHighscore, RaceHistory } from '@/lib/types';
-import { isLang } from '@/lib/lang';
-import { levelFor } from '@/lib/profiles';
+import { hasAnyLevel } from '@/lib/profiles';
 
 // Keep ~30 days of settled snapshots so the global row can't grow without bound.
 const KEEP_DAILY_DAYS = 30;
@@ -25,15 +24,13 @@ const KEEP_DAILY_DAYS = 30;
 // finished-day highscores, and awards a star to the winner of any finished month. All
 // side-effects are idempotent (guarded by settledDates / settledMonths), so repeating
 // this on a GET is safe. Points are scoped to the current calendar month.
-// Each language (?lang=it|es) has its own race: its own row, stats and racers.
-export async function GET(req: NextRequest) {
+// One race for everyone, across every language they practice.
+export async function GET(_req: NextRequest) {
   const { date: today } = berlinDayStart();
   const currentMonth = berlinMonth();
-  const langParam = req.nextUrl.searchParams.get('lang');
-  const lang = isLang(langParam) ? langParam : 'it';
   const allProfiles = await getAllProfiles();
-  // Racers: everyone who has set up this language (or already has activity in it).
-  let profiles = allProfiles.filter(p => levelFor(p, lang));
+  // Racers: everyone set up in at least one language (or already has activity).
+  let profiles = allProfiles.filter(hasAnyLevel);
 
   const nameOf = (id: string) => profiles.find(p => p.id === id)?.name ?? id;
   const EMPTY_HISTORY: RaceHistory = { dates: [], series: [] };
@@ -137,10 +134,10 @@ export async function GET(req: NextRequest) {
 
   try {
     const [state, profileStats] = await Promise.all([
-      getRaceState(lang),
-      getAllRaceStats(lang),
+      getRaceState(),
+      getAllRaceStats(),
     ]);
-    profiles = allProfiles.filter(p => levelFor(p, lang) || profileStats[p.id]);
+    profiles = allProfiles.filter(p => hasAnyLevel(p) || profileStats[p.id]);
     const dailyMaps = Object.fromEntries(
       Object.entries(profileStats).map(([id, stats]) => [id, stats.daily])
     );
@@ -184,7 +181,7 @@ export async function GET(req: NextRequest) {
     settleStars(state, totals, currentMonth);
 
     // We always update today's snapshot; persist the whole state.
-    await setRaceState(state, lang);
+    await setRaceState(state);
 
     const monthPoints = totals[currentMonth] ?? {};
     const history = buildHistory(dailyMaps, liveTracked);

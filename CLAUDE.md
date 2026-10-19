@@ -82,8 +82,12 @@ read-modify-write so a failed read can't overwrite real data with an empty list.
 - `vocab` — one row per user+word (SRS: levels 1–7 learning, 8 known; `next_review`, `last_reviewed`, `review_count`).
 - `stats` — one row per user. Cumulative totals + `streak` + **`daily` jsonb** (Berlin-date → activity count).
 - `conjugation`, `sentences`, `grammar` — one JSONB row per user (arrays of records).
-- `race` — one global row **per language**: `id='global'` (Italian), `id='global-es'`, `id='global-fr'`, holding
-  `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. Also the `id='profiles'` row (see above) and
+- `race` — **one single global row for everyone, across every language**: `id='global-all'`, holding
+  `{ dailyCounts, settledDates, highscores, stars, settledMonths }`. The old per-language rows
+  (`id='global'` Italian, `id='global-es'`, `id='global-fr'`, `id='global-pt'`, `id='global-br'`) are
+  kept untouched as a frozen historical backup — `migrateLegacyRaceState()` in `lib/db.ts` folds their
+  `stars` (summed) and `highscores` (unioned, top 5) into `global-all` the first time it's read, so
+  nobody's standings were lost when the races merged. Also the `id='profiles'` row (see above) and
   one **extras** row per user+language, `id='extras:<user_id>'` (`UserExtras`: `mistakes`, `reading`, `rounds`,
   `articles`, `numbers`, `phrases`, `writing`; `/api/data/extras`, `updateExtras()` in `lib/storage.ts` queues
   read-modify-writes). Deleted with the profile. **Never rebuild this blob from a fixed list of keys when
@@ -228,13 +232,15 @@ Tailwind `gray`/`red`/`green`/`white` palettes are re-tuned there, so keep using
 
 ## THE RACE (scoring model)
 
-Global standings everyone sees; **one separate race per language** (`/api/race?lang=es`, racers =
-profiles with a level or activity in that language).
+One global board for everyone (`GET /api/race`, no `lang` param), racers = profiles with a level or
+activity in **any** language (`hasAnyLevel()` in `lib/profiles.ts`). Activity is summed across every
+language a person practices — `getAllRaceStats()` in `lib/db.ts` merges each profile's per-language
+`stats` rows (`jannik`, `jannik:es`, `jannik:fr`, …) into one daily/streak total before scoring.
 - **Daily activity** per user = every vocab flashcard (+1) + every number/time/date (+1) + every conjugated
   form (**half credit**, `round(total/2)`) + every grammar item or tapped article (half credit) + every
   translated/dictated sentence (+2) + every reading question (+2) + every set phrase or written
-  sentence (+2), repeats included. Tracked in `stats.daily` (incremented in `recordExercise`),
-  keyed by **Europe/Berlin date**.
+  sentence (+2), repeats included, **added up across all languages**. Tracked per-language in `stats.daily`
+  (incremented in `recordExercise`), keyed by **Europe/Berlin date**.
 - Each finished day awards **5/4/3/2/1** to the top daily scorers; **ties split the tiers evenly**;
   0 activity earns nothing. Logic is pure in `lib/race.ts` (`awardPoints`, `berlinDayStart`/`berlinToday`).
 - `GET /api/race` is read-and-self-heal: it snapshots today's live count and **settles** finished days

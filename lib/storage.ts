@@ -406,14 +406,14 @@ const emptyRace: RaceResponse = {
   stars: {},
 };
 
-// Global leaderboard of the active language — no user header needed. Tolerant read.
+// Global leaderboard, across every language — no user header needed. Tolerant read.
 export async function getRace(): Promise<RaceResponse> {
-  return getJson<RaceResponse>(`/api/race?lang=${currentLang()}`, emptyRace);
+  return getJson<RaceResponse>('/api/race', emptyRace);
 }
 
 // Accumulated months won (stars) per user, for app-wide display. Tolerant read.
 export async function getStars(): Promise<{ stars: Record<string, number>; month: string }> {
-  return getJson<{ stars: Record<string, number>; month: string }>(`/api/race/stars?lang=${currentLang()}`, {
+  return getJson<{ stars: Record<string, number>; month: string }>('/api/race/stars', {
     stars: {},
     month: '',
   });
