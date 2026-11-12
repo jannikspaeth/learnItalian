@@ -7,21 +7,17 @@ import { getGrammarRecords, recordExercise } from '@/lib/storage';
 import { GrammarRecord } from '@/lib/types';
 import { useLearner } from '@/lib/use-profile';
 import { langInfo } from '@/lib/lang';
-import { X, BookMarked, ChevronRight, RotateCcw } from 'lucide-react';
+import { X, BookMarked, ChevronRight } from 'lucide-react';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
 import SpeakButton from '@/components/SpeakButton';
 import Icon from '@/components/Icon';
-import { useT, useUiLang } from '@/lib/ui-lang';
-import { dueGrammar, grammarDueDate } from '@/lib/grammar-review';
+import { useT } from '@/lib/ui-lang';
 
 type Tab = 'exercises' | 'lessons';
 
 export default function GrammarPage() {
   const { profile, lang, ready } = useLearner();
   const t = useT();
-  const [uiLang] = useUiLang();
-  // Fixed per visit: what counts as "due" doesn't shift while the page is open.
-  const [now] = useState(() => Date.now());
   const GRAMMAR_LESSONS = LESSONS_BY_LANG[lang];
   const GRAMMAR_TOPICS = TOPICS_BY_LANG[lang];
   const hasExercises = GRAMMAR_TOPICS.length > 0;
@@ -80,9 +76,6 @@ export default function GrammarPage() {
   const active = practicing ? GRAMMAR_TOPICS.find(t => t.id === practicing) : undefined;
   // Languages whose lessons carry a level get them grouped A1 / A2 / B1.
   const lessonsByLevel = GRAMMAR_LESSONS.every(l => l.level);
-  const topicById = new Map(GRAMMAR_TOPICS.map(tp => [tp.id, tp]));
-  const dueTopics = dueGrammar(records, now).map(r => topicById.get(r.id)).filter((tp): tp is GrammarTopic => !!tp);
-  const dueIds = new Set(dueTopics.map(tp => tp.id));
 
   function toggle(set: Set<string>, update: (s: Set<string>) => void, id: string) {
     const next = new Set(set);
@@ -122,18 +115,6 @@ export default function GrammarPage() {
               {rec && ` · ${rec.totalAttempts}× ${t('practised', 'geübt')}`}
               {rec?.mastered && ` · ${t('mastered', 'gemeistert')}`}
             </p>
-            {rec && (
-              dueIds.has(tp.id) ? (
-                <p className="text-xs font-medium text-amber-600 mt-0.5 flex items-center gap-1">
-                  <RotateCcw className="w-3 h-3" /> {t('Due for review', 'Zur Wiederholung fällig')}
-                </p>
-              ) : (
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {t('Next review', 'Nächste Wiederholung')}:{' '}
-                  {new Date(grammarDueDate(rec)).toLocaleDateString(uiLang === 'de' ? 'de-DE' : 'en-GB')}
-                </p>
-              )
-            )}
           </div>
           <button
             onClick={() => startPractice(tp.id)}
@@ -316,36 +297,6 @@ export default function GrammarPage() {
         {/* ===== EXERCISES ===== */}
         {tab === 'exercises' && (
           <div className="space-y-6">
-            {dueTopics.length > 0 && (
-              <section className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-2">
-                <h2 className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
-                  <RotateCcw className="w-4 h-4 text-amber-600" />
-                  {t(`Due for review (${dueTopics.length})`, `Zur Wiederholung fällig (${dueTopics.length})`)}
-                </h2>
-                <p className="text-xs text-gray-500">
-                  {t(
-                    'At least 80% right and a topic comes back later each time; less and it returns tomorrow.',
-                    'Mit mindestens 80 % richtig kommt ein Thema jedes Mal später wieder, sonst schon morgen.',
-                  )}
-                </p>
-                <div className="space-y-1.5">
-                  {dueTopics.map(tp => (
-                    <button
-                      key={tp.id}
-                      onClick={() => startPractice(tp.id)}
-                      className="w-full flex items-center justify-between gap-3 bg-white rounded-lg border border-amber-100 px-3 py-2 text-left hover:bg-amber-100/50 transition-colors"
-                    >
-                      <span className="flex items-center gap-2 min-w-0">
-                        <Icon name={tp.icon} className="w-4 h-4 shrink-0 text-red-700" />
-                        <span className="text-sm font-medium text-gray-800 truncate">{tp.title}</span>
-                        <span className="text-[11px] text-gray-400 shrink-0">{tp.level}</span>
-                      </span>
-                      <span className="text-xs font-semibold text-amber-700 shrink-0">{t('Review →', 'Wiederholen →')}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-            )}
             {GRAMMAR_LEVELS.map(level => {
               const topics = GRAMMAR_TOPICS.filter(t => t.level === level.id);
               const done = topics.filter(t => recordOf.get(t.id)?.mastered).length;

@@ -218,7 +218,8 @@ alter table grammar     enable row level security;
   A1–B1 per language with a `level`, grouped by level, every exercise topic links one via `lessonId`).
   Topics have review intervals (`lib/grammar-review.ts`: level 1–6, 1/3/7/14/30/60 days; ≥80% right moves up,
   less resets to level 1; `level`/`nextReview` on the `GrammarRecord`, legacy records derive a due date). Due
-  topics are listed at the top of Exercises and come first in the daily round's grammar part.
+  topics come first in the daily round's grammar part; the grammar page deliberately shows no due markers
+  (the user found them annoying).
 - `/race` — **THE RACE**: global competitive leaderboard (see below).
 - `/help`, `/profile`. Nav in `components/Navigation.tsx`: mobile has four tabs (Heute · Üben · Rennen · Profil),
   desktop a sidebar; the sections are listed once in `lib/sections.ts`. `/ueben` is the hub of all exercise types,
