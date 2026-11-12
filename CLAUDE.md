@@ -182,7 +182,9 @@ alter table grammar     enable row level security;
   for noon/midnight). Round stats in `extras.numbers`.
 - `/vokabeln` — Vocabulary: SRS flashcards (one at a time), **Learn in rounds of 20**, Review
   (shuffled) plus **Practise all words** (every met word or only known ones, optional topic, random rounds of 20;
-  a right answer leaves the schedule alone, a wrong one drops the word as usual), Words list. Daily goal banner. Beginners (A1) learn an ordered starter set first
+  a right answer leaves the schedule alone, a wrong one drops the word as usual), Words list. A per-device
+  **Listening only** switch (`italienisch_vocab_listen`) hides the word on every card: it is read out
+  (replay + slow), German is typed; ignored where the browser can't speak. Daily goal banner. Beginners (A1) learn an ordered starter set first
   (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts` (~2,900 words, A1–B1:
   hand-written core + `lib/vocab-b1.ts` B1 extension + `lib/vocab-imported.ts`, **generated** by `node scripts/import-vocab.mjs` from the Grund-/Ausbau-
   wortschatz CSVs in gitignored `scripts/data/`; correct entries in `scripts/vocab-import-fixes.mjs`

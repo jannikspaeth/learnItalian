@@ -38,10 +38,10 @@ import ChallengeStrip from '@/components/ChallengeStrip';
 import Celebration from '@/components/Celebration';
 import SpeakButton from '@/components/SpeakButton';
 import FeedbackBar from '@/components/practice/FeedbackBar';
-import { X, Flame, PartyPopper, BookOpen, Volume2, ChevronRight, ChevronUp, ChevronDown, TriangleAlert } from 'lucide-react';
+import { X, Flame, PartyPopper, BookOpen, Volume2, Headphones, Turtle, ChevronRight, ChevronUp, ChevronDown, TriangleAlert } from 'lucide-react';
 import Icon from '@/components/Icon';
 import type { IconName } from '@/lib/icon-names';
-import { speak } from '@/lib/speech';
+import { speak, canSpeak, useSpeechSupported, SLOW_RATE } from '@/lib/speech';
 import { useAutoplay } from '@/lib/use-autoplay';
 import { useT, useUiLang, T } from '@/lib/ui-lang';
 
@@ -68,6 +68,7 @@ type WordGroup = 'none' | 'phase' | 'due' | 'topic';
 
 // Chosen Learn topic: 'all' or a topic id (validated so stale storage can't break it).
 const isTopicChoice = (v: string): v is string => v === 'all' || TOPIC_IDS.has(v);
+const isOnOff = (v: string): v is 'on' | 'off' => v === 'on' || v === 'off';
 
 interface SessionItem {
   de: string;
@@ -78,6 +79,7 @@ interface SessionItem {
   vocabId?: string;
   currentLevel: number;
   askTarget: boolean;    // true ⇒ target word shown, German is the answer
+  listen?: boolean;      // listening mode: the target word is only read out, not shown
   question: string;
   answer: string;
 }
@@ -182,6 +184,9 @@ export default function VokabelnPage() {
 
   const [quizDir, setQuizDir] = useQuizDirection();
   const [autoplay, setAutoplay] = useAutoplay();
+  // Listening mode (per device): the word is only read out and German is typed.
+  const [listenSetting, setListenSetting] = useLocalSetting<'on' | 'off'>('italienisch_vocab_listen', 'off', isOnOff);
+  const listenOnly = listenSetting === 'on';
   const [topicSetting, setTopic] = useLocalSetting<string>('italienisch_vocab_topic', 'all', isTopicChoice);
   const [practiceTopicSetting, setPracticeTopic] = useLocalSetting<string>('italienisch_practice_topic', 'all', isTopicChoice);
 
@@ -316,10 +321,13 @@ export default function VokabelnPage() {
     currentLevel = 0,
     extra?: { de?: string; conj?: readonly string[] },
   ): SessionItem {
-    const asksTarget = askTarget(quizDir);
+    // Listening needs speech; without it the card falls back to the normal direction.
+    const listen = listenOnly && canSpeak();
+    const asksTarget = listen || askTarget(quizDir);
     return {
       de, target, example, exampleDe: extra?.de, conj: extra?.conj, vocabId, currentLevel,
       askTarget: asksTarget,
+      listen,
       question: asksTarget ? target : de,
       answer:   asksTarget ? de : target,
     };
@@ -946,6 +954,7 @@ export default function VokabelnPage() {
                   </button>
                   <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                   <AutoplayToggle value={autoplay} onChange={setAutoplay} />
+                  <ListenToggle value={listenOnly} onChange={on => setListenSetting(on ? 'on' : 'off')} />
                 </div>
                 {addWordSection}
               </>
@@ -984,6 +993,7 @@ export default function VokabelnPage() {
                   </button>
                   <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                   <AutoplayToggle value={autoplay} onChange={setAutoplay} />
+                  <ListenToggle value={listenOnly} onChange={on => setListenSetting(on ? 'on' : 'off')} />
                 </div>
               )}
               {vocab.length > 0 && (
@@ -1027,6 +1037,7 @@ export default function VokabelnPage() {
                     <>
                       <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                       <AutoplayToggle value={autoplay} onChange={setAutoplay} />
+                      <ListenToggle value={listenOnly} onChange={on => setListenSetting(on ? 'on' : 'off')} />
                     </>
                   )}
                 </div>
@@ -1187,9 +1198,11 @@ function Flashcard({
 
   // Auto-play: read the word out as soon as the target-language side is visible —
   // right away when it's the question, otherwise once the answer is revealed.
+  // In listening mode the word is always read out at once (that *is* the question).
   useEffect(() => {
-    if (autoplay && (item.askTarget || checked)) speak(item.target, lang);
-  }, [autoplay, item.askTarget, item.target, checked, lang]);
+    if (item.listen && !checked) speak(item.target, lang);
+    else if (autoplay && (item.askTarget || checked)) speak(item.target, lang);
+  }, [autoplay, item.listen, item.askTarget, item.target, checked, lang]);
 
   const evaluation = checked ? checkWordAnswer(answer, item.answer, lang) : null;
   const flag = langInfo(lang).flag;
@@ -1260,12 +1273,36 @@ function Flashcard({
       {/* Question */}
       <div className="text-center pb-1">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-          {t('Translate', 'Übersetze')} {item.askTarget ? `${flag} → 🇩🇪` : `🇩🇪 → ${flag}`}
+          {item.listen
+            ? <span className="inline-flex items-center gap-1"><Headphones className="w-3.5 h-3.5" /> {t('Listen and translate', 'Hör zu und übersetze')} {flag} → 🇩🇪</span>
+            : <>{t('Translate', 'Übersetze')} {item.askTarget ? `${flag} → 🇩🇪` : `🇩🇪 → ${flag}`}</>}
         </p>
-        <p className="font-display text-4xl text-gray-900 mt-2 inline-flex items-center gap-2 flex-wrap justify-center">
-          {item.question}
-          {item.askTarget && <SpeakButton text={item.target} lang={lang} size="md" />}
-        </p>
+        {item.listen && !checked ? (
+          <div className="mt-3 flex items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => { speak(item.target, lang); inputRef.current?.focus(); }}
+              aria-label={t('Play again', 'Nochmal abspielen')}
+              className="w-20 h-20 rounded-full bg-red-700 hover:bg-red-800 text-white flex items-center justify-center shadow-sm transition-colors"
+            >
+              <Volume2 className="w-9 h-9" />
+            </button>
+            <button
+              type="button"
+              onClick={() => { speak(item.target, lang, { rate: SLOW_RATE }); inputRef.current?.focus(); }}
+              aria-label={t('Play slowly', 'Langsam abspielen')}
+              title={t('Play slowly', 'Langsam abspielen')}
+              className="w-12 h-12 rounded-full bg-red-50 hover:bg-red-100 text-red-700 flex items-center justify-center transition-colors"
+            >
+              <Turtle className="w-6 h-6" />
+            </button>
+          </div>
+        ) : (
+          <p className="font-display text-4xl text-gray-900 mt-2 inline-flex items-center gap-2 flex-wrap justify-center">
+            {item.question}
+            {item.askTarget && <SpeakButton text={item.target} lang={lang} size="md" />}
+          </p>
+        )}
       </div>
 
       {!checked ? (
@@ -1418,6 +1455,29 @@ function Flashcard({
       )}
       </div>
     </div>
+  );
+}
+
+// ─── Listening-mode toggle ────────────────────────────────────────────────────
+
+function ListenToggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+  const t = useT();
+  if (!useSpeechSupported()) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!value)}
+      className="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-gray-50 text-xs text-gray-500 hover:bg-gray-100 transition-colors text-left"
+    >
+      <span className="inline-flex items-center gap-1.5">
+        <Headphones className="w-4 h-4 text-red-700 shrink-0" />
+        <span>
+          {t('Listening only', 'Nur hören')}
+          <span className="block text-[11px] text-gray-400">{t('The word is read out, not shown – type the German meaning', 'Das Wort wird nur vorgelesen – tippe die deutsche Bedeutung')}</span>
+        </span>
+      </span>
+      <span className={`font-semibold shrink-0 ${value ? 'text-green-700' : 'text-gray-400'}`}>{value ? t('On', 'An') : t('Off', 'Aus')}</span>
+    </button>
   );
 }
 
