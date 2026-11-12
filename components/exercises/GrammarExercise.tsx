@@ -10,6 +10,7 @@ import { useT } from '@/lib/ui-lang';
 import { checkClozeAnswer } from '@/lib/answer-check';
 import { BookMarked, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import FeedbackBar from '@/components/practice/FeedbackBar';
+import { RuleList, RichText, NoteBox, ExampleList } from '@/components/GrammarBlocks';
 
 interface Props {
   topic: GrammarTopic;
@@ -122,18 +123,13 @@ export default function GrammarExercise({ topic, lang, onComplete, onDone }: Pro
           {showRule ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
         </button>
         {showRule && (
-          <div className="px-4 pb-4 space-y-2">
-            <p className="text-sm text-gray-800 leading-relaxed">{topic.explanation}</p>
-            <div className="space-y-1">
-              {topic.examples.map((ex, i) => (
-                <p key={i} className="text-sm flex items-center gap-1.5 flex-wrap">
-                  <SpeakButton text={ex.target} lang={lang} />
-                  <span className="font-semibold text-gray-900">{ex.target}</span>
-                  <span className="text-gray-400"> → </span>
-                  <span className="text-gray-600">{ex.de}</span>
-                </p>
-              ))}
-            </div>
+          <div className="px-4 pb-4 space-y-3">
+            {Array.isArray(topic.explanation)
+              ? <RuleList points={topic.explanation} />
+              : <p className="text-sm text-gray-800 leading-relaxed"><RichText text={topic.explanation} /></p>}
+            {topic.examples.length > 0 && <ExampleList examples={topic.examples} lang={lang} />}
+            {topic.tip && <NoteBox kind="tip" text={topic.tip} />}
+            {topic.warn && <NoteBox kind="warn" text={topic.warn} />}
           </div>
         )}
       </div>

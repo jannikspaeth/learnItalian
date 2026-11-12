@@ -9,8 +9,8 @@ import { useLearner } from '@/lib/use-profile';
 import { langInfo } from '@/lib/lang';
 import { X, BookMarked, ChevronRight } from 'lucide-react';
 import GrammarExercise from '@/components/exercises/GrammarExercise';
-import SpeakButton from '@/components/SpeakButton';
 import Icon from '@/components/Icon';
+import { RichText, RuleList, NoteBox, TableBlock, ExampleList } from '@/components/GrammarBlocks';
 import { useT } from '@/lib/ui-lang';
 
 type Tab = 'exercises' | 'lessons';
@@ -200,28 +200,21 @@ export default function GrammarPage() {
         </button>
 
         {isOpen && (
-          <div className="px-5 pb-5 space-y-4 border-t border-gray-50 pt-4">
+          <div className="px-5 pb-5 space-y-6 border-t border-gray-100 pt-5">
             {lesson.sections.map((s, i) => (
-              <div key={i} className="space-y-2">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <div key={i} className="space-y-3">
+                <h3 className="flex items-center gap-2.5 font-semibold text-gray-900">
+                  <span className="w-6 h-6 rounded-full bg-red-50 text-red-700 text-xs font-bold flex items-center justify-center shrink-0">
+                    {i + 1}
+                  </span>
                   {s.heading}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{s.body}</p>
-                {s.examples && s.examples.length > 0 && (
-                  <div className="space-y-1.5 pt-1">
-                    {s.examples.map((ex, j) => (
-                      <div
-                        key={j}
-                        className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 bg-gray-50 rounded-lg px-3 py-2"
-                      >
-                        <SpeakButton text={ex.target} lang={lang} className="self-center" />
-                        <span className="font-semibold text-gray-900 text-sm">{ex.target}</span>
-                        <span className="text-gray-300 text-sm">→</span>
-                        <span className="text-gray-500 text-sm">{ex.de}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {s.body && <p className="text-sm text-gray-700 leading-relaxed"><RichText text={s.body} /></p>}
+                {s.points && s.points.length > 0 && <RuleList points={s.points} />}
+                {s.table && <TableBlock table={s.table} />}
+                {s.examples && s.examples.length > 0 && <ExampleList examples={s.examples} lang={lang} />}
+                {s.tip && <NoteBox kind="tip" text={s.tip} />}
+                {s.warn && <NoteBox kind="warn" text={s.warn} />}
               </div>
             ))}
           </div>

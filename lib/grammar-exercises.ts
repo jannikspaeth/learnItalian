@@ -29,7 +29,10 @@ export interface GrammarTopic {
   level: GrammarLevel;
   lessonId?: string;
   instruction: string;
-  explanation: string;
+  // The rule: one string, or short bullet points (preferred). **bold** marks key words.
+  explanation: string | string[];
+  tip?: string;  // shown as a "Merke:" box under the rule
+  warn?: string; // shown as an "Achtung:" box (typical mistake)
   examples: { target: string; de: string }[];
   items: GrammarItem[];
 }
@@ -55,9 +58,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'artikel',
     instruction: 'Setze den passenden bestimmten Artikel ein.',
-    explanation:
-      'Männlich: il (normal), lo (vor s + Konsonant, z, gn, ps), l\' (vor Vokal). Weiblich: la, l\' (vor Vokal). ' +
-      'Mehrzahl: il → i, lo und l\' (männlich) → gli, la und l\' (weiblich) → le.',
+    explanation: [
+      "**il** – männlich, normaler Anfang: il libro, il treno",
+      "**lo** – männlich vor **s + Konsonant, z, gn, ps, y**: lo studente, lo zaino",
+      "**la** – weiblich: la casa, la ragazza",
+      "**l'** – vor Vokal, männlich und weiblich: l'amico, l'isola",
+      "Mehrzahl: **il → i**, **lo / l' (m) → gli**, **la / l' (f) → le**",
+    ],
+    tip: "Der Artikel hängt vom **Anfang des nächsten Wortes** ab, nicht nur vom Geschlecht.",
+    warn: "In der Mehrzahl gibt es keinen Apostroph: l'amico → **gli** amici, l'amica → **le** amiche.",
     examples: [
       { target: "il libro · lo zaino · l'amico", de: "männlich: das Buch, der Rucksack, der Freund" },
       { target: "la casa · l'isola", de: "weiblich: das Haus, die Insel" },
@@ -90,9 +99,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'artikel',
     instruction: 'Setze den passenden unbestimmten Artikel ein.',
-    explanation:
-      'Männlich: un (normal und vor Vokal!), uno (vor s + Konsonant, z, gn, ps). Weiblich: una, un\' (vor Vokal). ' +
-      'Achtung: Nur weiblich bekommt einen Apostroph – un amico, aber un\'amica.',
+    explanation: [
+      "**un** – männlich, normal **und vor Vokal**: un libro, un amico",
+      "**uno** – männlich vor **s + Konsonant, z, gn, ps**: uno studente, uno zaino",
+      "**una** – weiblich: una casa",
+      "**un'** – weiblich vor Vokal: un'amica, un'ora",
+    ],
+    tip: "Es gelten dieselben Anfangs-Regeln wie bei il / lo.",
+    warn: "Nur die weibliche Form bekommt einen Apostroph: **un amico**, aber **un'amica**.",
     examples: [
       { target: "un libro · uno zaino · un amico", de: "ein Buch, ein Rucksack, ein Freund" },
       { target: "una casa · un'amica", de: "ein Haus, eine Freundin" },
@@ -123,10 +137,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'artikel',
     instruction: 'Bilde die Mehrzahl.',
-    explanation:
-      'Regel: -o → -i, -a → -e, -e → -i. Wörter mit betonter Endung (città, caffè) und Fremdwörter (film, bar) ' +
-      'bleiben gleich. Einige Wörter sind unregelmäßig: la mano → le mani, l\'uomo → gli uomini, ' +
-      'l\'uovo → le uova, il braccio → le braccia.',
+    explanation: [
+      "**-o → -i**: il libro → i libri",
+      "**-a → -e**: la casa → le case",
+      "**-e → -i**: il fiore → i fiori, la notte → le notti",
+      "Unverändert bleiben Wörter mit **betonter Endung** (la città → le città) und **Fremdwörter** (il film → i film)",
+      "Unregelmäßig: la mano → le **mani**, l'uomo → gli **uomini**, l'uovo → le **uova**, il braccio → le **braccia**",
+    ],
+    tip: "Der Artikel wechselt mit: **il → i**, **lo → gli**, **la → le**.",
+    warn: "Männliche Wörter auf -a (il problema) bilden die Mehrzahl auf **-i**: i problemi.",
     examples: [
       { target: "il libro → i libri", de: "-o → -i" },
       { target: "la casa → le case", de: "-a → -e" },
@@ -160,10 +179,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'essere-avere',
     instruction: 'Setze die richtige Form von essere oder avere ein.',
-    explanation:
-      'essere: sono, sei, è, siamo, siete, sono. avere: ho, hai, ha, abbiamo, avete, hanno. ' +
-      'Anders als im Deutschen sagt man „haben“ bei Alter (ho vent\'anni), Hunger, Durst, Angst, Kälte, Recht: ' +
-      'ho fame, ho sete, ho paura, ho freddo, hai ragione.',
+    explanation: [
+      "**essere** (sein): sono, sei, è, siamo, siete, sono",
+      "**avere** (haben): ho, hai, ha, abbiamo, avete, hanno",
+      "Mit **avere** sagt man das Alter: **ho** vent'anni",
+      "… und viele Zustände: ho **fame** (Hunger), **sete** (Durst), **freddo**, **caldo**, **paura**, **sonno**, hai **ragione**",
+    ],
+    tip: "Wo das Deutsche „ich **bin** … Jahre alt / mir ist kalt“ sagt, sagt das Italienische „ich **habe**“.",
+    warn: "Das **h** von ho, hai, ha, hanno ist stumm – es unterscheidet nur die Schreibung (ha = hat, a = nach / in).",
     examples: [
       { target: "Sono stanco.", de: "Ich bin müde." },
       { target: "Ho fame.", de: "Ich habe Hunger." },
@@ -195,10 +218,16 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'praesens',
     instruction: 'Konjugiere das Verb in Klammern im Präsens.',
-    explanation:
-      '-are: -o, -i, -a, -iamo, -ate, -ano. -ere: -o, -i, -e, -iamo, -ete, -ono. -ire: -o, -i, -e, -iamo, -ite, -ono. ' +
-      'Viele -ire-Verben schieben -isc- ein (capisco, finisci, preferisce, capiscono – nicht bei noi/voi). ' +
-      'Bei -care/-gare kommt vor i ein h: cerchi, paghi.',
+    explanation: [
+      "Stamm + Endung. Den Stamm bekommt man, indem man -are/-ere/-ire weglässt",
+      "**-are**: -o, -i, -a, -iamo, -ate, -ano (parlo, parli, parla …)",
+      "**-ere**: -o, -i, -e, -iamo, -ete, -ono (prendo, prendi, prende …)",
+      "**-ire**: -o, -i, -e, -iamo, -ite, -ono (dormo, dormi, dorme …)",
+      "Viele -ire-Verben schieben **-isc-** ein: capisco, capisci, capisce, capiamo, capite, capiscono",
+      "-care/-gare behalten den harten Laut mit **h**: cerchi, paghiamo",
+    ],
+    tip: "Die Endungen **io -o**, **tu -i** und **noi -iamo** sind bei allen drei Gruppen gleich.",
+    warn: "-isc- gibt es nicht bei **noi** und **voi**: capiamo, capite.",
     examples: [
       { target: "parlo · prendo · dormo · capisco", de: "ich spreche, nehme, schlafe, verstehe" },
       { target: "parliamo · prendete · capiscono", de: "wir sprechen, ihr nehmt, sie verstehen" },
@@ -229,10 +258,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'praepositionen',
     instruction: 'Setze Präposition + Artikel zusammen ein.',
-    explanation:
-      'a, di, da, in, su verschmelzen mit dem bestimmten Artikel: a + il = al, di + la = della, da + l\' = dall\', ' +
-      'in + il = nel (in → ne-), su + lo = sullo, a + gli = agli, di + i = dei, a + le = alle. ' +
-      'Die Artikel-Regeln (il/lo/la/l\'/i/gli/le) gelten wie immer.',
+    explanation: [
+      "a, di, da, in, su verschmelzen mit dem bestimmten Artikel",
+      "**in** wird dabei zu **ne-**, **di** zu **de-**: nel, nella, del, della",
+      "Der Artikel-Teil folgt den normalen Regeln (il / lo / l' / la / i / gli / le)",
+      "Beispiele: a + il = **al**, di + la = **della**, da + l' = **dall'**, in + i = **nei**, su + gli = **sugli**",
+    ],
+    tip: "Die Tabelle in der Lektion zeigt alle Formen auf einen Blick.",
+    warn: "**con** und **per** verschmelzen in der Regel nicht: con il treno, per la mamma.",
     examples: [
       { target: "al mare · nella borsa · dal medico", de: "ans Meer, in der Tasche, zum Arzt" },
       { target: "sul tavolo · il libro del professore", de: "auf dem Tisch, das Buch des Lehrers" },
@@ -263,10 +296,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'possessiv',
     instruction: 'Setze das passende Possessivpronomen ein (mit oder ohne Artikel).',
-    explanation:
-      'Das Possessiv richtet sich nach dem Besitz, nicht nach dem Besitzer: il mio libro, la mia casa, i miei libri, ' +
-      'le mie case. Normalerweise steht der Artikel davor. Ausnahme: Familienmitglieder im Singular ohne Artikel ' +
-      '(mia madre, tuo fratello) – aber in der Mehrzahl mit Artikel (i miei genitori). „loro“ hat immer einen Artikel.',
+    explanation: [
+      "Das Possessiv richtet sich nach dem **Besitz**, nicht nach dem Besitzer: la sua casa = sein **oder** ihr Haus",
+      "Formen: mio, tuo, suo, nostro, vostro, loro – jeweils mit -a, -i/-ei, -e (il mio, la mia, i miei, le mie)",
+      "Normalerweise steht **der Artikel davor**: il mio libro, la nostra casa",
+      "Familie im **Singular ohne Artikel**: mia madre, tuo fratello",
+      "Familie im **Plural mit Artikel**: i miei genitori, le mie sorelle",
+    ],
+    tip: "**loro** verändert sich nie und hat immer einen Artikel: la loro madre.",
+    warn: "mamma, papà und Verkleinerungen behalten den Artikel: **la mia** mamma, **il mio** fratellino.",
     examples: [
       { target: "il mio libro · la mia casa", de: "mein Buch, mein Haus" },
       { target: "mia madre · i miei genitori", de: "meine Mutter, meine Eltern" },
@@ -297,10 +335,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'fragen',
     instruction: 'Setze das passende Fragewort ein.',
-    explanation:
-      'chi = wer · che cosa / cosa / che = was · come = wie · dove = wo · quando = wann · perché = warum · ' +
-      'quanto / quanta / quanti / quante = wie viel(e) (richtet sich nach dem Nomen) · quale = welcher. ' +
-      'Vor è wird quale zu qual – ohne Apostroph: Qual è …?',
+    explanation: [
+      "**chi** = wer · **che cosa / cosa / che** = was",
+      "**come** = wie · **dove** = wo · **quando** = wann · **perché** = warum",
+      "**quanto, quanta, quanti, quante** = wie viel(e) – passt sich dem Nomen an",
+      "**quale / quali** = welche(r/s)",
+      "Fragen erkennt man oft nur an der Satzmelodie: Parli italiano?",
+    ],
+    tip: "**perché** heißt warum **und** weil – die Antwort beginnt auch mit perché.",
+    warn: "Vor è wird quale zu **qual** – ohne Apostroph: Qual è il tuo numero?",
     examples: [
       { target: "Come stai? Dove abiti?", de: "Wie geht es dir? Wo wohnst du?" },
       { target: "Qual è il tuo nome?", de: "Wie ist dein Name?" },
@@ -331,10 +374,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'fragen',
     instruction: 'Setze das passende Wort für die Verneinung ein.',
-    explanation:
-      'non steht direkt vor dem Verb: Non parlo tedesco. Weitere Verneinungswörter stehen nach dem Verb, ' +
-      'non bleibt trotzdem davor („doppelte Verneinung“): non … mai (nie), non … niente/nulla (nichts), ' +
-      'non … nessuno (niemand), non … più (nicht mehr), non … ancora (noch nicht). „nein“ als Antwort heißt no.',
+    explanation: [
+      "**non** steht direkt **vor dem Verb**: Non parlo tedesco",
+      "Pronomen bleiben zwischen non und Verb: Non lo so",
+      "Weitere Wörter stehen nach dem Verb, **non bleibt trotzdem**: non … **mai** (nie), non … **niente/nulla** (nichts), non … **nessuno** (niemand), non … **più** (nicht mehr), non … **ancora** (noch nicht)",
+      "„nein“ als Antwort heißt **no**",
+    ],
+    tip: "Die doppelte Verneinung ist im Italienischen **korrekt und Pflicht**: Non vedo niente.",
+    warn: "Steht das Verneinungswort am Satzanfang, fällt non weg: **Nessuno** è venuto.",
     examples: [
       { target: "Non parlo tedesco.", de: "Ich spreche kein Deutsch." },
       { target: "Non vado mai al cinema.", de: "Ich gehe nie ins Kino." },
@@ -367,11 +414,16 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'adjektive',
     instruction: 'Setze das Adjektiv in der passenden Form ein.',
-    explanation:
-      'Adjektive richten sich nach Geschlecht und Zahl des Nomens und stehen meist dahinter. Auf -o: rosso, rossa, ' +
-      'rossi, rosse. Auf -e: grande (männlich und weiblich), grandi (Mehrzahl). -co/-go bekommen in der Mehrzahl oft ' +
-      'ein h (stanchi, bianche). Farben wie blu, rosa, viola bleiben gleich. bello vor dem Nomen verändert sich wie ' +
-      'der Artikel: un bel libro, un bell\'albero, i bei fiori.',
+    explanation: [
+      "Adjektive passen sich in **Geschlecht und Zahl** an das Nomen an",
+      "Auf **-o**: rosso, rossa, rossi, rosse",
+      "Auf **-e**: grande (m + f), grandi (Plural)",
+      "Sie stehen **meist hinter** dem Nomen: una macchina rossa",
+      "Unveränderlich: blu, rosa, viola, beige",
+      "**bello** vor dem Nomen ändert sich wie der Artikel: un bel libro, un bell'albero, i bei fiori, i begli occhi",
+    ],
+    tip: "-co/-go bekommen in der Mehrzahl oft ein **h**: bianco → bianchi, lungo → lunghe.",
+    warn: "Ein Adjektiv auf -e hat **keine** eigene weibliche Form: una casa grand**e**.",
     examples: [
       { target: 'una macchina rossa · i libri nuovi', de: 'ein rotes Auto, die neuen Bücher' },
       { target: 'una casa grande · due case grandi', de: 'ein großes Haus, zwei große Häuser' },
@@ -403,9 +455,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'es-gibt',
     instruction: "Setze c'è oder ci sono ein.",
-    explanation:
-      "c'è (es gibt / es ist da) steht mit Einzahl, ci sono mit Mehrzahl. Verneinung: non c'è / non ci sono. " +
-      "Frage einfach mit Satzmelodie: C'è un bar qui vicino?",
+    explanation: [
+      "**c'è** = es gibt / es ist da – mit **Einzahl**",
+      "**ci sono** = es gibt / sind da – mit **Mehrzahl**",
+      "Verneinung: **non c'è** / **non ci sono**",
+      "Frage nur durch die Satzmelodie: C'è un bar qui vicino?",
+    ],
+    tip: "Was danach kommt, entscheidet: **c'è** un problema, **ci sono** due problemi.",
+    warn: "„Es gibt“ heißt nie es dà – immer c'è / ci sono.",
     examples: [
       { target: "C'è un bar qui vicino?", de: 'Gibt es hier in der Nähe eine Bar?' },
       { target: 'Ci sono molti turisti.', de: 'Es gibt viele Touristen.' },
@@ -435,10 +492,16 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'piacere',
     instruction: 'Setze die passende Form oder das passende Pronomen ein.',
-    explanation:
-      'piacere funktioniert umgekehrt als „mögen“: Das, was gefällt, ist das Subjekt. Einzahl oder Infinitiv → piace, ' +
-      'Mehrzahl → piacciono. Wem es gefällt, sagt das Pronomen: mi (mir), ti (dir), gli (ihm), le (ihr), Le (Ihnen), ' +
-      'ci (uns), vi (euch), gli (ihnen). Betont: a me, a te, a Marco. Im passato prossimo mit essere: mi è piaciuto/a.',
+    explanation: [
+      "Was gefällt, ist das **Subjekt** – wer es mag, steht als Pronomen davor",
+      "Einzahl oder Infinitiv → **piace**: Mi piace la pizza, Mi piace leggere",
+      "Mehrzahl → **piacciono**: Mi piacciono i film",
+      "Pronomen: **mi** (mir), **ti** (dir), **gli** (ihm), **le** (ihr), **Le** (Ihnen), **ci** (uns), **vi** (euch), **gli** (ihnen)",
+      "Betont: **a me**, **a te**, **a Marco** piace …",
+      "Vergangenheit mit essere: mi è piaciuto / piaciuta / piaciuti / piaciute",
+    ],
+    tip: "Denk an „**gefallen**“: Mir gefällt die Pizza – mir gefallen die Filme.",
+    warn: "Nicht beides zusammen: ~~A me mi piace~~ → **A me piace** oder **Mi piace**.",
     examples: [
       { target: 'Mi piace la pizza.', de: 'Ich mag Pizza.' },
       { target: 'Ti piacciono gli spaghetti?', de: 'Magst du Spaghetti?' },
@@ -469,10 +532,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'reflexiv',
     instruction: 'Setze das Reflexivpronomen oder die Verbform ein.',
-    explanation:
-      'Reflexive Verben haben ein Pronomen vor dem Verb: mi, ti, si, ci, vi, si – mi alzo, ti alzi, si alza, ' +
-      'ci alziamo, vi alzate, si alzano. Im passato prossimo stehen sie immer mit essere, und das Partizip passt sich ' +
-      'an: mi sono alzato/alzata, ci siamo divertiti.',
+    explanation: [
+      "Das Pronomen steht **vor dem Verb**: mi, ti, si, ci, vi, si",
+      "mi alzo, ti alzi, si alza, ci alziamo, vi alzate, si alzano",
+      "Beim Infinitiv wird es angehängt: Devo alzar**mi** presto",
+      "Im passato prossimo **immer mit essere**, das Partizip passt sich an: mi sono alzato / alzata",
+    ],
+    tip: "Viele Verben sind im Italienischen reflexiv, im Deutschen nicht: **chiamarsi** (heißen), **svegliarsi** (aufwachen).",
+    warn: "Nicht ~~mi ho lavato~~ – reflexiv heißt immer **essere**: mi **sono** lavato.",
     examples: [
       { target: 'Mi alzo alle sette.', de: 'Ich stehe um sieben auf.' },
       { target: 'Come ti chiami?', de: 'Wie heißt du?' },
@@ -503,12 +570,19 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'unregelmaessig',
     instruction: 'Konjugiere das Verb in Klammern im Präsens.',
-    explanation:
-      'Die häufigsten Verben sind unregelmäßig und müssen auswendig gelernt werden: andare (vado, vai, va, andiamo, ' +
-      'andate, vanno), fare (faccio, fai, fa, facciamo, fate, fanno), venire (vengo, vieni, viene, veniamo, venite, ' +
-      'vengono), volere (voglio, vuoi, vuole, vogliamo, volete, vogliono), potere (posso, puoi, può …), dovere (devo, ' +
-      'devi, deve, dobbiamo …), sapere (so, sai, sa …), uscire (esco, esci, esce, usciamo, uscite, escono), dire (dico, ' +
-      'dici, dice, diciamo, dite, dicono), stare (sto, stai, sta …), bere (bevo, bevi …).',
+    explanation: [
+      "**andare**: vado, vai, va, andiamo, andate, vanno",
+      "**fare**: faccio, fai, fa, facciamo, fate, fanno",
+      "**venire**: vengo, vieni, viene, veniamo, venite, vengono",
+      "**volere**: voglio, vuoi, vuole, vogliamo, volete, vogliono",
+      "**potere**: posso, puoi, può, possiamo, potete, possono",
+      "**dovere**: devo, devi, deve, dobbiamo, dovete, devono",
+      "**sapere**: so, sai, sa, sappiamo, sapete, sanno",
+      "**uscire**: esco, esci, esce, usciamo, uscite, escono",
+      "**dire**: dico, dici, dice, diciamo, dite, dicono · **stare**: sto, stai, sta … · **bere**: bevo, bevi, beve …",
+    ],
+    tip: "**noi** und **voi** sind meist regelmäßig (andiamo, andate) – die Überraschungen stecken in io, tu, lui und loro.",
+    warn: "**sapere** = etwas wissen / können (gelernt), **potere** = können (möglich / erlaubt).",
     examples: [
       { target: 'Vado al mare.', de: 'Ich fahre ans Meer.' },
       { target: 'Vuoi un caffè?', de: 'Willst du einen Kaffee?' },
@@ -540,10 +614,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A1',
     lessonId: 'es-gibt',
     instruction: 'Setze die passende Form von questo oder quello ein.',
-    explanation:
-      'questo (dieser hier): questo, questa, questi, queste – vor Vokal oft quest\'. quello (jener dort) verändert ' +
-      'sich wie der bestimmte Artikel: quel libro (il), quello studente (lo), quell\'amico (l\'), quella casa (la), ' +
-      'quei libri (i), quegli studenti (gli), quelle case (le).',
+    explanation: [
+      "**questo** = dieser hier: questo, questa, questi, queste (vor Vokal oft quest')",
+      "**quello** = jener dort – verändert sich **wie der bestimmte Artikel**",
+      "il → **quel** libro · lo → **quello** studente · l' → **quell'**amico",
+      "la → **quella** casa · i → **quei** libri · gli → **quegli** studenti · le → **quelle** case",
+    ],
+    tip: "Setz in Gedanken den Artikel ein: **il** libro → **quel** libro, **gli** amici → **quegli** amici.",
+    warn: "Allein (ohne Nomen) heißt es immer quello / quella / quelli / quelle: Quale vuoi? – **Quello**.",
     examples: [
       { target: 'Questo libro è mio.', de: 'Dieses Buch gehört mir.' },
       { target: 'quel ragazzo · quello zaino · quell\'albero', de: 'jener Junge, jener Rucksack, jener Baum' },
@@ -575,11 +653,16 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'passato-prossimo',
     instruction: 'Setze das Hilfsverb oder das Partizip ein.',
-    explanation:
-      'Passato prossimo = Hilfsverb (avere oder essere) + Partizip. Die meisten Verben nehmen avere: ho mangiato. ' +
-      'Verben der Bewegung und Veränderung (andare, venire, arrivare, partire, uscire, restare, nascere …) und alle ' +
-      'reflexiven Verben nehmen essere – dann richtet sich das Partizip nach dem Subjekt: sono andato/andata, ' +
-      'siamo andati/andate. Unregelmäßige Partizipien: fatto, scritto, preso, letto, visto, detto, messo.',
+    explanation: [
+      "Bildung: **avere / essere** im Präsens + **Partizip**",
+      "Partizip: -are → **-ato**, -ere → **-uto**, -ire → **-ito**",
+      "Die meisten Verben nehmen **avere**: ho mangiato, hai dormito",
+      "**essere** bei Bewegung / Veränderung (andare, venire, partire, arrivare, uscire, restare, nascere, morire, diventare) und bei **allen reflexiven** Verben",
+      "Mit **essere** passt sich das Partizip an: Giulia è andat**a**, siamo andat**i**",
+      "Unregelmäßig: fatto, detto, scritto, letto, preso, messo, visto, aperto, bevuto, venuto, stato",
+    ],
+    tip: "Frage: Gibt es ein direktes Objekt (wen/was?) → fast immer **avere**.",
+    warn: "**essere** ist selbst ein essere-Verb: sono **stato** / stata (ich bin gewesen).",
     examples: [
       { target: "Ho mangiato una pizza.", de: "Ich habe eine Pizza gegessen." },
       { target: "Giulia è andata al mare.", de: "Giulia ist ans Meer gefahren." },
@@ -611,11 +694,16 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'praepositionen',
     instruction: 'Setze die passende Präposition ein.',
-    explanation:
-      'a + Stadt (a Roma), in + Land/Region (in Italia, in Toscana), in + Verkehrsmittel (in treno, in macchina) – aber ' +
-      'a piedi. da + Person = zu/bei jemandem (vado da Marco), da + Zeitangabe = seit (da due anni), da = von/aus ' +
-      '(vengo da Roma). di = Herkunft/Besitz (sono di Berlino, il libro di Eco). per = für / Dauer (per tre ore). ' +
-      'tra/fra = in (Zukunft: tra un\'ora) oder zwischen.',
+    explanation: [
+      "**a** + Stadt: a Roma · **in** + Land / Region: in Italia, in Toscana",
+      "**in** + Verkehrsmittel: in treno, in macchina – aber **a piedi** (zu Fuß)",
+      "**da** + Person = zu / bei jemandem: vado **da** Marco, sono **dal** medico",
+      "**da** + Zeit = seit: studio italiano **da** due anni · **da** = von / aus: vengo da Roma",
+      "**di** = Herkunft und Besitz: sono **di** Berlino, il libro **di** Eco",
+      "**per** = für / Dauer: per te, per tre ore · **tra / fra** = in (Zukunft) oder zwischen: tra un'ora",
+    ],
+    tip: "„seit“ = **da** + Präsens: Abito qui **da** tre anni (ich wohne seit drei Jahren hier).",
+    warn: "Nicht ~~in Roma~~: Städte immer mit **a**.",
     examples: [
       { target: 'Abito a Milano, in Italia.', de: 'Ich wohne in Mailand, in Italien.' },
       { target: 'Vado da Marco in bici.', de: 'Ich fahre mit dem Rad zu Marco.' },
@@ -647,10 +735,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'imperfetto',
     instruction: 'Setze das Verb im imperfetto ein.',
-    explanation:
-      'Endungen: -are → -avo, -avi, -ava, -avamo, -avate, -avano; -ere → -evo, -evi, -eva …; -ire → -ivo, -ivi, -iva …. ' +
-      'Fast alle Verben sind regelmäßig. Ausnahmen: essere (ero, eri, era, eravamo, eravate, erano), fare (facevo), ' +
-      'dire (dicevo), bere (bevevo). Gebrauch: Gewohnheiten, Beschreibungen und Zustände in der Vergangenheit.',
+    explanation: [
+      "Endungen: -**vo**, -**vi**, -**va**, -**vamo**, -**vate**, -**vano** an a / e / i",
+      "parlare → parla**vo**, prendere → prende**vo**, dormire → dormi**vo**",
+      "Fast alle Verben sind regelmäßig",
+      "Unregelmäßig: **essere** (ero, eri, era, eravamo, eravate, erano), fare → **facevo**, dire → **dicevo**, bere → **bevevo**",
+      "Gebrauch: **Gewohnheiten**, **Beschreibungen**, **Zustände** und Handlungen im Hintergrund",
+    ],
+    tip: "Typische Signale: **da bambino**, **sempre**, **ogni giorno**, **di solito**, **mentre**.",
+    warn: "Die Betonung bei loro liegt vorn: par**la**vano, nicht parla**va**no.",
     examples: [
       { target: 'Da bambino giocavo a calcio.', de: 'Als Kind habe ich Fußball gespielt.' },
       { target: 'Era tardi e pioveva.', de: 'Es war spät und es regnete.' },
@@ -681,11 +774,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'imperfetto',
     instruction: 'Wähle die passende Vergangenheitsform.',
-    explanation:
-      'passato prossimo: abgeschlossene, einmalige Handlung („was ist passiert?“) – Ieri ho visto un film. ' +
-      'imperfetto: Gewohnheit, Beschreibung, Zustand oder eine laufende Handlung im Hintergrund („wie war es?“) – ' +
-      'Da bambino andavo al mare. Era tardi. Mentre leggevo, è suonato il telefono. Signalwörter: ieri, una volta, ' +
-      'improvvisamente → passato prossimo; sempre, ogni giorno, mentre, da bambino → imperfetto.',
+    explanation: [
+      "**passato prossimo** = abgeschlossen, einmalig, „was ist passiert?“: Ieri **ho visto** un film",
+      "**imperfetto** = Gewohnheit, Beschreibung, Zustand, „wie war es?“: Da bambino **andavo** al mare",
+      "Laufende Handlung + plötzliches Ereignis: Mentre **leggevo**, **è suonato** il telefono",
+      "Signalwörter passato prossimo: ieri, una volta, all'improvviso, nel 2020",
+      "Signalwörter imperfetto: sempre, ogni giorno, di solito, mentre, da bambino",
+    ],
+    tip: "Film-Bild: das **imperfetto** ist die Kulisse, das **passato prossimo** die Handlung.",
+    warn: "Eine abgeschlossene Zeitspanne steht im passato prossimo: **Ho vissuto** a Roma per due anni.",
     examples: [
       { target: 'Mentre cucinavo, è arrivata Anna.', de: 'Während ich kochte, kam Anna.' },
       { target: 'Ogni estate andavamo al mare, ma nel 2020 siamo rimasti a casa.', de: 'Jeden Sommer fuhren wir ans Meer, aber 2020 blieben wir zu Hause.' },
@@ -716,11 +813,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'futuro',
     instruction: 'Setze das Verb im Futur ein.',
-    explanation:
-      'Endungen -ò, -ai, -à, -emo, -ete, -anno an den Infinitivstamm; bei -are wird a zu e (parlare → parlerò). ' +
-      '-care/-gare bekommen ein h (cercherò, pagherò), -ciare/-giare verlieren das i (mangerò, comincerò). ' +
-      'Unregelmäßig: sarò, avrò, andrò, farò, verrò, vorrò, potrò, dovrò, saprò, vedrò, vivrò, berrò, rimarrò. ' +
-      'Das Futur drückt auch Vermutungen aus: Saranno le otto (Es wird wohl acht sein).',
+    explanation: [
+      "Endungen an den Infinitiv ohne -e: **-ò, -ai, -à, -emo, -ete, -anno**",
+      "Bei -are wird **a zu e**: parlare → parl**e**rò",
+      "-care/-gare + **h**: cercherò, pagherò · -ciare/-giare ohne i: mangerò, comincerò",
+      "Unregelmäßig: sarò, avrò, andrò, farò, verrò, vorrò, potrò, dovrò, saprò, vedrò, vivrò, berrò, rimarrò",
+      "Auch für **Vermutungen**: Saranno le otto (Es wird wohl acht sein)",
+    ],
+    tip: "Für die nahe Zukunft reicht oft das **Präsens**: Domani vado al mare.",
+    warn: "Die Endung der 1. und 3. Person trägt einen Akzent: parlerò, parlerà.",
     examples: [
       { target: 'Domani andrò al mare.', de: 'Morgen werde ich ans Meer fahren.' },
       { target: 'Che ore sono? – Saranno le dieci.', de: 'Wie spät ist es? – Es wird wohl zehn sein.' },
@@ -751,11 +852,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'objektpronomen',
     instruction: 'Setze das passende direkte Objektpronomen (oder Partizip) ein.',
-    explanation:
-      'mi (mich), ti (dich), lo (ihn/es), la (sie/es), La (Sie), ci (uns), vi (euch), li (sie, männlich Mz.), ' +
-      'le (sie, weiblich Mz.). Sie stehen vor dem konjugierten Verb (Lo compro) und werden an den Infinitiv ' +
-      'angehängt (Voglio comprarlo). lo/la vor h oder Vokal → l\' (L\'ho visto). Im passato prossimo passt sich das ' +
-      'Partizip an lo/la/li/le an: La torta? L\'ho fatta. Le foto? Le ho viste.',
+    explanation: [
+      "**mi** (mich), **ti** (dich), **lo** (ihn / es), **la** (sie / es), **La** (Sie)",
+      "**ci** (uns), **vi** (euch), **li** (sie, m. Pl.), **le** (sie, f. Pl.)",
+      "Stellung: **vor** dem konjugierten Verb (Lo compro), **angehängt** an den Infinitiv (Voglio comprar**lo**)",
+      "lo / la vor Vokal oder h → **l'**: L'ho visto",
+      "Im passato prossimo passt sich das Partizip an lo / la / li / le an: La pizza? L'ho mangiat**a**",
+    ],
+    tip: "Antwort auf „wen oder was?“ → direktes Pronomen.",
+    warn: "**le** ist doppeldeutig: sie (f. Pl., direkt) oder ihr (indirekt). Der Satz zeigt, welches gemeint ist.",
     examples: [
       { target: 'Il giornale? Lo compro ogni giorno.', de: 'Die Zeitung? Ich kaufe sie jeden Tag.' },
       { target: 'Le chiavi? Non le trovo.', de: 'Die Schlüssel? Ich finde sie nicht.' },
@@ -787,10 +892,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'objektpronomen',
     instruction: 'Setze das passende indirekte Objektpronomen ein.',
-    explanation:
-      'mi (mir), ti (dir), gli (ihm), le (ihr), Le (Ihnen), ci (uns), vi (euch), gli (ihnen). Typisch bei Verben ' +
-      'mit a + Person: dare, dire, scrivere, telefonare, regalare, rispondere, chiedere, piacere, servire. ' +
-      'Telefono a Marco → Gli telefono. Beim Infinitiv angehängt: Devo telefonargli.',
+    explanation: [
+      "**mi** (mir), **ti** (dir), **gli** (ihm), **le** (ihr), **Le** (Ihnen), **ci** (uns), **vi** (euch), **gli** (ihnen)",
+      "Sie ersetzen **a + Person**: Telefono **a Marco** → **Gli** telefono",
+      "Typische Verben: dare, dire, scrivere, telefonare, regalare, rispondere, chiedere, piacere, servire",
+      "Beim Infinitiv angehängt: Devo telefonar**gli**",
+    ],
+    tip: "Antwort auf „wem?“ → indirektes Pronomen.",
+    warn: "**telefonare a** und **rispondere a** sind im Italienischen indirekt: **Gli** telefono (ich rufe **ihn** an).",
     examples: [
       { target: 'Telefono a Marco. → Gli telefono.', de: 'Ich rufe Marco an. → Ich rufe ihn an.' },
       { target: 'Scrivo a Giulia. → Le scrivo.', de: 'Ich schreibe Giulia. → Ich schreibe ihr.' },
@@ -822,11 +931,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'vergleiche',
     instruction: 'Setze das passende Wort ein.',
-    explanation:
-      'più/meno … di vor Nomen und Pronomen (Marco è più alto di Luca), più … che beim Vergleich von Adjektiven, ' +
-      'Verben oder Mengen (È più facile parlare che scrivere). Gleichheit: tanto … quanto / così … come. ' +
-      'Superlativ: il più alto (della classe), absolut mit -issimo (bellissimo). Unregelmäßig: buono → migliore, ' +
-      'cattivo → peggiore, bene → meglio, male → peggio.',
+    explanation: [
+      "**più / meno … di** vor Nomen und Pronomen: Marco è più alto **di** Luca",
+      "**più / meno … che** beim Vergleich von zwei Adjektiven, Verben oder Mengen: È più facile parlare **che** scrivere",
+      "Gleichheit: **(tanto) … quanto** / **(così) … come**: È alto come me",
+      "Superlativ: **il più** alto (della classe) · absolut: **-issimo** (bellissimo)",
+      "Unregelmäßig: buono → **migliore**, cattivo → **peggiore**, bene → **meglio**, male → **peggio**",
+    ],
+    tip: "Vergleich zweier **Dinge/Personen** → di. Vergleich zweier **Eigenschaften/Tätigkeiten** → che.",
+    warn: "Nicht ~~più buono~~ für „besser“: es heißt **migliore** (Adjektiv) bzw. **meglio** (Adverb).",
     examples: [
       { target: 'Roma è più grande di Firenze.', de: 'Rom ist größer als Florenz.' },
       { target: 'Questo vino è migliore.', de: 'Dieser Wein ist besser.' },
@@ -858,11 +971,16 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'imperativ',
     instruction: 'Setze den Imperativ ein.',
-    explanation:
-      'tu: -are → -a (parla!), -ere/-ire → -i (prendi! dormi! finisci!). noi und voi = Präsens (andiamo! parlate!). ' +
-      'Lei (höflich) = congiuntivo: parli, prenda, senta, venga. Verneint bei tu: non + Infinitiv (Non parlare!). ' +
-      'Kurzformen: va\', fa\', da\', sta\', di\'; essere → sii, avere → abbi. Pronomen hängen an tu/noi/voi an ' +
-      '(Dimmi! Alzati!), bei Lei stehen sie davor (Si sieda!).',
+    explanation: [
+      "**tu**: -are → **-a** (parla!), -ere/-ire → **-i** (prendi! dormi! finisci!)",
+      "**noi / voi** = Präsensformen: andiamo! parlate!",
+      "**Lei** (höflich) = congiuntivo: parli, prenda, senta, venga",
+      "Verneint bei tu: **non + Infinitiv**: Non parlare!",
+      "Kurzformen: va', fa', da', sta', di' · essere → **sii**, avere → **abbi**",
+      "Pronomen **hängen an** bei tu / noi / voi (Dimmi! Alzati!), bei **Lei davor** (Si sieda!)",
+    ],
+    tip: "Bei den Kurzformen verdoppelt sich der Anfang des Pronomens: da' + mi = **dammi**, fa' + lo = **fallo**.",
+    warn: "Nicht ~~Non parla!~~ für tu – richtig ist **Non parlare!**",
     examples: [
       { target: 'Parla piano! · Non parlare!', de: 'Sprich leise! · Sprich nicht!' },
       { target: 'Signora, entri pure!', de: 'Kommen Sie ruhig herein!' },
@@ -894,10 +1012,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'A2',
     lessonId: 'gerundio',
     instruction: 'Setze das Gerundium oder die Form von stare ein.',
-    explanation:
-      'stare + Gerundium = gerade dabei sein, etwas zu tun: Sto mangiando. Gerundium: -are → -ando (parlando), ' +
-      '-ere/-ire → -endo (leggendo, dormendo). Unregelmäßig: fare → facendo, dire → dicendo, bere → bevendo. ' +
-      'In der Vergangenheit mit dem imperfetto von stare: Stavo dormendo, quando hai chiamato.',
+    explanation: [
+      "**stare + Gerundium** = gerade dabei sein: Sto mangiando",
+      "Gerundium: -are → **-ando** (parlando), -ere / -ire → **-endo** (leggendo, dormendo)",
+      "Unregelmäßig: fare → **facendo**, dire → **dicendo**, bere → **bevendo**",
+      "Vergangenheit mit dem imperfetto von stare: **Stavo** dormendo, quando hai chiamato",
+    ],
+    tip: "Nur für Handlungen, die **genau jetzt** laufen – sonst reicht das Präsens.",
+    warn: "Pronomen stehen vor stare oder hängen am Gerundium: **Lo** sto facendo = Sto facendo**lo**.",
     examples: [
       { target: 'Sto preparando la cena.', de: 'Ich bereite gerade das Abendessen zu.' },
       { target: 'Cosa stai facendo?', de: 'Was machst du gerade?' },
@@ -929,10 +1051,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'condizionale',
     instruction: 'Setze das Verb im condizionale ein.',
-    explanation:
-      'Futurstamm + -ei, -esti, -ebbe, -emmo, -este, -ebbero: parlerei, prenderei, dormirei; unregelmäßig wie im Futur: ' +
-      'sarei, avrei, andrei, farei, verrei, vorrei, potrei, dovrei, saprei. Gebrauch: höfliche Bitte (Vorrei un caffè), ' +
-      'Wunsch (Mi piacerebbe …), Ratschlag (Dovresti dormire di più), Vermutung (Secondo lui sarebbe tardi).',
+    explanation: [
+      "Futurstamm + **-ei, -esti, -ebbe, -emmo, -este, -ebbero**",
+      "parlerei, prenderei, dormirei",
+      "Unregelmäßig wie im Futur: sarei, avrei, andrei, farei, verrei, **vorrei**, potrei, dovrei, saprei",
+      "Gebrauch: **höfliche Bitte** (Vorrei un caffè), **Wunsch** (Mi piacerebbe …), **Rat** (Dovresti dormire di più), **Vermutung**",
+    ],
+    tip: "**Vorrei** (ich hätte gern) ist der wichtigste Satz beim Bestellen.",
+    warn: "Die 1. Person Plural hat **mm**: parler**emmo** (würden) – parleremo mit einem m ist Futur.",
     examples: [
       { target: 'Vorrei un caffè, per favore.', de: 'Ich hätte gern einen Kaffee, bitte.' },
       { target: 'Al tuo posto, parlerei con lui.', de: 'An deiner Stelle würde ich mit ihm reden.' },
@@ -964,11 +1090,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'congiuntivo',
     instruction: 'Setze das Verb im congiuntivo presente ein.',
-    explanation:
-      'Der congiuntivo steht nach Verben und Ausdrücken der Meinung, des Wunsches, des Gefühls oder des Zweifels ' +
-      '(penso che, credo che, voglio che, spero che, ho paura che, è importante che, bisogna che) und nach benché, ' +
-      'prima che, affinché. Formen: -are → -i (parli, parliamo, parliate, parlino), -ere/-ire → -a (prenda, dorma, ' +
-      'finisca). Unregelmäßig: sia, abbia, vada, faccia, venga, possa, voglia, debba, sappia, dia, stia, dica, esca.',
+    explanation: [
+      "Steht nach Ausdrücken der **Meinung, des Wunsches, Gefühls oder Zweifels**: penso che, credo che, voglio che, spero che, ho paura che, è importante che, bisogna che",
+      "… und nach **benché**, **prima che**, **affinché**",
+      "-are → **-i**: parli, parli, parli, parliamo, parliate, parlino",
+      "-ere / -ire → **-a**: prenda, dorma, finisca",
+      "Unregelmäßig: sia, abbia, vada, faccia, venga, possa, voglia, debba, sappia, dia, stia, dica, esca",
+    ],
+    tip: "Die drei Singularformen sind gleich – deshalb steht oft das Subjekt dabei: che **tu** venga.",
+    warn: "Ist das Subjekt in beiden Satzteilen gleich, nimmt man di + Infinitiv: Penso **di** venire (nicht ~~penso che io venga~~).",
     examples: [
       { target: 'Penso che sia vero.', de: 'Ich glaube, dass es wahr ist.' },
       { target: 'Voglio che tu venga.', de: 'Ich will, dass du kommst.' },
@@ -1000,10 +1130,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'congiuntivo',
     instruction: 'Wähle Indikativ oder congiuntivo.',
-    explanation:
-      'Indikativ bei Tatsachen und Gewissheit: so che, è vero che, sono sicuro che, vedo che, perché (weil), quando, ' +
-      'se. Congiuntivo bei Meinung, Wunsch, Hoffnung, Gefühl oder Unsicherheit: penso/credo che, spero che, ' +
-      'voglio che, non sono sicuro che, è possibile che, mi dispiace che, benché, prima che.',
+    explanation: [
+      "**Indikativ** bei Tatsachen und Gewissheit: so che, è vero che, sono sicuro che, vedo che",
+      "**Indikativ** auch nach perché (weil), quando, se",
+      "**Congiuntivo** bei Meinung, Wunsch, Hoffnung, Gefühl oder Unsicherheit: penso / credo che, spero che, voglio che, è possibile che, mi dispiace che",
+      "**Congiuntivo** nach benché, prima che, affinché",
+    ],
+    tip: "Wissen → Indikativ. **Glauben, wollen, fühlen** → congiuntivo.",
+    warn: "Die Verneinung kann den Modus ändern: sono sicuro che **è** … – **non** sono sicuro che **sia** …",
     examples: [
       { target: 'So che vive a Roma. · Penso che viva a Roma.', de: 'Ich weiß, dass … · Ich glaube, dass er in Rom lebt.' },
       { target: 'Esco perché fa bel tempo. · Esco benché piova.', de: 'Ich gehe raus, weil … · obwohl es regnet.' },
@@ -1034,10 +1168,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'pronomi-combinati',
     instruction: 'Setze die kombinierten Pronomen ein.',
-    explanation:
-      'Indirektes + direktes Pronomen: mi → me, ti → te, ci → ce, vi → ve, dann lo/la/li/le/ne: me lo, te la, ' +
-      'ce li, ve ne. gli, le und Le werden zu glie- und verschmelzen: glielo, gliela, glieli, gliele, gliene. ' +
-      'Beim Infinitiv angehängt: Voglio dartelo, Puoi portarmele?',
+    explanation: [
+      "Reihenfolge: **indirekt vor direkt** (wem vor was)",
+      "mi, ti, ci, vi werden zu **me, te, ce, ve**: me lo, te la, ce li, ve ne",
+      "gli, le und Le werden zu **glie-** und schreiben sich zusammen: glielo, gliela, glieli, gliele, gliene",
+      "Beim Infinitiv und Imperativ angehängt: Voglio dar**telo**, Puoi portar**mele**?",
+    ],
+    tip: "**glielo** heißt „es ihm“, „es ihr“ **und** „es Ihnen“ – der Zusammenhang klärt es.",
+    warn: "Im passato prossimo passt sich das Partizip an lo / la / li / le an: Gliel'ho dat**a** (la chiave).",
     examples: [
       { target: 'Mi dai il libro? – Sì, te lo do.', de: 'Gibst du mir das Buch? – Ja, ich gebe es dir.' },
       { target: 'Dai il regalo a Marco? – Sì, glielo do.', de: 'Gibst du Marco das Geschenk? – Ja, ich gebe es ihm.' },
@@ -1068,11 +1206,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'ci-ne',
     instruction: 'Setze ci oder ne (oder die passende Form) ein.',
-    explanation:
-      'ci ersetzt einen Ort (Vado a Roma → Ci vado) oder a/su + Sache (Pensi al lavoro? – Ci penso sempre). ' +
-      'ne ersetzt eine Menge oder einen Teil (Quante mele? – Ne compro tre) und di + Sache/Person (Parliamo del ' +
-      'problema → Ne parliamo). Im passato prossimo passt sich das Partizip nach ne an die Menge an: Ne ho mangiate due ' +
-      '(mele). Feste Wendungen: Non ne posso più, Ci vuole pazienza, Che ne pensi?',
+    explanation: [
+      "**ci** ersetzt einen **Ort**: Vado a Roma → **Ci** vado",
+      "**ci** ersetzt auch **a / su + Sache**: Pensi al lavoro? – **Ci** penso sempre",
+      "**ne** ersetzt eine **Menge** oder einen Teil: Quante mele? – **Ne** compro tre",
+      "**ne** ersetzt **di + Sache / Person**: Parliamo del problema → **Ne** parliamo",
+      "Feste Wendungen: Non ne posso più · Ci vuole pazienza · Che ne pensi?",
+    ],
+    tip: "Bei Mengen braucht das Italienische **ne**, wo das Deutsche nichts sagt: Ne ho due (ich habe zwei).",
+    warn: "Nach ne passt sich das Partizip an die Menge an: **Ne** ho mangiat**e** due (mele).",
     examples: [
       { target: 'Vai a Milano? – Sì, ci vado domani.', de: 'Fährst du nach Mailand? – Ja, ich fahre morgen hin.' },
       { target: 'Quanti figli hai? – Ne ho due.', de: 'Wie viele Kinder hast du? – Ich habe zwei.' },
@@ -1104,10 +1246,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'relativ',
     instruction: 'Setze das passende Relativpronomen ein.',
-    explanation:
-      'che = der/die/das (Subjekt oder Objekt, ohne Präposition): il libro che leggo. cui nach einer Präposition: ' +
-      'la città in cui vivo, l\'amico a cui scrivo, il motivo per cui. il/la cui = dessen/deren: l\'uomo la cui figlia …. ' +
-      'chi = wer / derjenige, der: Chi cerca trova. quello che / ciò che = das, was.',
+    explanation: [
+      "**che** = der / die / das – als Subjekt oder Objekt, **ohne** Präposition: il libro **che** leggo",
+      "**cui** steht **nach einer Präposition**: la città **in cui** vivo, l'amico **a cui** scrivo, il motivo **per cui**",
+      "**il / la cui** = dessen / deren: l'uomo **la cui** figlia …",
+      "**chi** = wer / derjenige, der: Chi cerca trova",
+      "**quello che / ciò che** = das, was: Fai quello che vuoi",
+    ],
+    tip: "Präposition davor → **cui**. Keine Präposition → **che**.",
+    warn: "Nie ~~in che~~ oder ~~a che~~ als Relativpronomen: richtig ist **in cui**, **a cui**.",
     examples: [
       { target: 'Il libro che leggo è bello.', de: 'Das Buch, das ich lese, ist schön.' },
       { target: 'La città in cui vivo è piccola.', de: 'Die Stadt, in der ich lebe, ist klein.' },
@@ -1139,10 +1286,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'trapassato',
     instruction: 'Setze das Hilfsverb oder das Partizip ein.',
-    explanation:
-      'Vorvergangenheit: imperfetto von avere oder essere + Partizip (avevo mangiato, ero andato/a). Sie beschreibt ' +
-      'eine Handlung, die vor einer anderen vergangenen Handlung abgeschlossen war: Quando sono arrivato, il film era ' +
-      'già cominciato. Die Wahl des Hilfsverbs und die Angleichung sind wie im passato prossimo.',
+    explanation: [
+      "Bildung: **imperfetto von avere / essere + Partizip**: avevo mangiato, ero andato / andata",
+      "Für eine Handlung, die **vor einer anderen vergangenen** Handlung abgeschlossen war",
+      "Hilfsverb und Angleichung wie im passato prossimo",
+      "Typisch mit **già** (schon) und **quando** (als)",
+    ],
+    tip: "Es entspricht genau dem deutschen **Plusquamperfekt**: ich hatte gegessen, ich war gegangen.",
+    warn: "Die spätere Handlung bleibt im passato prossimo: Quando **sono arrivato**, il treno **era** già **partito**.",
     examples: [
       { target: 'Quando sono arrivato, il treno era già partito.', de: 'Als ich ankam, war der Zug schon abgefahren.' },
       { target: 'Non avevo fame perché avevo già mangiato.', de: 'Ich hatte keinen Hunger, weil ich schon gegessen hatte.' },
@@ -1173,11 +1324,14 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'bedingungssaetze',
     instruction: 'Setze die passende Verbform ein.',
-    explanation:
-      'Realer Fall: se + Präsens → Präsens/Futur (Se piove, resto a casa). Möglicher/unwirklicher Fall: ' +
-      'se + congiuntivo imperfetto → condizionale (Se avessi tempo, verrei). Congiuntivo imperfetto: -are → -assi, ' +
-      '-assi, -asse, -assimo, -aste, -assero; -ere → -essi …; -ire → -issi …; essere → fossi, fossi, fosse, fossimo, ' +
-      'foste, fossero; fare → facessi; dare → dessi; stare → stessi. Nie condizionale direkt nach se!',
+    explanation: [
+      "**Real**: se + Präsens → Präsens / Futur: Se piove, resto a casa",
+      "**Möglich / unwirklich**: se + **congiuntivo imperfetto** → **condizionale**: Se avessi tempo, verrei",
+      "Congiuntivo imperfetto: -are → -assi, -assi, -asse, -assimo, -aste, -assero; -ere → -essi …; -ire → -issi …",
+      "Unregelmäßig: **essere** → fossi, fossi, fosse, fossimo, foste, fossero · fare → facessi · dare → dessi · stare → stessi",
+    ],
+    tip: "Merksatz: **se** + avessi / fossi … **dann** + -rei.",
+    warn: "**Nie condizionale direkt nach se**: nicht ~~se avrei~~, sondern **se avessi**.",
     examples: [
       { target: 'Se piove, resto a casa.', de: 'Wenn es regnet, bleibe ich zu Hause.' },
       { target: 'Se avessi tempo, verrei con te.', de: 'Wenn ich Zeit hätte, würde ich mitkommen.' },
@@ -1209,11 +1363,15 @@ export const GRAMMAR_TOPICS: GrammarTopic[] = [
     level: 'B1',
     lessonId: 'si',
     instruction: 'Setze die passende Form ein.',
-    explanation:
-      'si + 3. Person = „man“: In Italia si mangia bene. Steht ein Nomen in der Mehrzahl dabei, steht auch das Verb ' +
-      'in der Mehrzahl: Si vendono case. Passiv: essere + Partizip, angeglichen an das Subjekt: La casa è stata ' +
-      'costruita nel 1900. In einfachen Zeiten geht auch venire: Il libro viene letto da molti. Der Handelnde steht ' +
-      'mit da.',
+    explanation: [
+      "**si + 3. Person** = „man“: In Italia **si mangia** bene",
+      "Mit einem Nomen in der Mehrzahl steht auch das Verb in der Mehrzahl: **Si vendono** case",
+      "**Passiv**: essere + Partizip, angeglichen an das Subjekt: La casa è stata costruit**a** nel 1900",
+      "In einfachen Zeiten geht auch **venire**: Il libro **viene** letto da molti",
+      "Der Handelnde steht mit **da**: scritto **da** Eco",
+    ],
+    tip: "**Come si dice …?** (Wie sagt man …?) ist der nützlichste si-Satz überhaupt.",
+    warn: "Bei reflexiven Verben wird „man“ zu **ci si**: Ci si alza presto.",
     examples: [
       { target: 'Come si dice «Hund» in italiano?', de: 'Wie sagt man „Hund“ auf Italienisch?' },
       { target: 'Qui si vendono biglietti.', de: 'Hier werden Fahrkarten verkauft.' },

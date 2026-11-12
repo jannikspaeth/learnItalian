@@ -215,8 +215,12 @@ alter table grammar     enable row level security;
   `scripts/vocab-import-topics.mjs` (verbs auto-detected by ending).
 - `/grammar` — two tabs: **Exercises** (34 hand-written cloze sets covering A1–B1 in
   `lib/grammar-exercises.ts`, grouped by level, each with rule + examples; choose/type modes, progress
-  per topic in the `grammar` table) and **Lessons** (`lib/grammar-lessons.ts` + `lib/{es,fr,pt,br}/`; ~27–33 lessons
-  A1–B1 per language with a `level`, grouped by level, every exercise topic links one via `lessonId`).
+  per topic in the `grammar` table; a topic's `explanation` is a string or — preferred — bullet points, plus
+  optional `tip`/`warn`) and **Lessons** (`lib/grammar-lessons.ts` + `lib/{es,fr,pt,br}/`; ~27–33 lessons
+  A1–B1 per language with a `level`, grouped by level, every exercise topic links one via `lessonId`). Lesson
+  sections are built from blocks (`body`, `points`, `table`, `examples`, `tip` → "Merke", `warn` → "Achtung";
+  rendered by `components/GrammarBlocks.tsx`, strings may use `**bold**` and `~~wrong~~`). Italian rules and
+  lessons use the full format; es/fr/pt/br still use plain `body` text and are to be converted the same way.
   Topics have review intervals (`lib/grammar-review.ts`: level 1–6, 1/3/7/14/30/60 days; ≥80% right moves up,
   less resets to level 1; `level`/`nextReview` on the `GrammarRecord`, legacy records derive a due date). Due
   topics come first in the daily round's grammar part; the grammar page deliberately shows no due markers
