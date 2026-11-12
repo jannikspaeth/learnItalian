@@ -183,6 +183,7 @@ export default function VokabelnPage() {
   const [quizDir, setQuizDir] = useQuizDirection();
   const [autoplay, setAutoplay] = useAutoplay();
   const [topicSetting, setTopic] = useLocalSetting<string>('italienisch_vocab_topic', 'all', isTopicChoice);
+  const [practiceTopicSetting, setPracticeTopic] = useLocalSetting<string>('italienisch_practice_topic', 'all', isTopicChoice);
 
   // Add-your-own-word form state
   const [showAddForm, setShowAddForm] = useState(false);
@@ -255,7 +256,6 @@ export default function VokabelnPage() {
   });
 
   const seenWords = new Set(vocab.map(v => norm(v.word)));
-  const practiceWords = practicePool === 'known' ? bekanntWords : vocab.filter(v => getLevel(v) > 0);
 
   // Learn can be narrowed to one topic; order within the topic stays catalog order.
   const topicCatalog = topic === 'all' ? sourceCatalog : sourceCatalog.filter(w => w.topic === topic);
@@ -275,6 +275,21 @@ export default function VokabelnPage() {
     if (w.topic && !topicOfWord.has(norm(w.target))) topicOfWord.set(norm(w.target), w.topic);
   }
   const group: WordGroup = wordGroup === 'topic' && !pack.hasTopics ? 'none' : wordGroup;
+
+  // "Practise all words" pool: every word met (or only known ones), optionally one topic.
+  const practiceTopic = pack.hasTopics ? practiceTopicSetting : 'all';
+  const metWords = vocab.filter(v => getLevel(v) > 0);
+  const inPracticeTopic = (v: VocabEntry) => practiceTopic === 'all' || topicOfWord.get(norm(v.word)) === practiceTopic;
+  const practiceWords = (practicePool === 'known' ? bekanntWords : metWords).filter(inPracticeTopic);
+  // Per topic: known / met — shown in the picker; topics with no words met are hidden.
+  const practiceProgress: Record<string, TopicProgress> = { all: { seen: bekanntWords.length, total: metWords.length } };
+  for (const v of metWords) {
+    const tp = topicOfWord.get(norm(v.word));
+    if (!tp) continue;
+    const p = (practiceProgress[tp] ??= { seen: 0, total: 0 });
+    p.total++;
+    if (getLevel(v) >= VOCAB_KNOWN_LEVEL) p.seen++;
+  }
 
   // Every flashcard done today counts (repeats included) — sourced from the
   // per-day stats counter, not distinct words.
@@ -982,10 +997,13 @@ export default function VokabelnPage() {
                       )}
                     </p>
                   </div>
+                  {pack.hasTopics && (
+                    <TopicPicker value={practiceTopic} onChange={setPracticeTopic} progress={practiceProgress} hideEmpty />
+                  )}
                   <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
                     {([
-                      ['all', `${t('All', 'Alle')} (${vocab.filter(v => getLevel(v) > 0).length})`],
-                      ['known', `${t('Only known', 'Nur gekonnte')} (${bekanntWords.length})`],
+                      ['all', `${t('All', 'Alle')} (${metWords.filter(inPracticeTopic).length})`],
+                      ['known', `${t('Only known', 'Nur gekonnte')} (${bekanntWords.filter(inPracticeTopic).length})`],
                     ] as ['all' | 'known', string][]).map(([id, label]) => (
                       <button
                         key={id}

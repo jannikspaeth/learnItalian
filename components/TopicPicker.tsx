@@ -18,10 +18,12 @@ export default function TopicPicker({
   value,
   onChange,
   progress,
+  hideEmpty = false,
 }: {
   value: string; // topic id or 'all'
   onChange: (v: string) => void;
   progress: Record<string, TopicProgress>; // keyed by topic id, plus 'all'
+  hideEmpty?: boolean; // leave out topics with no words (e.g. none met yet)
 }) {
   const [open, setOpen] = useState(false);
   const t = useT();
@@ -79,7 +81,7 @@ export default function TopicPicker({
       {open && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
           {row('all', 'books', t('All topics', 'Alle Themen'))}
-          {TOPICS.map(t => row(t.id, t.icon, t.label))}
+          {TOPICS.filter(t => !hideEmpty || (progress[t.id]?.total ?? 0) > 0).map(t => row(t.id, t.icon, t.label))}
         </div>
       )}
     </div>

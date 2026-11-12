@@ -112,6 +112,8 @@ export interface GrammarRecord {
   recentMistakes: GrammarMistake[]; // from the most recent attempt
   lastAttempted: string;
   mastered: boolean;    // true when the most recent attempt had no mistakes
+  level?: number;       // review level (lib/grammar-review.ts); missing on older records
+  nextReview?: string;  // ISO date the topic is due again
 }
 
 // ─── The Race (cross-user competitive vocab leaderboard) ───────────────────────

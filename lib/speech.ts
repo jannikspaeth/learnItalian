@@ -22,9 +22,12 @@ function voiceFor(lang: Lang): SpeechSynthesisVoice | undefined {
   const tag = BCP47[lang].toLowerCase();
   const exact = voices.filter(v => v.lang.replace('_', '-').toLowerCase() === tag);
   const pool = exact.length ? exact : voices.filter(v => v.lang.toLowerCase().startsWith(lang));
-  // Local voices start instantly and work offline; the "Google"/"Premium" ones sound better.
+  // Local voices start instantly and work offline; the neural ones sound far more human:
+  // Edge/Windows "… Online (Natural)", Apple "Premium"/"Enhanced", Chrome "Google …".
   return (
-    pool.find(v => /premium|enhanced|google/i.test(v.name)) ??
+    pool.find(v => /natural|neural/i.test(v.name)) ??
+    pool.find(v => /premium|enhanced/i.test(v.name)) ??
+    pool.find(v => /google/i.test(v.name)) ??
     pool.find(v => v.localService) ??
     pool[0]
   );

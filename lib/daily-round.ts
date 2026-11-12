@@ -2,6 +2,7 @@ import type { Lang } from './lang';
 import type { VocabPack } from './content';
 import type { VocabEntry, ConjugationRecord, GrammarRecord, SentenceProgress, MistakeItem } from './types';
 import type { GrammarItem, GrammarTopic } from './grammar-exercises';
+import { dueGrammar } from './grammar-review';
 import type { VocabExample } from './vocab-examples';
 import { normWord } from './norm';
 import { VOCAB_KNOWN_LEVEL, effectiveVocabLevel, isDue } from './srs';
@@ -118,7 +119,8 @@ export function pickRoundVerbs(
   return out;
 }
 
-// Grammar: topics you've started but not mastered, then the next new ones.
+// Grammar: topics due for review (most overdue first), then ones started but not
+// mastered, then the next new ones.
 export function grammarSteps(
   topics: GrammarTopic[],
   records: GrammarRecord[],
@@ -127,10 +129,13 @@ export function grammarSteps(
 ): RoundStep[] {
   const rec = new Map(records.map(r => [r.id, r]));
   const available = topics.filter(t => !beginner || t.level === 'A1');
+  const availableIds = new Set(available.map(t => t.id));
+  const byId = new Map(available.map(t => [t.id, t]));
+  const due = dueGrammar(records.filter(r => availableIds.has(r.id))).map(r => byId.get(r.id)!);
   const started = available.filter(t => rec.has(t.id) && !rec.get(t.id)!.mastered);
   const fresh = available.filter(t => !rec.has(t.id));
   const mastered = shuffle(available.filter(t => rec.get(t.id)?.mastered));
-  const chosen = [...shuffle(started), ...fresh, ...mastered].slice(0, 3);
+  const chosen = [...new Set([...due, ...shuffle(started), ...fresh, ...mastered])].slice(0, 3);
   const items = shuffle(chosen.flatMap(t => t.items.map(item => ({ t, item })))).slice(0, n);
   return items.map(({ t, item }) => ({ kind: 'grammar', topicId: t.id, topicTitle: t.title, item }));
 }

@@ -146,7 +146,7 @@ alter table grammar     enable row level security;
 - **Audio**: `lib/speech.ts` (browser `speechSynthesis`, voice per language, `speakableText` strips notes/variants)
   + `components/SpeakButton.tsx` on flashcards, word list, sentences, verb tables, grammar and lessons; per-device
   auto-play for vocab (`lib/use-autoplay.ts`). No speech recognition.
-- `/lesen` — **Reading**: graded texts per language in `lib/reading/{it,es,fr}.ts` (18 it, 9 es, 9 fr) with
+- `/lesen` — **Reading**: graded texts per language in `lib/reading/{it,es,fr,pt,br}.ts` (18 per language, 6 each A1/A2/B1) with
   tap-to-translate (`lib/reading/lookup.ts`: text glossary → `common-words.ts` → vocab catalog → every verb form
   from the `forms` pack → plural/feminine/-issimo/gerund/clitic heuristics), per-paragraph translation, audio and
   comprehension questions (`recordExercise('reading')`, 2 race points per question; progress in extras). Every
@@ -181,7 +181,8 @@ alter table grammar     enable row level security;
   of four. `checkNumberAnswer` is forgiving about separators and accepts 12- or 24-hour input (except
   for noon/midnight). Round stats in `extras.numbers`.
 - `/vokabeln` — Vocabulary: SRS flashcards (one at a time), **Learn in rounds of 20**, Review
-  (shuffled), Words list. Daily goal banner. Beginners (A1) learn an ordered starter set first
+  (shuffled) plus **Practise all words** (every met word or only known ones, optional topic, random rounds of 20;
+  a right answer leaves the schedule alone, a wrong one drops the word as usual), Words list. Daily goal banner. Beginners (A1) learn an ordered starter set first
   (`lib/vocab-starter.ts`) then flow into the full `lib/vocab-catalog.ts` (~2,900 words, A1–B1:
   hand-written core + `lib/vocab-b1.ts` B1 extension + `lib/vocab-imported.ts`, **generated** by `node scripts/import-vocab.mjs` from the Grund-/Ausbau-
   wortschatz CSVs in gitignored `scripts/data/`; correct entries in `scripts/vocab-import-fixes.mjs`
@@ -211,8 +212,11 @@ alter table grammar     enable row level security;
   `scripts/vocab-import-topics.mjs` (verbs auto-detected by ending).
 - `/grammar` — two tabs: **Exercises** (34 hand-written cloze sets covering A1–B1 in
   `lib/grammar-exercises.ts`, grouped by level, each with rule + examples; choose/type modes, progress
-  per topic in the `grammar` table) and **Lessons** (`lib/grammar-lessons.ts`; Italian: 29 lessons A1–B1 with a
-  `level`, grouped by level, every exercise topic links one via `lessonId`; es/fr: first-steps lessons only).
+  per topic in the `grammar` table) and **Lessons** (`lib/grammar-lessons.ts` + `lib/{es,fr,pt,br}/`; ~27–33 lessons
+  A1–B1 per language with a `level`, grouped by level, every exercise topic links one via `lessonId`).
+  Topics have review intervals (`lib/grammar-review.ts`: level 1–6, 1/3/7/14/30/60 days; ≥80% right moves up,
+  less resets to level 1; `level`/`nextReview` on the `GrammarRecord`, legacy records derive a due date). Due
+  topics are listed at the top of Exercises and come first in the daily round's grammar part.
 - `/race` — **THE RACE**: global competitive leaderboard (see below).
 - `/help`, `/profile`. Nav in `components/Navigation.tsx`: mobile has four tabs (Heute · Üben · Rennen · Profil),
   desktop a sidebar; the sections are listed once in `lib/sections.ts`. `/ueben` is the hub of all exercise types,

@@ -15,6 +15,7 @@ import { Lang, LANG_STORAGE_KEY, dataUserId, isLang } from './lang';
 import { berlinToday } from './race';
 import { conjugationMatches } from './conjugation-match';
 import { nextVerbReview } from './verb-review';
+import { nextGrammarReview } from './grammar-review';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -316,13 +317,16 @@ export async function upsertGrammarAttempt(
     mastered: mistakes.length === 0,
   };
   if (existing) {
-    Object.assign(existing, attempt, {
+    Object.assign(existing, attempt, nextGrammarReview(existing.level, correct, total), {
       totalAttempts: existing.totalAttempts + 1,
       totalCorrect: existing.totalCorrect + correct,
       totalQuestions: existing.totalQuestions + total,
     });
   } else {
-    records.unshift({ id: topicId, totalAttempts: 1, totalCorrect: correct, totalQuestions: total, ...attempt });
+    records.unshift({
+      id: topicId, totalAttempts: 1, totalCorrect: correct, totalQuestions: total, ...attempt,
+      ...nextGrammarReview(undefined, correct, total),
+    });
   }
   await putJson('/api/data/grammar', records);
 }
