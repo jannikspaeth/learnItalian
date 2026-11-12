@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { GRAMMAR_LEVELS, GrammarTopic } from '@/lib/grammar-exercises';
 import { LESSONS_BY_LANG, TOPICS_BY_LANG } from '@/lib/grammar-by-lang';
 import { getGrammarRecords, recordExercise } from '@/lib/storage';
@@ -40,6 +40,29 @@ export default function GrammarPage() {
     return () => { delete document.body.dataset.focus; };
   }, [focused]);
 
+  // Starting a topic swaps the long list for the exercise: begin at the top instead of
+  // wherever the list was scrolled to, and return to that spot when the exercise closes.
+  const listScroll = useRef(0);
+  const pendingLesson = useRef<string | null>(null);
+  const wasFocused = useRef(false);
+  useLayoutEffect(() => {
+    if (focused) {
+      window.scrollTo(0, 0);
+    } else if (pendingLesson.current) {
+      // "Lesson: …" link: jump straight to that lesson.
+      document.getElementById(`lesson-${pendingLesson.current}`)?.scrollIntoView({ block: 'start' });
+      pendingLesson.current = null;
+    } else if (wasFocused.current) {
+      window.scrollTo(0, listScroll.current);
+    }
+    wasFocused.current = focused;
+  }, [focused, tab]);
+
+  function startPractice(id: string) {
+    listScroll.current = window.scrollY;
+    setPracticing(id);
+  }
+
   if (!ready || !profile) {
     return (
       <main className="md:ml-56 min-h-screen bg-gray-50 flex items-center justify-center">
@@ -61,6 +84,7 @@ export default function GrammarPage() {
   }
 
   function openLesson(id: string) {
+    pendingLesson.current = id;
     setPracticing(null);
     setTab('lessons');
     setOpen(prev => new Set(prev).add(id));
@@ -93,7 +117,7 @@ export default function GrammarPage() {
             </p>
           </div>
           <button
-            onClick={() => setPracticing(tp.id)}
+            onClick={() => startPractice(tp.id)}
             className="shrink-0 text-sm font-medium px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors"
           >
             {rec ? t('Practise', 'Üben') : t('Start', 'Starten')}
@@ -156,6 +180,7 @@ export default function GrammarPage() {
     return (
       <section
         key={lesson.id}
+        id={`lesson-${lesson.id}`}
         className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
       >
         <button

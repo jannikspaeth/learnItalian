@@ -157,6 +157,9 @@ export default function VokabelnPage() {
   const [current, setCurrent] = useState(0);
   const [doneCount, setDoneCount] = useState(0);
   const [sessionCorrect, setSessionCorrect] = useState(0);
+  // Free practice of words already met (known ones included) from the Review tab.
+  const [practiceAll, setPracticeAll] = useState(false);
+  const [practicePool, setPracticePool] = useState<'all' | 'known'>('all');
   // Serializes per-word saves so concurrent writes don't clobber each other.
   const saveChain = useRef<Promise<unknown>>(Promise.resolve());
   const [saveError, setSaveError] = useState(false);
@@ -220,6 +223,7 @@ export default function VokabelnPage() {
   useEffect(() => {
     if (phase !== 'active') return;
     document.body.dataset.focus = '1';
+    window.scrollTo(0, 0);
     return () => { delete document.body.dataset.focus; };
   }, [phase]);
 
@@ -251,6 +255,7 @@ export default function VokabelnPage() {
   });
 
   const seenWords = new Set(vocab.map(v => norm(v.word)));
+  const practiceWords = practicePool === 'known' ? bekanntWords : vocab.filter(v => getLevel(v) > 0);
 
   // Learn can be narrowed to one topic; order within the topic stays catalog order.
   const topicCatalog = topic === 'all' ? sourceCatalog : sourceCatalog.filter(w => w.topic === topic);
@@ -307,6 +312,7 @@ export default function VokabelnPage() {
 
   function reset() {
     setPhase('idle');
+    setPracticeAll(false);
     setItems([]);
     setCurrent(0);
     setDoneCount(0);
@@ -367,8 +373,28 @@ export default function VokabelnPage() {
 
   function startWiederholen() {
     if (!vocabLoaded || dueToday.length === 0) return;
+    setPracticeAll(false);
     // Show due words in random order rather than fixed DB order.
     setItems(shuffle(dueToday).map(v => {
+      const ex = examples.get(norm(v.word));
+      return makeItem(v.translation, v.word, ex?.text || v.example || '', v.id, getLevel(v), {
+        de: ex?.de,
+        conj: presentForms(verbs, v.word, ex),
+      });
+    }));
+    setCurrent(0);
+    setDoneCount(0);
+    setSessionCorrect(0);
+    setCombo(0);
+    setPhase('active');
+  }
+
+  // Practise any words already met — known ones included — in random rounds of ROUND_SIZE,
+  // whether they're due or not.
+  function startUeben() {
+    if (!vocabLoaded || practiceWords.length === 0) return;
+    setPracticeAll(true);
+    setItems(shuffle(practiceWords).slice(0, ROUND_SIZE).map(v => {
       const ex = examples.get(norm(v.word));
       return makeItem(v.translation, v.word, ex?.text || v.example || '', v.id, getLevel(v), {
         de: ex?.de,
@@ -436,6 +462,12 @@ export default function VokabelnPage() {
         };
         next = [changed, ...vocab];
       }
+    } else if (practiceAll && correct && conf !== 'bekannt' && conf !== 'again') {
+      // Free practice: getting a word right ahead of time doesn't move its schedule
+      // (a known word stays known). Wrong answers and "Again"/"Easy" count as usual.
+      const idx = vocab.findIndex(v => v.id === item.vocabId);
+      changed = { ...vocab[idx], lastReviewed: now, reviewCount: vocab[idx].reviewCount + 1 };
+      next = vocab.map(v => (v.id === item.vocabId ? changed : v));
     } else {
       const idx = vocab.findIndex(v => v.id === item.vocabId);
       changed = { ...vocab[idx], level: newLevel, nextReview: nr, lastReviewed: now, reviewCount: vocab[idx].reviewCount + 1 };
@@ -742,7 +774,15 @@ export default function VokabelnPage() {
               {t('Keep learning →', 'Weiterlernen →')}
             </button>
           )}
-          {tab === 'wiederholen' && dueToday.length > 0 && (
+          {tab === 'wiederholen' && practiceAll && practiceWords.length > 0 && (
+            <button
+              onClick={startUeben}
+              className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition-colors"
+            >
+              {t('Keep practising →', 'Weiter üben →')}
+            </button>
+          )}
+          {tab === 'wiederholen' && !practiceAll && dueToday.length > 0 && (
             <button
               onClick={startWiederholen}
               className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition-colors"
@@ -904,7 +944,8 @@ export default function VokabelnPage() {
         {tab === 'wiederholen' && (
           <div className="space-y-4">
             {phase === 'idle' ? (
-              dueToday.length === 0 ? (
+              <>
+              {dueToday.length === 0 ? (
                 <div className="text-center py-14">
                   <PartyPopper className="w-10 h-10 text-red-700 mx-auto mb-3" />
                   <p className="text-sm font-medium text-gray-500">{t('No words due today!', 'Heute ist nichts fällig!')}</p>
@@ -929,7 +970,50 @@ export default function VokabelnPage() {
                   <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
                   <AutoplayToggle value={autoplay} onChange={setAutoplay} />
                 </div>
-              )
+              )}
+              {vocab.length > 0 && (
+                <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{t('Practise all words', 'Alle Wörter üben')}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {t(
+                        `Any time, even if nothing is due — in random rounds of ${ROUND_SIZE}. Right answers don't change a word's phase; wrong ones send it back to review.`,
+                        `Jederzeit, auch wenn nichts fällig ist – in zufälligen Runden à ${ROUND_SIZE}. Richtige Antworten ändern die Phase nicht, falsche schicken das Wort zurück in die Wiederholung.`,
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+                    {([
+                      ['all', `${t('All', 'Alle')} (${vocab.filter(v => getLevel(v) > 0).length})`],
+                      ['known', `${t('Only known', 'Nur gekonnte')} (${bekanntWords.length})`],
+                    ] as ['all' | 'known', string][]).map(([id, label]) => (
+                      <button
+                        key={id}
+                        onClick={() => setPracticePool(id)}
+                        className={`flex-1 py-2 text-xs font-medium rounded-lg transition-colors ${
+                          practicePool === id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={startUeben}
+                    disabled={practiceWords.length === 0 || !vocabLoaded}
+                    className="w-full py-3 border-2 border-amber-500 text-amber-700 hover:bg-amber-50 disabled:border-gray-200 disabled:text-gray-400 disabled:hover:bg-transparent rounded-xl font-semibold transition-colors"
+                  >
+                    {t('Start practising →', 'Üben starten →')}
+                  </button>
+                  {dueToday.length === 0 && (
+                    <>
+                      <QuizDirectionToggle value={quizDir} onChange={setQuizDir} flag={info.flag} />
+                      <AutoplayToggle value={autoplay} onChange={setAutoplay} />
+                    </>
+                  )}
+                </div>
+              )}
+              </>
             ) : (
               sessionView
             )}
