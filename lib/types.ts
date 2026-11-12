@@ -237,4 +237,5 @@ export interface UserExtras {
   numbers?: BlitzRecord;                  // numbers, times and dates
   phrases?: Record<string, PhraseRecord>; // by phrase id
   writing?: WritingProgress;
+  vocabPass?: string[];                   // "Practise all words": normWord keys done in the current pass
 }

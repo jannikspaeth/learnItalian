@@ -53,6 +53,7 @@ try {
     articles: { rounds: 1, best: 18, bestSeconds: 44, lastCorrect: 18, lastTotal: 20, last: '2026-01-01' },
     numbers: { rounds: 2, best: 9, lastCorrect: 8, lastTotal: 10, last: '2026-01-01' },
     writing: { items: { 'o-01': 1 }, texts: { vorstellen: { times: 1, last: '2026-01-01', rating: 'good' } } },
+    vocabPass: ['casa', 'libro'],
   };
   await setExtras('check:it', written);
   const read = await getExtras('check:it');

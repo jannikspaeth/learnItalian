@@ -8,6 +8,8 @@ import {
   recordExercise,
   getRace,
   recordMistakes,
+  getExtras,
+  updateExtras,
 } from '@/lib/storage';
 import { vocabMistake } from '@/lib/mistakes';
 import { VocabEntry, ProgressStats, RaceResponse } from '@/lib/types';
@@ -162,6 +164,9 @@ export default function VokabelnPage() {
   // Free practice of words already met (known ones included) from the Review tab.
   const [practiceAll, setPracticeAll] = useState(false);
   const [practicePool, setPracticePool] = useState<'all' | 'known'>('all');
+  // Words already practised in the current pass (normWord keys, saved in extras):
+  // a pass runs through the whole pool once, in mixed order, across sessions.
+  const [passDone, setPassDone] = useState<Set<string>>(new Set());
   // Serializes per-word saves so concurrent writes don't clobber each other.
   const saveChain = useRef<Promise<unknown>>(Promise.resolve());
   const [saveError, setSaveError] = useState(false);
@@ -224,6 +229,8 @@ export default function VokabelnPage() {
     setStats(s);
   }, [celebrate, t]);
   useEffect(() => { refresh(); }, [refresh]);
+  // Pass progress: read once; afterwards local state leads (saves are queued in order).
+  useEffect(() => { getExtras().then(e => setPassDone(new Set(e.vocabPass ?? []))).catch(() => {}); }, []);
 
   // Focus mode while a card is on screen: the tab bar steps aside (see globals.css).
   useEffect(() => {
@@ -285,7 +292,9 @@ export default function VokabelnPage() {
   const practiceTopic = pack.hasTopics ? practiceTopicSetting : 'all';
   const metWords = vocab.filter(v => getLevel(v) > 0);
   const inPracticeTopic = (v: VocabEntry) => practiceTopic === 'all' || topicOfWord.get(norm(v.word)) === practiceTopic;
-  const practiceWords = (practicePool === 'known' ? bekanntWords : metWords).filter(inPracticeTopic);
+  const practicePoolWords = (practicePool === 'known' ? bekanntWords : metWords).filter(inPracticeTopic);
+  const practiceWords = practicePoolWords.filter(v => !passDone.has(norm(v.word)));
+  const passCount = practicePoolWords.length - practiceWords.length;
   // Per topic: known / met — shown in the picker; topics with no words met are hidden.
   const practiceProgress: Record<string, TopicProgress> = { all: { seen: bekanntWords.length, total: metWords.length } };
   for (const v of metWords) {
@@ -412,12 +421,28 @@ export default function VokabelnPage() {
     setPhase('active');
   }
 
-  // Practise any words already met — known ones included — in random rounds of ROUND_SIZE,
-  // whether they're due or not.
+  // Practise any words already met — known ones included — whether they're due or not:
+  // every word of the pool not yet done in this pass, in mixed order. Stopping keeps the
+  // pass; "Reset" starts a new one.
+  function markPassed(key: string) {
+    setPassDone(prev => new Set(prev).add(key));
+    updateExtras(e => {
+      const done = new Set(e.vocabPass ?? []);
+      done.add(key);
+      return { ...e, vocabPass: [...done] };
+    }).catch(() => {});
+  }
+
+  function resetPass() {
+    if (!confirm(t('Start the pass over? Every word comes up again.', 'Durchgang zurücksetzen? Alle Wörter kommen dann wieder dran.'))) return;
+    setPassDone(new Set());
+    updateExtras(e => ({ ...e, vocabPass: [] })).catch(() => {});
+  }
+
   function startUeben() {
     if (!vocabLoaded || practiceWords.length === 0) return;
     setPracticeAll(true);
-    setItems(shuffle(practiceWords).slice(0, ROUND_SIZE).map(v => {
+    setItems(shuffle(practiceWords).map(v => {
       const ex = examples.get(norm(v.word));
       return makeItem(v.translation, v.word, ex?.text || v.example || '', v.id, getLevel(v), {
         de: ex?.de,
@@ -498,6 +523,7 @@ export default function VokabelnPage() {
     }
 
     persistVocab(next, changed);
+    if (practiceAll) markPassed(norm(item.target));
     // Optimistically bump today's flashcard count so the goal moves per card.
     setStats(prev => {
       if (!prev) return prev;
@@ -1002,8 +1028,8 @@ export default function VokabelnPage() {
                     <p className="text-sm font-semibold text-gray-900">{t('Practise all words', 'Alle Wörter üben')}</p>
                     <p className="text-sm text-gray-600 mt-1">
                       {t(
-                        `Any time, even if nothing is due — in random rounds of ${ROUND_SIZE}. Right answers don't change a word's phase; wrong ones send it back to review.`,
-                        `Jederzeit, auch wenn nichts fällig ist – in zufälligen Runden à ${ROUND_SIZE}. Richtige Antworten ändern die Phase nicht, falsche schicken das Wort zurück in die Wiederholung.`,
+                        `Any time, even if nothing is due: one pass through every word in mixed order. Stop whenever you like — your place is kept. Right answers don't change a word's phase; wrong ones send it back to review.`,
+                        `Jederzeit, auch wenn nichts fällig ist: ein Durchgang durch alle Wörter, gemischt. Du kannst jederzeit aufhören – der Stand bleibt gespeichert. Richtige Antworten ändern die Phase nicht, falsche schicken das Wort zurück in die Wiederholung.`,
                       )}
                     </p>
                   </div>
@@ -1026,12 +1052,34 @@ export default function VokabelnPage() {
                       </button>
                     ))}
                   </div>
+                  {practicePoolWords.length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between gap-2 text-xs text-gray-500">
+                        <span>
+                          {practiceWords.length === 0
+                            ? t(`Pass complete — all ${practicePoolWords.length} words done`, `Durchgang geschafft – alle ${practicePoolWords.length} Wörter geübt`)
+                            : t(`${passCount} of ${practicePoolWords.length} done · ${practiceWords.length} to go`, `${passCount} von ${practicePoolWords.length} geübt · noch ${practiceWords.length}`)}
+                        </span>
+                        {passDone.size > 0 && (
+                          <button onClick={resetPass} className="font-semibold text-gray-500 underline hover:text-gray-700 shrink-0">
+                            {t('Reset', 'Zurücksetzen')}
+                          </button>
+                        )}
+                      </div>
+                      <div className="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-amber-500 rounded-full"
+                          style={{ width: `${Math.round((passCount / practicePoolWords.length) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
                   <button
                     onClick={startUeben}
                     disabled={practiceWords.length === 0 || !vocabLoaded}
                     className="w-full py-3 border-2 border-amber-500 text-amber-700 hover:bg-amber-50 disabled:border-gray-200 disabled:text-gray-400 disabled:hover:bg-transparent rounded-xl font-semibold transition-colors"
                   >
-                    {t('Start practising →', 'Üben starten →')}
+                    {passCount > 0 && practiceWords.length > 0 ? t('Continue →', 'Weitermachen →') : t('Start practising →', 'Üben starten →')}
                   </button>
                   {dueToday.length === 0 && (
                     <>

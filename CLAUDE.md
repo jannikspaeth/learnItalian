@@ -181,7 +181,8 @@ alter table grammar     enable row level security;
   of four. `checkNumberAnswer` is forgiving about separators and accepts 12- or 24-hour input (except
   for noon/midnight). Round stats in `extras.numbers`.
 - `/vokabeln` — Vocabulary: SRS flashcards (one at a time), **Learn in rounds of 20**, Review
-  (shuffled) plus **Practise all words** (every met word or only known ones, optional topic, random rounds of 20;
+  (shuffled) plus **Practise all words** (every met word or only known ones, optional topic; one mixed pass through the
+  whole pool, resumable — done words in `extras.vocabPass`, reset button starts over;
   a right answer leaves the schedule alone, a wrong one drops the word as usual), Words list. A per-device
   **Listening only** switch (`italienisch_vocab_listen`) hides the word on every card: it is read out
   (replay + slow), German is typed; ignored where the browser can't speak. Daily goal banner. Beginners (A1) learn an ordered starter set first
